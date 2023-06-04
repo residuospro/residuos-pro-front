@@ -1,0 +1,41 @@
+export const MAX = 999999999999
+
+export const setPermission = (permissions: Array<string>) => {
+	return localStorage.setItem("user_permissions", JSON.stringify(permissions))
+}
+
+export const getPermission = (): Array<string> => {
+	return JSON.parse(localStorage.getItem("user_permissions") || "[]")
+}
+
+export const getExp = (): number => {
+	const data = localStorage.getItem("exp")
+
+	if (data) {
+		const exp = JSON.parse(data)
+		return exp == typeof "number" ? exp : MAX
+	}
+
+	return MAX
+}
+
+export const removeItems = () => {
+	localStorage.removeItem("token")
+	localStorage.removeItem("exp")
+	localStorage.removeItem("user_permissions")
+}
+
+export const hasPermission = (permission: string[]) => {
+	return getPermission().filter((e) => permission.includes(e)).length > 0
+}
+
+export const setIsAuthenticated = (token: string, exp: number) => {
+	localStorage.setItem("token", JSON.stringify(token))
+	localStorage.setItem("exp", JSON.stringify(exp))
+
+	return
+}
+
+export const isAuthenticated = (): string => {
+	return JSON.parse(localStorage.getItem("token") || "[]")
+}
