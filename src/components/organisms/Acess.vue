@@ -13,7 +13,10 @@
 				</div>
 
 				<Container container="inputContainer">
-					<Input placeholder="Username:" input="loginInput" />
+					<Input
+						placeholder="Username:"
+						input="loginInput"
+						@keyup="getUsername($event.target.value)" />
 
 					<mdicon
 						name="account"
@@ -23,7 +26,8 @@
 						placeholder="Senha:"
 						input="loginInput"
 						type="password"
-						id="pass" />
+						id="pass"
+						@keyup="getPassword($event.target.value)" />
 
 					<mdicon
 						name="lock"
@@ -42,9 +46,10 @@
 					</p>
 
 					<Button
+						@click="login"
 						button="signIn"
-						:disabled="showButton"
-						:class="showButton ? 'bg-v_medium_gray' : 'bg-v_green'">
+						:disabled="!showButton"
+						:class="showButton ? ' bg-v_green' : 'bg-v_medium_gray'">
 						Entrar
 					</Button>
 
@@ -75,6 +80,7 @@ import Container from "@/components/atoms/Container.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
+import { PropType } from "vue"
 
 defineProps({
 	eyeIcon: { type: Boolean, required: true },
@@ -84,5 +90,17 @@ defineProps({
 	},
 	validationError: { type: Boolean, required: true },
 	showButton: { type: Boolean, required: true },
+	getUsername: {
+		type: Function as PropType<(username: string) => void>,
+		required: true,
+	},
+	getPassword: {
+		type: Function as PropType<(password: string) => void>,
+		required: true,
+	},
+	login: {
+		type: Function as unknown as () => (event: MouseEvent) => void,
+		required: true,
+	},
 })
 </script>

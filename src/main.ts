@@ -5,6 +5,9 @@ import { createPinia } from "pinia"
 import mdiVue from "mdi-vue/v3"
 import * as mdijs from "@mdi/js"
 import "./index.css"
+import { setupClient } from "./clients/AxiosClient"
+
+setupClient(process.env.VUE_APP_BACK)
 
 const pinia = createPinia()
 

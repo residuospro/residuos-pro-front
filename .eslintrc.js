@@ -28,6 +28,7 @@ module.exports = {
 					"Input",
 					"Acess",
 					"Login",
+					"Loading",
 				],
 			},
 		],
@@ -49,5 +50,6 @@ module.exports = {
 				},
 			},
 		],
+		"no-undef": "off",
 	},
 }

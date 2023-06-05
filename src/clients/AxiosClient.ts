@@ -2,18 +2,10 @@ import axios, { AxiosInstance } from "axios"
 import { Credential } from "@/utils/interfaces"
 
 let restClient: AxiosInstance
-let authClient: AxiosInstance
 
-export const setupClient = (
-	baseUrl: string | undefined,
-	authUrl: string | undefined
-) => {
+export const setupClient = (baseUrl: string | undefined) => {
 	restClient = axios.create({
 		baseURL: baseUrl,
-	})
-
-	authClient = axios.create({
-		baseURL: authUrl,
 	})
 }
 
@@ -39,4 +31,3 @@ export const setContentType = (client: AxiosInstance) => {
 }
 
 export const useClient = () => restClient
-export const useAuthClient = () => authClient

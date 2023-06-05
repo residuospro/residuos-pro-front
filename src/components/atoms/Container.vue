@@ -40,6 +40,12 @@ const containerClass = computed(() => {
 
 				inputContainer:
 					"flex flex-col justify-evenly items-center h-[25rem] mt-[-2rem]",
+
+				loadingContainer: `w-full h-full flex justify-center items-center z-10 fixed top-0 left-0`,
+
+				modalLoading: `w-full h-full 
+				absolute top-[50%] left-[50%] 
+				flex flex-col justify-center loading`,
 			},
 		},
 	})({
@@ -53,5 +59,10 @@ const containerClass = computed(() => {
 	box-shadow: 0 0.5rem 2rem 0 rgba(31, 38, 135, 0.37);
 	backdrop-filter: blur(1px);
 	-webkit-backdrop-filter: blur(0.9rem);
+}
+
+.loading {
+	transform: translate(-50%, -50%);
+	background: rgba(0, 0, 0, 0.5);
 }
 </style>
