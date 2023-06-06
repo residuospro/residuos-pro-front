@@ -20,7 +20,7 @@
 
 					<mdicon
 						name="account"
-						class="absolute top-[11.2rem] left-[7rem] text-v_gray3" />
+						class="absolute top-[3.4rem] left-[1rem] text-v_gray3 transform sm:left-[3.5rem]" />
 
 					<Input
 						placeholder="Senha:"
@@ -31,18 +31,18 @@
 
 					<mdicon
 						name="lock"
-						class="absolute top-[17.4rem] left-[7rem] text-v_gray3" />
+						class="absolute top-[9.7rem] left-[1rem] text-v_gray3 sm:left-[3.5rem]" />
 
 					<button
-						class="absolute top-[17.5rem] left-[27rem] text-v_gray3"
+						class="absolute top-[9.7rem] left-[21rem] text-v_gray3 sm:left-[16rem]"
 						@click="showPassord">
 						<mdicon :name="eyeIcon ? 'eye-outline' : 'eye-off-outline'" />
 					</button>
 
 					<p
-						class="text-v_red text-center text-[0.75rem] absolute top-[21rem]"
+						class="text-v_red text-center text-[0.75rem] absolute top-[13rem]"
 						v-if="validationError">
-						Username ou senha incorretos. Tente novamente
+						{{ errorMessage }}. Tente novamente
 					</p>
 
 					<Button
@@ -61,9 +61,12 @@
 		</Container>
 
 		<Container container="logoContainer">
-			<img src="@/assets/logo.png" :width="400" class="-mt-24 ml-[10rem]" />
+			<img
+				src="@/assets/logo.png"
+				:width="400"
+				class="-mt-24 ml-[10rem] sm:-ml-20" />
 
-			<div class="absolute top-[32.5rem] text-center ml-[10rem]">
+			<div class="absolute top-[32.5rem] text-center ml-[10rem] sm:-ml-20">
 				<Typograph typograph="title">RESÍDUOS PRO</Typograph>
 
 				<Typograph typograph="Paragraph" class="-mt-3">
@@ -100,6 +103,10 @@ defineProps({
 	},
 	login: {
 		type: Function as unknown as () => (event: MouseEvent) => void,
+		required: true,
+	},
+	errorMessage: {
+		type: String,
 		required: true,
 	},
 })

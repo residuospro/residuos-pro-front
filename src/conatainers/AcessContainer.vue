@@ -7,20 +7,26 @@
 		:show-button="showButton"
 		:get-username="getUserInfo"
 		:get-password="getPassword"
+		:error-message="errorMessage"
 		:login="login" />
 </template>
 
 <script setup lang="ts">
-import { signIn } from "@/api/signIn"
+import { signin } from "@/api/signin"
 import Acess from "@/components/organisms/Acess.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import router from "@/router"
 import { reactive, ref, watch } from "vue"
+import { TypeErrors } from "@/utils/enum"
+import { setCompany } from "@/store/setCompany"
+
+const store = setCompany()
 
 let eyeIcon = ref(false)
 let validationError = ref(false)
 let showButton = ref(false)
 let showLoading = ref(false)
+let errorMessage = ref("")
 let user = reactive({
 	username: "",
 	password: "",
@@ -54,15 +60,31 @@ const showPassord = () => {
 
 const login = async () => {
 	showLoading.value = true
-	const res: any = await signIn(user)
+	const res: any = await signin(user)
+
+	console.log("res", res)
 
 	if (res?.status == 200) {
-		//router.push("/Home")
-		alert("Logado")
-	} else {
+		router.push("/Painel")
+	} else if (res.response.data.error == TypeErrors.INCORRECT_PASSWORD) {
 		validationError.value = true
+
 		showButton.value = false
+
+		errorMessage.value = TypeErrors.INCORRECT_PASSWORD
+	} else if (res.response.data.error == TypeErrors.USER_NOT_FOUND) {
+		validationError.value = true
+
+		showButton.value = false
+
+		errorMessage.value = TypeErrors.USER_NOT_FOUND
+	} else if (res.status == 500) {
+		validationError.value = true
+
+		showButton.value = false
+
+		errorMessage.value = TypeErrors.UNEXPECTED_ERROR
 	}
-	//showLoading.value = false
+	showLoading.value = false
 }
 </script>

@@ -18,12 +18,9 @@ export const setBearerAuthorization = (
 
 export const setBasicAuthorization = (
 	client: AxiosInstance,
-	credential: Credential
+	encode: string
 ) => {
-	client.defaults.auth = {
-		username: credential.username.trim(),
-		password: credential.password.trim(),
-	}
+	client.defaults.headers.common["Authorization"] = `Basic ${encode}`
 }
 
 export const setContentType = (client: AxiosInstance) => {

@@ -14,11 +14,11 @@ const props = defineProps({
 
 const inputClass = computed(() => {
 	return cva(
-		"text-[1rem] font-[700] rounded-md shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] outline-[#e1e4ed] input bg-gray-100",
+		"text-[1rem] font-[700] rounded-md shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] outline-[#e1e4ed] input bg-gray-100 ",
 		{
 			variants: {
 				intent: {
-					loginInput: `w-[17rem] h-[3.75rem] px-14`,
+					loginInput: `w-[24rem] h-[3.75rem] px-14 inputLogin`,
 				},
 			},
 		}
@@ -51,5 +51,11 @@ const inputClass = computed(() => {
 
 input {
 	-moz-appearance: textfield;
+}
+
+@media (max-width: 767px) {
+	.inputLogin {
+		width: calc(100% - 5rem) !important;
+	}
 }
 </style>

@@ -1,16 +1,18 @@
-import { setBearerAuthorization, useClient } from "@/clients/AxiosClient"
+import {
+	setBearerAuthorization,
+	useClient,
+	setBasicAuthorization,
+} from "@/clients/AxiosClient"
 import { Routes } from "@/utils/enum"
 import { setIsAuthenticated, setPermission } from "@/utils/permissions"
-import axios from "axios"
 
-export const signIn = async (user: any) => {
+export const signin = async (user: any) => {
 	try {
-		const config = {
-			auth: { username: user.username.trim(), password: user.password.trim() },
-		}
-		const res: any = await useClient().post(Routes.LOGIN, config)
+		const encode = btoa(`${user.username}:${user.password}`)
 
-		console.log(res)
+		setBasicAuthorization(useClient(), encode)
+
+		const res = await useClient().post(Routes.LOGIN)
 
 		const token = res.data.token
 

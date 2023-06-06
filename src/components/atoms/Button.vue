@@ -22,7 +22,7 @@ const buttonClass = computed(() => {
 		{
 			variants: {
 				intent: {
-					signIn: `w-[24rem] text-white`,
+					signIn: `w-[24rem] text-white signinBtn`,
 				},
 			},
 		}
@@ -32,4 +32,11 @@ const buttonClass = computed(() => {
 })
 </script>
 
+<style scoped>
+@media (max-width: 767px) {
+	.signinBtn {
+		width: calc(100% - 5rem);
+	}
+}
+</style>
 #f0f7da #c9df8a #77ab59 #36802d #234d20

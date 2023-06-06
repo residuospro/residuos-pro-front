@@ -12,7 +12,7 @@ module.exports = {
 				v_light_green2: "rgba(74, 217, 137, 0.5)",
 				v_dark_blue: "#09092A",
 				v_blue: "#0000F1",
-				v_gray: "rgba(255, 255, 255, 0.35)",
+				v_gray: "rgba(255, 255, 255, 0.8)",
 				v_medium_gray: "#9D9797",
 				v_dark_gray: "#606060",
 				v_dark_gray2: "#343434",
