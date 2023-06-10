@@ -35,6 +35,8 @@ module.exports = {
 					"Departments",
 					"Dashboard",
 					"Settings",
+					"DataTable",
+					"Pagination",
 				],
 			},
 		],

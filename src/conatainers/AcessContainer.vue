@@ -60,25 +60,27 @@ const showPassord = () => {
 
 const login = async () => {
 	showLoading.value = true
-	const res: any = await signin(user)
+	const response: any = await signin(user)
 
-	console.log("res", res)
+	console.log("res", response)
 
-	if (res?.status == 200) {
+	if (response.res?.status == 200) {
 		router.push("/Painel")
-	} else if (res.response.data.error == TypeErrors.INCORRECT_PASSWORD) {
+
+		store.setCompany(response.company)
+	} else if (response.response.data.error == TypeErrors.INCORRECT_PASSWORD) {
 		validationError.value = true
 
 		showButton.value = false
 
 		errorMessage.value = TypeErrors.INCORRECT_PASSWORD
-	} else if (res.response.data.error == TypeErrors.USER_NOT_FOUND) {
+	} else if (response.response.data.error == TypeErrors.USER_NOT_FOUND) {
 		validationError.value = true
 
 		showButton.value = false
 
 		errorMessage.value = TypeErrors.USER_NOT_FOUND
-	} else if (res.status == 500) {
+	} else if (response.response.status == 500) {
 		validationError.value = true
 
 		showButton.value = false

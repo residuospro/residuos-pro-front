@@ -1,11 +1,16 @@
 <template>
-	<main class="">
-		<router-view
-			:key="$router.currentRoute.value.path.split('/')[0]"></router-view>
-	</main>
+	<router-view
+		:key="$router.currentRoute.value.path.split('/')[0]"></router-view>
 </template>
-<script setup lang="ts">
-import { useHead } from "@unhead/vue"
+<script setup lang="ts"></script>
 
-useHead({ title: "dfewfw" })
-</script>
+<style>
+::-webkit-scrollbar {
+	height: 0.5rem;
+	width: 0.25rem;
+	background-color: #e7e7e7;
+}
+::-webkit-scrollbar-thumb {
+	background-color: #77ab59;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
-	<Container container="menuContainer">
-		<Container container="menuIconContainer">
+	<Container type="menuContainer">
+		<Container type="menuIconContainer">
 			<div v-for="menu in menuIcons" :key="menu.id" class="mt-2">
 				<button
 					@click="setIdBtn(menu.path)"
@@ -15,7 +15,7 @@
 				</button>
 			</div>
 		</Container>
-		<Container container="menuIconContainer">
+		<Container type="menuIconContainer">
 			<button @click="logout" class="btnColor">
 				<mdicon name="logout-variant" />
 				<v-tooltip activator="parent" location="start">Sair</v-tooltip>

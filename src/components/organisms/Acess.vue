@@ -1,18 +1,16 @@
 <template>
-	<Container container="loginContainer">
-		<Container container="acessContainer">
-			<Container container="userInputContainer">
+	<Container type="loginContainer">
+		<Container type="acessContainer">
+			<Container type="userInputContainer">
 				<div class="text-center">
-					<Typograph typograph="H1" class="!text-v_dark_green">
-						Entrar
-					</Typograph>
+					<Typograph type="H1" class="!text-v_dark_green"> Entrar </Typograph>
 
-					<Typograph typograph="H2" class="!text-v_gray3">
+					<Typograph type="H2" class="!text-v_dark_gray2">
 						Após o login você terá acesso as funcionalidades
 					</Typograph>
 				</div>
 
-				<Container container="inputContainer">
+				<Container type="inputContainer">
 					<Input
 						placeholder="Username:"
 						input="loginInput"
@@ -47,7 +45,7 @@
 
 					<Button
 						@click="login"
-						button="signIn"
+						type="signIn"
 						:disabled="!showButton"
 						:class="showButton ? ' bg-v_green' : 'bg-v_medium_gray'">
 						Entrar
@@ -60,16 +58,16 @@
 			</Container>
 		</Container>
 
-		<Container container="logoContainer">
+		<Container type="logoContainer">
 			<img
 				src="@/assets/logo.png"
 				:width="400"
 				class="-mt-24 ml-[10rem] sm:-ml-20" />
 
 			<div class="absolute top-[32.5rem] text-center ml-[10rem] sm:-ml-20">
-				<Typograph typograph="title">RESÍDUOS PRO</Typograph>
+				<Typograph type="title">RESÍDUOS PRO</Typograph>
 
-				<Typograph typograph="Paragraph" class="-mt-3">
+				<Typograph type="Paragraph" class="-mt-3">
 					A maneira inteligente de gerenciar coletas
 				</Typograph>
 			</div>

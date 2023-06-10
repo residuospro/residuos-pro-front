@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from "axios"
-import { Credential } from "@/utils/interfaces"
 
 let restClient: AxiosInstance
 

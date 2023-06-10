@@ -11,7 +11,7 @@ import { cva } from "class-variance-authority"
 import { computed } from "vue"
 
 const props = defineProps({
-	typograph: { type: String, required: true },
+	type: { type: String, required: true },
 })
 
 const typographClass = computed(() => {
@@ -25,7 +25,7 @@ const typographClass = computed(() => {
 			},
 		},
 	})({
-		intent: props.typograph as any,
+		intent: props.type as any,
 	})
 })
 </script>

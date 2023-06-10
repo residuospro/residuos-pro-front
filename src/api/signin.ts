@@ -15,21 +15,21 @@ export const signin = async (user: any) => {
 		const res = await useClient().post(Routes.LOGIN)
 
 		const token = res.data.token
+		const refresh_token = res.data.refreshToken
 
 		setBearerAuthorization(useClient(), token)
 
 		const payload: any = await getPayload()
 
-		console.log(payload)
+		const company = payload.data.company
 
-		const exp = payload.data.exp
 		const roles = payload.data.permission
 
-		setIsAuthenticated(token, exp)
+		setIsAuthenticated(token, refresh_token)
 
 		setPermission(roles)
 
-		return res
+		return { res, company }
 	} catch (error) {
 		return error
 	}
