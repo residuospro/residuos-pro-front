@@ -37,6 +37,8 @@ module.exports = {
 					"Settings",
 					"DataTable",
 					"Pagination",
+					"Select",
+					"DeleteModal",
 				],
 			},
 		],

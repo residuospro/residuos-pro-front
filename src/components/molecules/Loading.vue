@@ -1,6 +1,6 @@
 <template>
-	<Container container="loadingContainer">
-		<Container container="modalLoading">
+	<Container type="backgroundContainer">
+		<Container type="modalContainer">
 			<div class="flex flex-col items-center justify-around">
 				<VueSpinnerFade size="60" color="#fff" />
 				<h1 class="mt-3 text-[1.5rem] text-white">{{ message }}</h1>

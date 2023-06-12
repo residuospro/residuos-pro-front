@@ -3,24 +3,26 @@
 		<div class="flex items-center w-full justify-between mb-8">
 			<div class="flex justify-between items-center w-[23rem] space-x-5">
 				<v-autocomplete
-					:items="items"
+					:onUpdate:modelValue="selectDepartment"
+					:items="departments"
 					density="comfortable"
 					label="Buscar Departamento"></v-autocomplete>
 
-				<button class="mt-4">Limpar pesquisa</button>
+				<button class="mt-7">Limpar pesquisa</button>
 			</div>
 
-			<Button type="submit">
+			<Button buttonType="submit" @click="openDepartmentModal('Cadastrar')">
 				<p class="text-v_medium_gray">Cadastrar</p>
 			</Button>
 		</div>
 
 		<Container type="dataTableContainer">
-			<Container type="headersContainer">
-				<Typograph type="H2" v-for="(items, index) in headers" :key="index">{{
-					items
-				}}</Typograph>
-				<Typograph type="H2">Ajustar</Typograph>
+			<Container type="headersContainer" class="text-white">
+				<Typograph type="H3" v-for="(items, index) in headers" :key="index">
+					{{ items }}
+				</Typograph>
+
+				<Typograph type="H3">Ajustar</Typograph>
 			</Container>
 
 			<div class="min-h-[28rem] bg-transparent">
@@ -42,11 +44,16 @@
 									<mdicon name="pencil-box-outline" class="" />
 								</button>
 							</template>
+
 							<v-list>
-								<v-list-item v-for="(item, i) in titles" :key="i">
-									<button>
-										{{ item }}
+								<v-list-item>
+									<button @click="openDepartmentModal('Atualizar')">
+										Atualizar
 									</button>
+								</v-list-item>
+
+								<v-list-item>
+									<button @click="showDeleteModal(items.id)">Deletar</button>
 								</v-list-item>
 							</v-list>
 						</v-menu>
@@ -56,88 +63,35 @@
 				</div>
 			</div>
 		</Container>
-
-		<Pagination :pageCount="10" :items="[0, 1, 2, 4, 5]" />
 	</div>
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-undef */
 import { useHead } from "@vueuse/head"
 import Container from "../atoms/Container.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Button from "../atoms/Button.vue"
-import Pagination from "../molecules/Pagination.vue"
-import ItemsPerPage from "../molecules/ItemsPerPage.vue"
-const headers = ["Departamento", "Responsável", "Ramal", "Email"]
-const items = ["foo", "bar", "fizz", "buzz"]
+import { PropType } from "vue"
 
-const titles = ["Atualizar", "Deletar"]
-
-const content = [
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
+defineProps({
+	headers: { type: Array as PropType<string[]>, required: true },
+	departments: { type: Array as PropType<string[]>, required: true },
+	actions: { type: Array as PropType<string[]>, required: true },
+	content: { type: Array as PropType<any[]>, required: true },
+	selectDepartment: {
+		type: Function as PropType<(department: string) => void>,
+		required: true,
 	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
+	showDeleteModal: {
+		type: Function as PropType<(id: string) => void>,
+		required: true,
 	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
+	openDepartmentModal: {
+		type: Function as PropType<(password: string) => void>,
+		required: true,
 	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
-	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
-	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
-	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
-	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
-	},
-	{
-		id: 1,
-		name: "Aumoxarifado",
-		responsible: "Douglas",
-		ramal: 2329,
-		email: "douglas_fernando2023_legal@gmail.com",
-	},
-]
+})
 
 useHead({
 	title: "Resíduos Pro - Departamentos",

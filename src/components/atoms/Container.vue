@@ -60,22 +60,28 @@ const containerClass = computed(() => {
 					h-[25rem]
 					mt-[-2rem] relative`,
 
-				loadingContainer: `
+				backgroundContainer: `
 					w-full
-					h-full flex
+					h-full 
+					flex
 					justify-center
-					items-center z-10
-					fixed top-0 left-0`,
+					items-center 
+					z-10
+					fixed 
+					top-0 
+					left-0`,
 
-				modalLoading: `
+				modalContainer: `
 					w-full
 					h-full
 					absolute
 					top-[50%]
 					left-[50%]
-					flex flex-col
+					flex 
+					flex-col
+					items-center 
 					justify-center
-					loading`,
+					modalContainer`,
 
 				menuContainer: `
 					w-[5.6rem]
@@ -142,7 +148,6 @@ const containerClass = computed(() => {
 				paginationContainer: `
 					flex
 					justify-around
-					pr-5
 					items-center
 					text-[#c9c9c9]
 					w-[34%]
@@ -152,7 +157,29 @@ const containerClass = computed(() => {
 					justify-evenly
 					w-[20%]
 					items-center
-					text-v_medium_gray
+				`,
+				deleteModalContainer: `
+					bg-v_white_two 
+					flex 
+					flex-col 
+					justify-center 
+					items-center 
+					h-[10rem] 
+					w-[30rem] 
+					text-black 
+					rounded-md
+				`,
+
+				departmentModalContainer: `
+					bg-v_white_two 
+					flex 
+					flex-col 
+					py-5
+					px-5
+					h-[17rem] 
+					w-[40rem] 
+					text-black 
+					rounded-md
 				`,
 			},
 		},
@@ -170,7 +197,7 @@ const containerClass = computed(() => {
 	-webkit-backdrop-filter: blur(13.5px);
 	border: 1px solid rgba(255, 255, 255, 0.18);
 }
-.loading {
+.modalContainer {
 	transform: translate(-50%, -50%);
 	background: rgba(0, 0, 0, 0.5);
 }

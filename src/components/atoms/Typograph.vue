@@ -15,12 +15,13 @@ const props = defineProps({
 })
 
 const typographClass = computed(() => {
-	return cva("font-[700] text-v_white_two", {
+	return cva("font-[700]", {
 		variants: {
 			intent: {
 				title: "text-[3rem]",
 				H1: "text-[2.5rem]",
-				H2: "text-[1rem]",
+				H2: "text-[1.9rem]",
+				H3: "text-[1rem]",
 				Paragraph: "text-[0.8rem]",
 			},
 		},

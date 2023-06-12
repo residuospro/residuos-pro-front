@@ -5,7 +5,7 @@
 		</button>
 
 		<Button
-			type="paginationButton"
+			buttonType="paginationButton"
 			class="bg-[#ccc] text-v_medium_gray"
 			@click="less"
 			:disabled="page < 5 ? true : false">
@@ -14,7 +14,7 @@
 
 		<div id="divBtn" class="flex items-center">
 			<Button
-				type="paginationButton"
+				buttonType="paginationButton"
 				v-for="(_, index) in items.slice(0, perPage)"
 				:id="String(index + start)"
 				:style="
@@ -33,7 +33,7 @@
 		</div>
 
 		<Button
-			type="paginationButton"
+			buttonType="paginationButton"
 			class="ml-3 bg-[#ccc] text-v_medium_gray"
 			@click="plus"
 			:disabled="maxPage === 0 ? true : false">

@@ -45,7 +45,7 @@
 
 					<Button
 						@click="login"
-						type="signIn"
+						buttonType="signIn"
 						:disabled="!showButton"
 						:class="showButton ? ' bg-v_green' : 'bg-v_medium_gray'">
 						Entrar
