@@ -1,54 +1,58 @@
-// import { getNewToken } from "@/repositories/refreshToken"
-// import { removeItems } from "@/utils/permissions"
-// import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios"
+import { removeItems } from "@/utils/permissions"
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios"
+import { setCompany } from "@/store/setCompany"
 
-// abstract class Interceptor {
-// 	abstract onRequest(
-// 		options: InternalAxiosRequestConfig
-// 	): Promise<InternalAxiosRequestConfig>
+abstract class Interceptor {
+	abstract onRequest(
+		options: InternalAxiosRequestConfig
+	): Promise<InternalAxiosRequestConfig>
 
-// 	abstract onResponse(response: AxiosResponse): Promise<AxiosResponse>
+	abstract onResponse(response: AxiosResponse): Promise<AxiosResponse>
 
-// 	abstract onError(error: any): Promise<never>
-// }
+	abstract onError(error: any): Promise<never>
+}
 
-// export class RefreshTokenInterceptor implements Interceptor {
-// 	async onRequest(
-// 		options: InternalAxiosRequestConfig<any>
-// 	): Promise<InternalAxiosRequestConfig<any>> {
-// 		return options
-// 	}
+export class Interceptors implements Interceptor {
+	async onRequest(
+		options: InternalAxiosRequestConfig<any>
+	): Promise<InternalAxiosRequestConfig<any>> {
+		const idCompany = setCompany().getCompany
 
-// 	async onResponse(
-// 		response: AxiosResponse<any, any>
-// 	): Promise<AxiosResponse<any, any>> {
-// 		if (response.status === 401) {
-// 			const token = await getNewToken()
+		if (idCompany != "") options.data = { ...options.data, idCompany }
 
-// 			if (token) {
-// 				const instance = axios.create()
+		return options
+	}
 
-// 				response.config.headers["Authorization"] = `Bearer ${token}`
+	async onResponse(
+		response: AxiosResponse<any, any>
+	): Promise<AxiosResponse<any, any>> {
+		// if (response.status === 401) {
+		// 	const token = await getNewToken()
 
-// 				const result = await instance.request({
-// 					...response.config,
-// 				})
+		// 	if (token) {
+		// 		const instance = axios.create()
 
-// 				return result
-// 			} else {
-// 				alert(
-// 					"Sua sessão expirou. Você será redirecionado para a página de login."
-// 				)
+		// 		response.config.headers["Authorization"] = `Bearer ${token}`
 
-// 				removeItems()
-// 				location.href = "/"
-// 			}
-// 		}
+		// 		const result = await instance.request({
+		// 			...response.config,
+		// 		})
 
-// 		return response
-// 	}
+		// 		return result
+		// 	} else {
+		// 		alert(
+		// 			"Sua sessão expirou. Você será redirecionado para a página de login."
+		// 		)
 
-// 	onError(error: any): Promise<never> {
-// 		return Promise.reject(error)
-// 	}
-// }
+		// 		removeItems()
+		// 		location.href = "/"
+		// 	}
+		// }
+
+		return response
+	}
+
+	onError(error: any): Promise<never> {
+		return Promise.reject(error)
+	}
+}

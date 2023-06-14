@@ -1,11 +1,13 @@
 <template>
-	<input :class="inputClass" />
+	<input :class="inputClass" @input="handleInput($event)" />
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
 import { cva } from "class-variance-authority"
 import { computed } from "vue"
+
+const emit = defineEmits(["input"])
 
 const props = defineProps({
 	input: { type: String, required: true },
@@ -33,6 +35,12 @@ const inputClass = computed(() => {
 		intent: props.input as any,
 	})
 })
+
+const handleInput = (event: Event) => {
+	const target = event.target as HTMLInputElement
+	const value = target.value
+	emit("input", value)
+}
 </script>
 
 <style>

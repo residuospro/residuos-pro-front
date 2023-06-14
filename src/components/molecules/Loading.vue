@@ -1,5 +1,5 @@
 <template>
-	<Container type="backgroundContainer">
+	<Container type="loadingContainer">
 		<Container type="modalContainer">
 			<div class="flex flex-col items-center justify-around">
 				<VueSpinnerFade size="60" color="#fff" />

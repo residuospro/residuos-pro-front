@@ -1,4 +1,7 @@
 import axios, { AxiosInstance } from "axios"
+import { Interceptors } from "./Interceptors"
+
+const interceptors = new Interceptors()
 
 let restClient: AxiosInstance
 
@@ -9,15 +12,16 @@ export const setupClient = (baseUrl: string | undefined) => {
 			return status! < 500
 		},
 	})
-	// restClient.interceptors.request.use(
-	// 	refreshInterceptor.onRequest,
-	// 	refreshInterceptor.onError
-	// )
 
-	// restClient.interceptors.response.use(
-	// 	refreshInterceptor.onResponse,
-	// 	refreshInterceptor.onError
-	// )
+	restClient.interceptors.request.use(
+		interceptors.onRequest,
+		interceptors.onError
+	)
+
+	restClient.interceptors.response.use(
+		interceptors.onResponse,
+		interceptors.onError
+	)
 }
 
 export const setBearerAuthorization = (

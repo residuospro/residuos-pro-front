@@ -60,9 +60,8 @@ const showPassord = () => {
 
 const login = async () => {
 	showLoading.value = true
-	const response: any = await signin(user)
 
-	console.log("res", response)
+	const response: any = await signin(user)
 
 	if (response.res?.status == 200) {
 		router.push("/Painel")

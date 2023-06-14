@@ -15,7 +15,7 @@
 
 					<Button
 						buttonType="confirmButton"
-						class="text-white"
+						class="text-white bg-v_green"
 						@click="deleteFunction">
 						Sim
 					</Button>

@@ -39,6 +39,7 @@ module.exports = {
 					"Pagination",
 					"Select",
 					"DeleteModal",
+					"Notification",
 				],
 			},
 		],

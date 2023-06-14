@@ -60,6 +60,17 @@ const containerClass = computed(() => {
 					h-[25rem]
 					mt-[-2rem] relative`,
 
+				loadingContainer: `
+					w-full
+					h-full 
+					flex
+					justify-center
+					items-center 
+					z-30
+					fixed 
+					top-0 
+					left-0`,
+
 				backgroundContainer: `
 					w-full
 					h-full 
@@ -159,7 +170,7 @@ const containerClass = computed(() => {
 					items-center
 				`,
 				deleteModalContainer: `
-					bg-v_white_two 
+					bg-white
 					flex 
 					flex-col 
 					justify-center 
@@ -171,7 +182,7 @@ const containerClass = computed(() => {
 				`,
 
 				departmentModalContainer: `
-					bg-v_white_two 
+					bg-white 
 					flex 
 					flex-col 
 					py-5
@@ -180,6 +191,21 @@ const containerClass = computed(() => {
 					w-[40rem] 
 					text-black 
 					rounded-md
+				`,
+
+				notificationContainer: `
+					bg-v_white_two 
+					flex 
+					flex-col 
+					justify-center
+					items-center
+					py-5
+					px-8
+					h-[17rem] 
+				
+					text-black 
+					rounded-md
+			
 				`,
 			},
 		},
@@ -200,6 +226,18 @@ const containerClass = computed(() => {
 .modalContainer {
 	transform: translate(-50%, -50%);
 	background: rgba(0, 0, 0, 0.5);
+	animation: fadeInAnimation ease 0.3s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+	0% {
+		opacity: 0.3;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 @media (max-width: 1023px) {

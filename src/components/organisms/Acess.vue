@@ -5,7 +5,7 @@
 				<div class="text-center">
 					<Typograph type="H1" class="!text-v_dark_green"> Entrar </Typograph>
 
-					<Typograph type="H2" class="!text-v_dark_gray2">
+					<Typograph type="H3" class="!text-v_dark_gray2">
 						Após o login você terá acesso as funcionalidades
 					</Typograph>
 				</div>
@@ -64,8 +64,9 @@
 				:width="400"
 				class="-mt-24 ml-[10rem] sm:-ml-20" />
 
-			<div class="absolute top-[32.5rem] text-center ml-[10rem] sm:-ml-20">
-				<Typograph type="title">RESÍDUOS PRO</Typograph>
+			<div
+				class="absolute top-[32.5rem] text-center ml-[10rem] sm:-ml-20 text-white">
+				<Typograph type="title" class="">RESÍDUOS PRO</Typograph>
 
 				<Typograph type="Paragraph" class="-mt-3">
 					A maneira inteligente de gerenciar coletas

@@ -26,10 +26,10 @@ const buttonClass = computed(() => {
 			variants: {
 				intent: {
 					signIn: `w-[24rem] text-white signinBtn`,
-					submit: `w-[12rem] bg-white h-[3rem]`,
-					paginationButton: `w-[2rem] h-8 rounded-md`,
-					closeButton: `h-10 bg-white border-2 border-v_medium_gray px-3`,
-					confirmButton: `h-10 bg-v_green px-3`,
+					submit: `w-[12rem] h-[3rem]`,
+					paginationButton: `w-[2rem] !h-7 rounded-md`,
+					closeButton: `!h-10 bg-white border-2 border-v_medium_gray px-3`,
+					confirmButton: `!h-10 px-3`,
 				},
 			},
 		}

@@ -11,7 +11,10 @@
 				<button class="mt-7">Limpar pesquisa</button>
 			</div>
 
-			<Button buttonType="submit" @click="openDepartmentModal('Cadastrar')">
+			<Button
+				buttonType="submit"
+				@click="openDepartmentModal('Cadastrar')"
+				class="bg-white">
 				<p class="text-v_medium_gray">Cadastrar</p>
 			</Button>
 		</div>

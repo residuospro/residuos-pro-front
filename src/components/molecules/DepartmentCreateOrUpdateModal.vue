@@ -7,13 +7,24 @@
 				</Typograph>
 
 				<div class="flex flex-wrap w-full justify-between h-36 mt-2">
-					<Input input="input" placeholder="Departamento:" v-model="name" />
+					<Input
+						input="input"
+						placeholder="Departamento:"
+						v-model="department.name"
+						@input="(value: string) => department.name = value" />
 					<Input
 						input="input"
 						placeholder="Responsável:"
-						v-model="responsible" />
-					<Input input="input" placeholder="Ramal:" v-model="ramal" />
-					<Input input="input" placeholder="Email:" v-model="email" />
+						@input="(value: string) => department.responsible = value" />
+					<Input
+						input="input"
+						type="number"
+						placeholder="Ramal:"
+						@input="(value: number) => department.ramal = value" />
+					<Input
+						input="input"
+						placeholder="Email:"
+						@input="(value: string) => department.email = value" />
 				</div>
 
 				<div class="flex justify-end w-full space-x-5 mt-2">
@@ -23,12 +34,9 @@
 
 					<Button
 						buttonType="confirmButton"
-						@click="
-							createOrUpdateDepartment(
-								{ name, responsible, ramal, email },
-								typeAction
-							)
-						">
+						:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
+						:disabled="!showButton"
+						@click="createOrUpdateDepartment(department, typeAction)">
 						<p class="text-white">{{ typeAction }}</p>
 					</Button>
 				</div>
@@ -38,22 +46,41 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-useless-escape */
 import Container from "../atoms/Container.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
-import { ref } from "vue"
+import { reactive, ref, watch } from "vue"
 import { PropType } from "vue"
 import { IDepartment } from "@/utils/interfaces"
 
-let name = ref("")
-let responsible = ref("")
-let ramal = ref(0)
-let email = ref("")
+let showButton = ref(false)
 
-const print = () => {
-	console.log("dee", name.value)
-}
+let department: IDepartment = reactive({
+	name: "",
+	responsible: "",
+	ramal: 0,
+	email: "",
+})
+
+watch(department, () => {
+	let validade = []
+
+	const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
+
+	for (const key in department) {
+		if (department[key as keyof IDepartment] != "" && regex) {
+			validade.push(key)
+		}
+	}
+
+	if (validade.length == 4) {
+		showButton.value = true
+	} else {
+		showButton.value = false
+	}
+})
 
 defineProps({
 	typeAction: {

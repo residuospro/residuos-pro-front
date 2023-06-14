@@ -1,12 +1,12 @@
 <template>
 	<Container type="paginationContainer">
 		<button @click="previous" :disabled="maxPage === 0 ? true : false">
-			<mdicon name="chevron-left" :size="45" />
+			<mdicon name="chevron-left" :size="45" class="text-black" />
 		</button>
 
 		<Button
 			buttonType="paginationButton"
-			class="bg-[#ccc] text-v_medium_gray"
+			class="bg-[#ccc] text-black"
 			@click="less"
 			:disabled="page < 5 ? true : false">
 			<mdicon name="dots-horizontal" :size="20" />
@@ -34,14 +34,14 @@
 
 		<Button
 			buttonType="paginationButton"
-			class="ml-3 bg-[#ccc] text-v_medium_gray"
+			class="ml-3 bg-[#ccc] text-black"
 			@click="plus"
 			:disabled="maxPage === 0 ? true : false">
 			<mdicon name="dots-horizontal" :size="20" />
 		</Button>
 
 		<button @click="next" :disabled="maxPage === 0 ? true : false">
-			<mdicon name="chevron-right" :size="45" />
+			<mdicon name="chevron-right" :size="45" class="text-black" />
 		</button>
 	</Container>
 </template>

@@ -4,8 +4,8 @@ export interface Credential {
 }
 
 export interface IDepartment {
-	name: string | null
-	responsible: string | null
-	ramal: number | null
-	email: string | null
+	name: string
+	responsible: string
+	ramal: number
+	email: string
 }
