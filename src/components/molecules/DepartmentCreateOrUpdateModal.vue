@@ -54,6 +54,7 @@ import Button from "../atoms/Button.vue"
 import { reactive, ref, watch } from "vue"
 import { PropType } from "vue"
 import { IDepartment } from "@/utils/interfaces"
+import { Actions } from "@/utils/enum"
 
 let showButton = ref(false)
 
@@ -64,25 +65,7 @@ let department: IDepartment = reactive({
 	email: "",
 })
 
-watch(department, () => {
-	let validade = []
-
-	const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
-
-	for (const key in department) {
-		if (department[key as keyof IDepartment] != "" && regex) {
-			validade.push(key)
-		}
-	}
-
-	if (validade.length == 4) {
-		showButton.value = true
-	} else {
-		showButton.value = false
-	}
-})
-
-defineProps({
+const props = defineProps({
 	typeAction: {
 		type: String,
 		required: true,
@@ -97,5 +80,33 @@ defineProps({
 		>,
 		required: true,
 	},
+})
+
+watch(department, () => {
+	let validade = []
+
+	const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
+
+	if (props.typeAction == Actions.SAVE) {
+		for (const key in department) {
+			if (department[key as keyof IDepartment] != "" && regex) {
+				validade.push(key)
+			}
+		}
+	} else {
+		for (const key in department) {
+			if (department[key as keyof IDepartment] != "" || regex) {
+				validade.push(key)
+			}
+		}
+	}
+
+	if (props.typeAction == Actions.SAVE && validade.length == 4) {
+		showButton.value = true
+	} else if (props.typeAction == Actions.UPDATE && validade.length >= 1) {
+		showButton.value = true
+	} else {
+		showButton.value = false
+	}
 })
 </script>

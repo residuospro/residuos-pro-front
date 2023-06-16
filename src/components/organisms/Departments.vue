@@ -1,14 +1,16 @@
 <template>
 	<div class="w-full ml-8 mt-2">
 		<div class="flex items-center w-full justify-between mb-8">
-			<div class="flex justify-between items-center w-[23rem] space-x-5">
+			<div
+				class="flex justify-between items-center w-auto min-w-[23rem] space-x-5">
 				<v-autocomplete
 					:onUpdate:modelValue="selectDepartment"
+					v-model="departmentSelected"
 					:items="departments"
 					density="comfortable"
 					label="Buscar Departamento"></v-autocomplete>
 
-				<button class="mt-7">Limpar pesquisa</button>
+				<button class="mt-7" @click="clearFilter">Limpar pesquisa</button>
 			</div>
 
 			<Button
@@ -75,9 +77,9 @@ import { useHead } from "@vueuse/head"
 import Container from "../atoms/Container.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Button from "../atoms/Button.vue"
-import { PropType } from "vue"
+import { PropType, ref } from "vue"
 
-defineProps({
+const props = defineProps({
 	headers: { type: Array as PropType<string[]>, required: true },
 	departments: { type: Array as PropType<string[]>, required: true },
 	actions: { type: Array as PropType<string[]>, required: true },
@@ -94,7 +96,19 @@ defineProps({
 		type: Function as PropType<(password: string) => void>,
 		required: true,
 	},
+
+	departmentFilterCleaning: {
+		type: Function as unknown as () => () => void,
+		required: true,
+	},
 })
+
+let departmentSelected = ref()
+
+const clearFilter = () => {
+	props.departmentFilterCleaning()
+	departmentSelected.value = null
+}
 
 useHead({
 	title: "Resíduos Pro - Departamentos",

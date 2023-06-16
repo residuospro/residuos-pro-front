@@ -1,7 +1,7 @@
 <template>
 	<Container type="paginationContainer">
 		<button @click="previous" :disabled="maxPage === 0 ? true : false">
-			<mdicon name="chevron-left" :size="45" class="text-black" />
+			<mdicon name="chevron-left" :size="45" class="text-v_dark_gray" />
 		</button>
 
 		<Button
@@ -41,7 +41,7 @@
 		</Button>
 
 		<button @click="next" :disabled="maxPage === 0 ? true : false">
-			<mdicon name="chevron-right" :size="45" class="text-black" />
+			<mdicon name="chevron-right" :size="45" class="text-v_dark_gray" />
 		</button>
 	</Container>
 </template>

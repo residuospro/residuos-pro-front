@@ -2,7 +2,7 @@
 	<Container type="painelContainer">
 		<MenuSideBarContainer />
 		<div
-			class="rounded-br-[50rem] bg-v_white_two w-[90%] ml-4 px-5 py-5 h-full">
+			class="rounded-br-[50rem] bg-v_white_two w-[89%] ml-4 px-5 py-5 h-full">
 			<router-view :key="$router.currentRoute.value.path"></router-view>
 		</div>
 	</Container>

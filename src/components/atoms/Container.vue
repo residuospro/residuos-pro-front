@@ -161,7 +161,8 @@ const containerClass = computed(() => {
 					justify-around
 					items-center
 					text-[#c9c9c9]
-					w-[34%]
+					w-[33%]
+					ml-10
 				`,
 				itemsPerPageContainer: `
 					flex
