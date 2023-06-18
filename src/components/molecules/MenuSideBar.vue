@@ -4,10 +4,13 @@
 			<div v-for="menu in menuIcons" :key="menu.id" class="mt-2">
 				<button
 					@click="setIdBtn(menu.path)"
-					:class="menu.path == idBtn && 'text-v_dark_green'"
+					:class="
+						menu.path == idBtn ? 'text-v_dark_green' : 'text-v_medium_gray'
+					"
 					v-if="hasPermission(menu.permissions)">
 					<RouterLink :to="menu.path">
 						<mdicon :name="menu.icon" />
+
 						<v-tooltip activator="parent" location="start">{{
 							menu.label
 						}}</v-tooltip>

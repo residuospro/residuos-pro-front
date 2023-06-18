@@ -1,5 +1,5 @@
-import { removeItems } from "@/utils/permissions"
-import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios"
+//import { removeItems } from "@/utils/permissions"
+import { AxiosResponse, InternalAxiosRequestConfig } from "axios"
 import { setCompany } from "@/store/setCompany"
 
 abstract class Interceptor {

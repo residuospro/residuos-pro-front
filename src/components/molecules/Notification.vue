@@ -23,7 +23,6 @@
 import Container from "../atoms/Container.vue"
 import Button from "../atoms/Button.vue"
 import TypographVue from "../atoms/Typograph.vue"
-import { SubTitle } from "chart.js"
 
 defineProps({
 	title: {

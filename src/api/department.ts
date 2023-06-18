@@ -13,8 +13,6 @@ export const createDepartment = async (department: IDepartment) => {
 
 		const res = await useClient().post(Routes.CREATE_DEPARTMENT, data)
 
-		console.log(res)
-
 		return res
 	} catch (error) {
 		return error
@@ -33,8 +31,6 @@ export const takeDepartmentsByPage = async (
 
 		const res = await useClient().post(Routes.GET_DEPARTMENT_BY_PAGE, data)
 
-		console.log("all", res)
-
 		return res
 	} catch (error) {
 		return error
@@ -44,7 +40,6 @@ export const takeDepartmentsByPage = async (
 export const takeAllDepartments = async () => {
 	try {
 		const res = await useClient().post(Routes.GET_ALL_DEPARTMENT)
-		console.log("all", res)
 
 		return res
 	} catch (error) {
@@ -68,6 +63,27 @@ export const takeDepartmentsByName = async (name: string) => {
 export const deleteDepartments = async (id: string) => {
 	try {
 		const res = await useClient().delete(`${Routes.DELETE_DEPARTMENT}${id}`)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
+export const updateDepartment = async (department: IDepartment, id: string) => {
+	try {
+		const data: Partial<IDepartment> = {}
+
+		for (const key in department) {
+			if (
+				department[key as keyof IDepartment] !== undefined &&
+				department[key as keyof IDepartment] !== ""
+			) {
+				data[key as keyof IDepartment] = department[key as keyof IDepartment]
+			}
+		}
+
+		const res = await useClient().put(`${Routes.UPDATE_DEPARTMENT}${id}`, data)
 
 		return res
 	} catch (error) {

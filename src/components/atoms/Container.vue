@@ -146,10 +146,22 @@ const containerClass = computed(() => {
 					top-0
 				`,
 
-				tableContents: `
+				departmentContent: `
 					grid
-					grid-cols-[28%_25%_18%_25%_5%]
-					h-12 px-8
+					grid-cols-[27%_26%_20%_23%_5%]
+					h-12 
+					px-6
+					w-full
+					items-center
+					font-[700]
+					text-black
+				`,
+
+				userContent: `
+					grid
+					grid-cols-[17%_20%_17%_23%_19%_5%]
+					h-12 
+					px-8
 					w-full
 					items-center
 					font-[700]
@@ -177,18 +189,19 @@ const containerClass = computed(() => {
 					justify-center 
 					items-center 
 					h-[10rem] 
-					w-[30rem] 
+					min-w-[30rem] 
 					text-black 
 					rounded-md
+					px-8
 				`,
 
-				departmentModalContainer: `
+				actionsModalContainer: `
 					bg-white 
 					flex 
 					flex-col 
 					py-5
 					px-5
-					h-[17rem] 
+					min-h-[17rem] 
 					w-[40rem] 
 					text-black 
 					rounded-md

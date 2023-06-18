@@ -9,6 +9,9 @@
 
 	<DepartmentModal
 		v-if="showDepartmentModal"
+		:showButton="showButton"
+		:validateDataToUpdateDepartment="validateDataToUpdateDepartment"
+		:validateDataToCreateDepartment="validateDataToCreateDepartment"
 		:typeAction="typeAction"
 		:closeDepartmentModal="() => (showDepartmentModal = false)"
 		:create-or-update-department="createOrUpdateDepartment" />
@@ -16,7 +19,9 @@
 	<DeleteModal
 		v-if="showDeleteModal"
 		:closeDeleteModal="() => (showDeleteModal = false)"
-		:deleteFunction="deleteDepartment" />
+		:deleteFunction="deleteDepartment"
+		title="Confirmar Exclusão"
+		sub-title="Ao excluir um departamento, você excluirá todos os usuários do mesmo, tem certeza disso ?" />
 
 	<Departments
 		:actions="actions"
@@ -26,11 +31,11 @@
 		:showDeleteModal="openDeleteModal"
 		:selectDepartment="selectDepartment"
 		:departmentFilterCleaning="departmentFilterCleaning"
-		:openDepartmentModal="(action: string) => (showDepartmentModal = true, typeAction = action)" />
+		:openDepartmentModal="openDepartmentModal" />
 
 	<div
 		class="flex justify-between items-center ml-10 w-full"
-		v-if="totalPages.length > 0">
+		v-if="totalPages.length > 1">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
 
 		<Pagination
@@ -40,6 +45,7 @@
 	</div>
 </template>
 <script setup lang="ts">
+/* eslint-disable no-useless-escape */
 import Departments from "@/components/organisms/Departments.vue"
 import Pagination from "../components/molecules/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
@@ -54,6 +60,7 @@ import {
 	takeAllDepartments,
 	takeDepartmentsByName,
 	deleteDepartments,
+	updateDepartment,
 } from "@/api/department"
 import Notification from "@/components/molecules/Notification.vue"
 import { Actions, Messages } from "@/utils/enum"
@@ -62,9 +69,10 @@ import { onMounted } from "vue"
 let showDeleteModal = ref(false)
 let showLoading = ref(false)
 let showDepartmentModal = ref(false)
-let typeAction = ref("Cadastrar")
-let idDepartment = ref("")
 let showNotificationModal = ref(false)
+let showButton = ref(false)
+let typeAction = ref("Cadastrar")
+let idDepartment = ref()
 let title = ref("")
 let subTitle = ref("")
 let page = ref(1)
@@ -72,14 +80,11 @@ let itemsPerPage = ref(10)
 let departments = ref<IDepartment[]>([])
 let departmentsName = ref<string[]>([])
 let totalPages = ref<number[]>([])
+let departmentSelected = ref(false)
 
 const headers = ["Departamento", "Responsável", "Ramal", "Email"]
 
 const actions = ["Atualizar", "Deletar"]
-
-const departmentFilterCleaning = () => {
-	getDepartmentsByPage(page.value, itemsPerPage.value)
-}
 
 const setPagination = (currentPage: number) => {
 	page.value = currentPage
@@ -92,10 +97,14 @@ const setItemsPerPage = (value: number) => {
 }
 
 const openDeleteModal = (id: string) => {
-	console.log("id", id)
-
 	idDepartment.value = id
 	showDeleteModal.value = true
+}
+
+const openDepartmentModal = (action: string, id?: string) => {
+	showDepartmentModal.value = true
+	typeAction.value = action
+	idDepartment.value = id
 }
 
 const deleteDepartment = async () => {
@@ -116,15 +125,65 @@ const deleteDepartment = async () => {
 	showNotificationModal.value = true
 	showLoading.value = false
 }
-const createOrUpdateDepartment = async (
-	department: IDepartment,
-	action: string
-) => {
+
+const validateDataToCreateDepartment = (department: IDepartment) => {
+	let validate = []
+
+	const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
+
+	for (const key in department) {
+		if (department[key as keyof IDepartment] != "" && regex) {
+			validate.push(key)
+		}
+	}
+
+	if (validate.length == 4) showButton.value = true
+	else showButton.value = false
+}
+
+const validateDataToUpdateDepartment = (department: IDepartment) => {
+	let validate = []
+	let regex = true
+
+	for (const key in department) {
+		if (department[key as keyof IDepartment] != "" && key !== "email") {
+			validate.push(key)
+		}
+	}
+
+	if (department.email != "") {
+		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
+	}
+
+	if (validate.length >= 1 && regex) showButton.value = true
+	else showButton.value = false
+}
+
+const createOrUpdateDepartment = (department: IDepartment, action: string) => {
 	showLoading.value = true
 
 	if (action == Actions.SAVE) {
-		await createDepartments(department)
+		createDepartments(department)
+	} else {
+		updateDepartments(department)
 	}
+}
+
+const updateDepartments = async (departament: IDepartment) => {
+	const res: any = await updateDepartment(departament, idDepartment.value)
+
+	if (res?.status == 201) {
+		title.value = Messages.TITLE_UPDATE_REGISTER
+		subTitle.value = Messages.SUBTITLE_UPDATE_REGISTER
+		getDepartmentsByPage(page.value, itemsPerPage.value)
+	} else {
+		title.value = Messages.TITLE_ERROR_UPDATE_REGISTER
+		subTitle.value = Messages.SUBTITLE_ERROR_UPDATE_REGISTER
+		showLoading.value = false
+	}
+
+	showDepartmentModal.value = false
+	showNotificationModal.value = true
 }
 
 const createDepartments = async (department: IDepartment) => {
@@ -137,6 +196,7 @@ const createDepartments = async (department: IDepartment) => {
 	} else {
 		title.value = Messages.TITLE_ERROR_REGISTER
 		subTitle.value = Messages.SUBTITLE_ERROR_REGISTER
+		showLoading.value = false
 	}
 
 	showDepartmentModal.value = false
@@ -163,7 +223,8 @@ const getDepartmentsByPage = async (page: number, itemsPerPage: number) => {
 const getAllDepartment = async () => {
 	const res: any = await takeAllDepartments()
 
-	departmentsName.value = res.data.map((n: any) => n.name)
+	if (res?.status == 200)
+		departmentsName.value = res.data.map((n: any) => n.name)
 }
 
 const setTotalPages = (pages: number) => {
@@ -174,8 +235,17 @@ const setTotalPages = (pages: number) => {
 	}
 }
 
+const departmentFilterCleaning = () => {
+	if (departmentSelected.value) {
+		getDepartmentsByPage(page.value, itemsPerPage.value)
+		departmentSelected.value = false
+	}
+}
+
 const selectDepartment = async (department: string) => {
 	showLoading.value = true
+
+	departmentSelected.value = true
 
 	const res: any = await takeDepartmentsByName(department)
 
@@ -183,8 +253,8 @@ const selectDepartment = async (department: string) => {
 		parseDepartment([res.data])
 		totalPages.value = []
 	} else {
-		title.value = Messages.TITLE_ERROR_REGISTER
-		subTitle.value = Messages.SUBTITLE_ERROR_REGISTER
+		title.value = Messages.TITLE_ERROR
+		subTitle.value = Messages.SUBTITLE_ERROR
 	}
 
 	showLoading.value = false

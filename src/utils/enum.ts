@@ -6,6 +6,9 @@ export enum Routes {
 	GET_DEPARTMENT_BY_PAGE = "/department/pagineted",
 	GET_DEPARTMENT_BY_NAME = "/department/by-name",
 	DELETE_DEPARTMENT = "/department/",
+	UPDATE_DEPARTMENT = "/department/update/",
+	GET_ALL_USERS = "/users",
+	SAVE_USER = "/user/save",
 }
 
 export enum TypeErrors {
@@ -36,4 +39,8 @@ export enum Messages {
 	SUBTITLE_DELETE_REGISTER = "Registro deletado com sucesso",
 	TITLE_ERROR_DELETE_REGISTER = "Erro ao deletar",
 	SUBTITLE_ERROR_DELETE_REGISTER = "Houve um erro inesperado ao deletar",
+	TITLE_UPDATE_REGISTER = "Atualizado",
+	SUBTITLE_UPDATE_REGISTER = "Registro atualizazdo com sucesso",
+	TITLE_ERROR_UPDATE_REGISTER = "Erro ao atualizar",
+	SUBTITLE_ERROR_UPDATE_REGISTER = "Houve um erro inesperado ao atualizar",
 }

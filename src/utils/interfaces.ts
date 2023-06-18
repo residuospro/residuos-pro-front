@@ -6,6 +6,15 @@ export interface Credential {
 export interface IDepartment {
 	name: string
 	responsible: string
-	ramal: number
+	ramal: string
 	email: string
+}
+
+export interface IUsers {
+	name: string
+	username: string
+	email: string
+	department: string | null
+	ramal: string
+	id?: string
 }

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
 import Login from "../views/Login.vue"
 import Painel from "../views/Painel.vue"
 import Collections from "@/components/organisms/Collections.vue"
-import Users from "@/components/organisms/Users.vue"
+import Users from "@/conatainers/UsersContainer.vue"
 import Departments from "@/conatainers/DepartmentsContainer.vue"
 import Dashboard from "@/components/organisms/Dashboard.vue"
 import Settings from "@/components/organisms/Settings.vue"
@@ -98,7 +98,7 @@ router.beforeEach(async (to, from, next) => {
 		setBearerAuthorization(useClient(), token)
 
 		if (to.path == "/") {
-			router.push("/Home")
+			router.push("/Painel")
 		}
 	}
 

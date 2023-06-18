@@ -7,7 +7,7 @@
 					:onUpdate:modelValue="selectDepartment"
 					v-model="departmentSelected"
 					:items="departments"
-					density="comfortable"
+					chips
 					label="Buscar Departamento"></v-autocomplete>
 
 				<button class="mt-7" @click="clearFilter">Limpar pesquisa</button>
@@ -15,9 +15,9 @@
 
 			<Button
 				buttonType="submit"
-				@click="openDepartmentModal('Cadastrar')"
+				@click="openDepartmentModal(Actions.SAVE)"
 				class="bg-white">
-				<p class="text-v_medium_gray">Cadastrar</p>
+				<p class="text-v_dark_gray">Cadastrar</p>
 			</Button>
 		</div>
 
@@ -32,8 +32,10 @@
 
 			<div class="min-h-[28rem] bg-transparent">
 				<div v-for="items in content" :key="items.id">
-					<Container type="tableContents">
-						<h1>{{ items.name }}</h1>
+					<Container type="departmentContent">
+						<div class="relative">
+							<h1 class="overflow w-[15rem]">{{ items.name }}</h1>
+						</div>
 
 						<h1>{{ items.responsible }}</h1>
 
@@ -52,7 +54,8 @@
 
 							<v-list>
 								<v-list-item>
-									<button @click="openDepartmentModal('Atualizar')">
+									<button
+										@click="openDepartmentModal(Actions.UPDATE, items.id)">
 										Atualizar
 									</button>
 								</v-list-item>
@@ -77,23 +80,30 @@ import { useHead } from "@vueuse/head"
 import Container from "../atoms/Container.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Button from "../atoms/Button.vue"
-import { PropType, ref } from "vue"
+import { PropType, ref, computed } from "vue"
+import { Actions } from "@/utils/enum"
 
 const props = defineProps({
 	headers: { type: Array as PropType<string[]>, required: true },
+
 	departments: { type: Array as PropType<string[]>, required: true },
+
 	actions: { type: Array as PropType<string[]>, required: true },
+
 	content: { type: Array as PropType<any[]>, required: true },
+
 	selectDepartment: {
 		type: Function as PropType<(department: string) => void>,
 		required: true,
 	},
+
 	showDeleteModal: {
 		type: Function as PropType<(id: string) => void>,
 		required: true,
 	},
+
 	openDepartmentModal: {
-		type: Function as PropType<(password: string) => void>,
+		type: Function as PropType<(action: string, id?: string) => void>,
 		required: true,
 	},
 
@@ -109,6 +119,14 @@ const clearFilter = () => {
 	props.departmentFilterCleaning()
 	departmentSelected.value = null
 }
+
+const autocompleteHeight = computed(() => {
+	let height = "3rem"
+
+	if (departmentSelected.value) height = "3.8rem"
+
+	return height
+})
 
 useHead({
 	title: "Resíduos Pro - Departamentos",
@@ -140,8 +158,8 @@ useHead({
 	background: #fff;
 	box-shadow: 0 0.3rem 0.62rem rgba(0, 0, 0, 0.4);
 	border-radius: 0.375rem;
-	height: 3rem;
-	color: #9d9797;
+	height: v-bind(autocompleteHeight);
+	color: #606060;
 	font-weight: bold;
 }
 </style>

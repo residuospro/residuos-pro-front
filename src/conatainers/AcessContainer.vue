@@ -35,9 +35,11 @@ let user = reactive({
 const getUserInfo = (username: string) => {
 	user.username = username
 }
+
 const getPassword = (password: string) => {
 	user.password = password
 }
+
 watch(user, () => {
 	if (user.username != "" && user.password != "") {
 		showButton.value = true
