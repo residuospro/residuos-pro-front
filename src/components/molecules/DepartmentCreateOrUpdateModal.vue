@@ -10,20 +10,23 @@
 					<Input
 						input="input"
 						placeholder="Departamento:"
-						v-model="department.name"
+						:class="department.name !== '' ? 'bg-white' : ''"
 						@input="(value: string) => department.name = value" />
 					<Input
 						input="input"
 						placeholder="Responsável:"
+						:class="department.responsible !== '' ? 'bg-white' : ''"
 						@input="(value: string) => department.responsible = value" />
 					<Input
 						input="input"
 						type="number"
 						placeholder="Ramal:"
+						:class="department.ramal !== '' ? 'bg-white' : ''"
 						@input="(value: number) => department.ramal = String(value)" />
 					<Input
 						input="input"
 						placeholder="Email:"
+						:class="department.email !== '' ? 'bg-white' : ''"
 						@input="(value: string) => department.email = value" />
 				</div>
 

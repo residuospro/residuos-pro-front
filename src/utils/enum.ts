@@ -9,6 +9,7 @@ export enum Routes {
 	UPDATE_DEPARTMENT = "/department/update/",
 	GET_ALL_USERS = "/users",
 	SAVE_USER = "/user/save",
+	GET_ALL_USERNAMES = "/user/all",
 }
 
 export enum TypeErrors {
@@ -43,4 +44,7 @@ export enum Messages {
 	SUBTITLE_UPDATE_REGISTER = "Registro atualizazdo com sucesso",
 	TITLE_ERROR_UPDATE_REGISTER = "Erro ao atualizar",
 	SUBTITLE_ERROR_UPDATE_REGISTER = "Houve um erro inesperado ao atualizar",
+
+	SUBTITLE_EXISTENT_DEPARTMENT = "O departamento que você está tentando criar já existe em nosso banco",
+	SUBTITLE_ERROR_UPDATE_DEPARTMENT = "Esse nome de departamento já existe em nosso banco",
 }

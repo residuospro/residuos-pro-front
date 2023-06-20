@@ -2,7 +2,7 @@
 	<Container type="backgroundContainer">
 		<Container type="modalContainer">
 			<Container type="notificationContainer">
-				<TypographVue type="H1">{{ title }}</TypographVue>
+				<TypographVue type="H1" class="text-v_blue">{{ title }}</TypographVue>
 
 				<TypographVue type="H3" class="text-v_medium_gray">
 					{{ subTitle }}

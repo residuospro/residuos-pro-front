@@ -5,6 +5,7 @@
 				class="flex justify-between items-center w-auto min-w-[43rem] space-x-5">
 				<v-autocomplete
 					v-model="usersSelected"
+					:onUpdate:modelValue="selectUser"
 					:items="users"
 					chips
 					density="comfortable"
@@ -93,7 +94,7 @@ import { Actions } from "@/utils/enum"
 let usersSelected = ref()
 let departamentSelected = ref()
 
-let props = defineProps({
+defineProps({
 	headers: { type: Array as PropType<string[]>, required: true },
 
 	users: { type: Array as PropType<string[]>, required: true },
