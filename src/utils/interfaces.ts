@@ -14,7 +14,8 @@ export interface IUsers {
 	name: string
 	username: string
 	email: string
-	department: string | null
+	department: string | undefined
 	ramal: string
-	id?: string
+	id: string | undefined
+	idDepartment: string | undefined
 }

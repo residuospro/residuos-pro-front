@@ -10,7 +10,7 @@
 	<DeleteModal
 		v-if="showDeleteModal"
 		:closeDeleteModal="() => (showDeleteModal = false)"
-		:deleteFunction="deleteUser"
+		:deleteFunction="deleteUsers"
 		title="Confirmar exclusão"
 		sub-title="Tem certeza que deseja excluir esse usuário?" />
 
@@ -18,7 +18,7 @@
 		v-if="showUserModal"
 		:type-action="typeAction"
 		:show-button="showButton"
-		:departments="nameDepartments"
+		:departments="allDepartments"
 		:close-user-modal="() => (showUserModal = false)"
 		:create-or-update-user="createOrUpdateUser"
 		:validateDataToCreateUser="validateDataToCreateUser"
@@ -39,7 +39,7 @@
 
 	<div
 		class="flex justify-between items-center ml-10 w-full"
-		v-if="totalPages.length >= 0">
+		v-if="totalPages.length > 1">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
 
 		<Pagination
@@ -63,7 +63,14 @@ import { reactive, ref } from "vue"
 import { Actions, Messages } from "@/utils/enum"
 import { takeAllDepartments, takeDepartmentsByName } from "@/api/department"
 import { onMounted } from "vue"
-import { createUser, takeAllUsers, takeAllUsernames } from "@/api/user"
+import {
+	createUser,
+	takeAllUsers,
+	takeAllUsernames,
+	takeUserByUsername,
+	updateUser,
+	deleteUser,
+} from "@/api/user"
 
 const headers = ["Nome", "Username", "Email", "Departamento", "Ramal"]
 
@@ -83,6 +90,8 @@ let totalPages = ref<number[]>([])
 let users = ref<IUsers[]>([])
 let usernames = ref<string[]>([])
 let nameDepartments = ref<string[]>([])
+let allDepartments = ref<string[]>([])
+let idDepartment = ref<any[]>([])
 let departmentInfo = reactive({
 	name: "",
 	id: "",
@@ -98,8 +107,26 @@ const setItemsPerPage = (value: number) => {
 	itemsPerPage.value = value
 }
 
-const deleteUser = async () => {
-	console.log("deletado")
+const deleteUsers = async () => {
+	showLoading.value = true
+
+	const res: any = await deleteUser(userId.value)
+
+	if (res?.status == 200) {
+		handleApiResponse(
+			Messages.TITLE_DELETE_REGISTER,
+			Messages.SUBTITLE_DELETE_REGISTER,
+			200
+		)
+	} else {
+		handleApiResponse(
+			Messages.TITLE_ERROR_DELETE_REGISTER,
+			Messages.SUBTITLE_ERROR_DELETE_REGISTER
+		)
+	}
+
+	showDeleteModal.value = false
+	showNotificationModal.value = true
 }
 const openUserModal = (action: string, id?: string) => {
 	showUserModal.value = true
@@ -107,13 +134,53 @@ const openUserModal = (action: string, id?: string) => {
 	userId.value = id
 }
 
-const openDeleteModal = (id: string) => {
+const openDeleteModal = (id: string | undefined) => {
 	userId.value = id
 	showDeleteModal.value = true
 }
 
-const selectUser = async () => {
-	console.log("selected")
+const userFilterCleaning = async () => {
+	if (userSelected.value) {
+		getAllUsersByPage(page.value, itemsPerPage.value)
+		userSelected.value = false
+	}
+}
+
+const selectUser = async (username: string) => {
+	showLoading.value = true
+
+	const res: any = await takeUserByUsername(username)
+
+	if (res?.status == 200) {
+		parseUser([res?.data])
+
+		userSelected.value = true
+	} else {
+		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+		showNotificationModal.value = true
+	}
+
+	showLoading.value = false
+}
+
+const selectUserByDepartment = async (department: string) => {
+	showLoading.value = true
+	const id = idDepartment.value.find((d) => d.name == department)
+
+	const res: any = await takeAllUsers(page.value, itemsPerPage.value, id.id)
+
+	if (res?.status == 200 && res?.data.users.length > 0) {
+		parseUser(res?.data.users)
+
+		setTotalPages(res?.data.totalPages)
+
+		userSelected.value = true
+	} else {
+		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+		showNotificationModal.value = true
+	}
+
+	showLoading.value = false
 }
 
 const handleApiResponse = (
@@ -126,14 +193,13 @@ const handleApiResponse = (
 
 	if (status == 201 || status == 200) {
 		getAllUsersByPage(page.value, itemsPerPage.value)
+
 		getAllDepartment()
+
+		getAllUsernames()
 	} else {
 		showLoading.value = false
 	}
-}
-
-const userFilterCleaning = async () => {
-	console.log("selected")
 }
 
 const validateDataToCreateUser = (user: IUsers) => {
@@ -156,7 +222,11 @@ const validateDataToUpdateUser = (user: IUsers) => {
 	let regex = true
 
 	for (const key in user) {
-		if (user[key as keyof IUsers] != "" && key !== "email") {
+		if (
+			user[key as keyof IUsers] != "" &&
+			user[key as keyof IUsers] &&
+			key !== "email"
+		) {
 			validate.push(key)
 		}
 	}
@@ -165,7 +235,8 @@ const validateDataToUpdateUser = (user: IUsers) => {
 		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email)
 	}
 
-	if (validate.length >= 1 && regex) showButton.value = true
+	if (validate.length > 0 && regex) showButton.value = true
+	else if (!regex) showButton.value = false
 	else showButton.value = false
 }
 
@@ -175,12 +246,17 @@ const createOrUpdateUser = (user: IUsers, action: string) => {
 	if (action == Actions.SAVE) {
 		createUsers(user)
 	} else {
-		console.log("update")
+		updateUsers(user)
 	}
 }
 
 const createUsers = async (user: IUsers) => {
-	const res: any = await createUser(user, departmentInfo)
+	if (departmentInfo.name != "") {
+		user.department = departmentInfo.name
+		user.idDepartment = departmentInfo.id
+	}
+
+	const res: any = await createUser(user)
 
 	if (res?.status == 201) {
 		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER, 201)
@@ -195,8 +271,29 @@ const createUsers = async (user: IUsers) => {
 	showNotificationModal.value = true
 }
 
-const selectUserByDepartment = async () => {
-	console.log("selected")
+const updateUsers = async (user: IUsers) => {
+	if (departmentInfo.name != "") {
+		user.department = departmentInfo.name
+		user.idDepartment = departmentInfo.id
+	}
+
+	const res: any = await updateUser(user, userId.value)
+
+	if (res?.status == 200) {
+		handleApiResponse(
+			Messages.TITLE_UPDATE_REGISTER,
+			Messages.SUBTITLE_UPDATE_REGISTER,
+			201
+		)
+	} else {
+		handleApiResponse(
+			Messages.TITLE_ERROR_UPDATE_REGISTER,
+			Messages.SUBTITLE_ERROR_UPDATE_REGISTER
+		)
+	}
+
+	showUserModal.value = false
+	showNotificationModal.value = true
 }
 
 const selectTheDepartmentToCreateTheUser = async (department: string) => {
@@ -218,15 +315,28 @@ const selectTheDepartmentToCreateTheUser = async (department: string) => {
 const getAllDepartment = async () => {
 	const res: any = await takeAllDepartments()
 
-	if (res?.status == 200)
-		nameDepartments.value = res?.data.map((n: any) => n.name)
+	if (res?.status == 200) {
+		allDepartments.value = res.data.map((d: any) => d.name)
+		idDepartment.value = res?.data.map((d: any) => {
+			return {
+				name: d.name,
+				id: d._id,
+			}
+		})
+	}
 }
 
 const getAllUsernames = async () => {
 	const res: any = await takeAllUsernames()
-	console.log("usernames", res.data)
-	if (res?.status == 200) usernames.value = res?.data.map((n: any) => n.name)
-	console.log(usernames.value)
+
+	if (res?.status == 200) {
+		usernames.value = res?.data.map((n: any) => n.username)
+		res?.data.forEach((user: any) => {
+			if (!nameDepartments.value.includes(user.department)) {
+				nameDepartments.value.push(user.department)
+			}
+		})
+	}
 }
 
 const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
@@ -255,6 +365,7 @@ const parseUser = (data: any[]) => {
 			email: d.email,
 			id: d._id,
 			department: d.department,
+			idDepartment: d.idDepartment,
 		}
 	})
 }

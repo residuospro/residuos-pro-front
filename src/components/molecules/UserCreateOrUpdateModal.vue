@@ -1,18 +1,12 @@
 <template>
 	<Container type="backgroundContainer">
 		<Container type="modalContainer">
-			<Container type="actionsModalContainer" class="h-[22rem]">
+			<Container type="actionsModalContainer" class="h-[22.5rem]">
 				<Typograph type="H2" class="text-v_medium_gray">
 					{{ typeAction }} usuário
 				</Typograph>
 
-				<div class="flex flex-wrap w-full justify-between h-60 mt-2">
-					<Input
-						input="input"
-						placeholder="Nome:"
-						:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
-						@input="(value: string) => user.name = value" />
-
+				<div class="flex flex-wrap w-full justify-between h-64 mt-2 relative">
 					<Input
 						input="input"
 						placeholder="Username:"
@@ -27,6 +21,12 @@
 
 					<Input
 						input="input"
+						placeholder="Nome:"
+						:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
+						@input="(value: string) => user.name = value" />
+
+					<Input
+						input="input"
 						type="number"
 						placeholder="Ramal:"
 						:class="user.ramal !== '' ? '!w-full bg-white' : '!w-full'"
@@ -38,6 +38,13 @@
 						v-model="user.department"
 						chips
 						label="Departamento"></v-autocomplete>
+
+					<button
+						v-if="typeAction == Actions.UPDATE"
+						class="absolute left-[35rem] top-[10.6rem]"
+						@click="() => (user.department = null)">
+						<mdicon name="close-thick" />
+					</button>
 				</div>
 
 				<div class="flex justify-end w-full space-x-5 mt-2">
@@ -66,8 +73,6 @@ import Button from "../atoms/Button.vue"
 import { PropType, reactive, watch, ref, computed } from "vue"
 import { IUsers } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
-
-let departmentSelected = ref()
 
 const user = reactive({
 	name: "",

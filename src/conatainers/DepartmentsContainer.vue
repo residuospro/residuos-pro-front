@@ -152,7 +152,8 @@ const validateDataToUpdateDepartment = (department: IDepartment) => {
 		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
 	}
 
-	if (validate.length >= 1 && regex) showButton.value = true
+	if (validate.length > 0 && regex) showButton.value = true
+	else if (!regex) showButton.value = false
 	else showButton.value = false
 }
 

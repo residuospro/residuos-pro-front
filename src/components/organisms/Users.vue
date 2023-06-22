@@ -11,14 +11,19 @@
 					density="comfortable"
 					label="Buscar Usuário"></v-autocomplete>
 
+				<h1 class="mt-7">ou</h1>
+
 				<v-autocomplete
 					v-model="departamentSelected"
+					:onUpdate:modelValue="selectUserByDepartment"
 					:items="departments"
 					chips
 					label="Buscar por departamento">
 				</v-autocomplete>
 
-				<button class="mt-7">Limpar pesquisa</button>
+				<button class="mt-7" @click="userFilterCleaning">
+					Limpar pesquisa
+				</button>
 			</div>
 
 			<Button
@@ -64,11 +69,13 @@
 
 							<v-list>
 								<v-list-item>
-									<button>Atualizar</button>
+									<button @click="openUserModal(Actions.UPDATE, items.id)">
+										Atualizar
+									</button>
 								</v-list-item>
 
 								<v-list-item>
-									<button>Deletar</button>
+									<button @click="showDeleteModal(items.id)">Deletar</button>
 								</v-list-item>
 							</v-list>
 						</v-menu>
@@ -94,12 +101,12 @@ import { Actions } from "@/utils/enum"
 let usersSelected = ref()
 let departamentSelected = ref()
 
-defineProps({
+let props = defineProps({
 	headers: { type: Array as PropType<string[]>, required: true },
 
 	users: { type: Array as PropType<string[]>, required: true },
 
-	departments: { type: Array as PropType<string[]>, required: true },
+	departments: { type: Array as PropType<any[]>, required: true },
 
 	actions: { type: Array as PropType<string[]>, required: true },
 
@@ -116,7 +123,7 @@ defineProps({
 	},
 
 	showDeleteModal: {
-		type: Function as PropType<(id: string) => void>,
+		type: Function as PropType<(id: string | undefined) => void>,
 		required: true,
 	},
 	openUserModal: {
@@ -137,6 +144,22 @@ const autocompleteHeight = computed(() => {
 
 	return height
 })
+
+const selectUserByDepartment = (department: string) => {
+	props.selectUserByDepartment(department)
+	usersSelected.value = null
+}
+
+const selectUser = (username: string) => {
+	props.selectUser(username)
+	departamentSelected.value = null
+}
+
+const userFilterCleaning = () => {
+	props.userFilterCleaning()
+	usersSelected.value = null
+	departamentSelected.value = null
+}
 
 useHead({
 	title: "Resíduos Pro - Usuários",
