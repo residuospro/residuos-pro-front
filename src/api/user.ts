@@ -88,8 +88,6 @@ export const takeUserByUsername = async (username: string) => {
 
 		const res = await useClient().post(Routes.GET_USER_BY_USERNAME, data)
 
-		console.log("user", res)
-
 		return res
 	} catch (error) {
 		return error

@@ -13,7 +13,6 @@ export const setCompany = defineStore("setCompany", {
 	actions: {
 		setCompany(details: string) {
 			this.company = details
-			console.log("ccc", this.company)
 		},
 	},
 })

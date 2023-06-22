@@ -108,8 +108,6 @@ router.beforeEach(async (to, from, next) => {
 	// 	return next({ name: "Login" })
 	// }
 
-	console.log("p", permissions)
-
 	if (to.meta.protected) {
 		if (!hasPermission(permissions)) {
 			return next({ name: "Login" })

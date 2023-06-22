@@ -107,27 +107,6 @@ const setItemsPerPage = (value: number) => {
 	itemsPerPage.value = value
 }
 
-const deleteUsers = async () => {
-	showLoading.value = true
-
-	const res: any = await deleteUser(userId.value)
-
-	if (res?.status == 200) {
-		handleApiResponse(
-			Messages.TITLE_DELETE_REGISTER,
-			Messages.SUBTITLE_DELETE_REGISTER,
-			200
-		)
-	} else {
-		handleApiResponse(
-			Messages.TITLE_ERROR_DELETE_REGISTER,
-			Messages.SUBTITLE_ERROR_DELETE_REGISTER
-		)
-	}
-
-	showDeleteModal.value = false
-	showNotificationModal.value = true
-}
 const openUserModal = (action: string, id?: string) => {
 	showUserModal.value = true
 	typeAction.value = action
@@ -293,6 +272,28 @@ const updateUsers = async (user: IUsers) => {
 	}
 
 	showUserModal.value = false
+	showNotificationModal.value = true
+}
+
+const deleteUsers = async () => {
+	showLoading.value = true
+
+	const res: any = await deleteUser(userId.value)
+
+	if (res?.status == 200) {
+		handleApiResponse(
+			Messages.TITLE_DELETE_REGISTER,
+			Messages.SUBTITLE_DELETE_REGISTER,
+			200
+		)
+	} else {
+		handleApiResponse(
+			Messages.TITLE_ERROR_DELETE_REGISTER,
+			Messages.SUBTITLE_ERROR_DELETE_REGISTER
+		)
+	}
+
+	showDeleteModal.value = false
 	showNotificationModal.value = true
 }
 
