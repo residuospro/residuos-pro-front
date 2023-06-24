@@ -12,12 +12,13 @@ import { createVuetify } from "vuetify"
 import * as components from "vuetify/components"
 import * as directives from "vuetify/directives"
 
+setupClient(process.env.VUE_APP_BACK)
+
 const vuetify = createVuetify({
 	components,
 	directives,
 })
 
-setupClient(process.env.VUE_APP_BACK)
 const head = createHead()
 
 const pinia = createPinia()

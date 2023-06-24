@@ -18,7 +18,9 @@ export class Interceptors implements Interceptor {
 	): Promise<InternalAxiosRequestConfig<any>> {
 		const idCompany = setCompany().getCompany
 
-		if (idCompany != "") options.data = { ...options.data, idCompany }
+		if (idCompany != "") {
+			options.data = { ...options.data, idCompany }
+		}
 
 		return options
 	}
