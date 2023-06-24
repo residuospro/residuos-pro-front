@@ -69,19 +69,19 @@ const login = async () => {
 		router.push("/Painel")
 
 		store.setCompany(response.company)
-	} else if (response.response.data.error == TypeErrors.INCORRECT_PASSWORD) {
+	} else if (response.data.error == TypeErrors.INCORRECT_PASSWORD) {
 		validationError.value = true
 
 		showButton.value = false
 
 		errorMessage.value = TypeErrors.INCORRECT_PASSWORD
-	} else if (response.response.data.error == TypeErrors.USER_NOT_FOUND) {
+	} else if (response.data.error == TypeErrors.USER_NOT_FOUND) {
 		validationError.value = true
 
 		showButton.value = false
 
 		errorMessage.value = TypeErrors.USER_NOT_FOUND
-	} else if (response.response.status == 500) {
+	} else if (response.status == 500) {
 		validationError.value = true
 
 		showButton.value = false

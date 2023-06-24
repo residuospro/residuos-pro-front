@@ -14,6 +14,10 @@ export const signin = async (user: any) => {
 
 		const res = await useClient().post(Routes.LOGIN)
 
+		if (res?.status == 401) {
+			return res
+		}
+
 		const token = res.data.token
 		const refresh_token = res.data.refreshToken
 
