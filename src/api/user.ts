@@ -15,6 +15,7 @@ export const createUser = async (user: IUsers) => {
 			idDepartment: user.idDepartment,
 			ramal: user.ramal,
 			role: permission,
+			idCompany: user.idCompany,
 		}
 
 		const res = await useClient().post(Routes.SAVE_USER, data)
@@ -28,12 +29,14 @@ export const createUser = async (user: IUsers) => {
 export const takeAllUsers = async (
 	page: number,
 	itemsPerPage: number,
+	idCompany: string,
 	idDepartment?: string
 ) => {
 	try {
 		let data: any = {
 			page,
 			itemsPerPage,
+			idCompany,
 		}
 
 		if (permission.includes(AuthorizationUser.ADMIN)) {
@@ -54,10 +57,11 @@ export const takeAllUsers = async (
 	}
 }
 
-export const takeAllUsernames = async () => {
+export const takeAllUsernames = async (idCompany: string) => {
 	try {
 		const data: any = {
 			role: [],
+			idCompany,
 		}
 
 		if (permission.includes(AuthorizationUser.ADMIN)) {
@@ -74,10 +78,14 @@ export const takeAllUsernames = async () => {
 	}
 }
 
-export const takeUserByUsername = async (username: string) => {
+export const takeUserByUsername = async (
+	username: string,
+	idCompany: string
+) => {
 	try {
 		let data: any = {
 			username,
+			idCompany,
 		}
 
 		if (permission.includes(AuthorizationUser.ADMIN)) {

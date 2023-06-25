@@ -4,27 +4,14 @@
 </template>
 
 <script setup lang="ts">
-import { setCompany } from "@/store/setCompany"
-import { getPayload } from "@/api/signin"
 import { isAuthenticated } from "./utils/permissions"
 import { setBearerAuthorization, useClient } from "./clients/AxiosClient"
-const store = setCompany()
 
 const token = isAuthenticated()
 
 if (token.length > 0) {
 	setBearerAuthorization(useClient(), token)
 }
-
-const setIdCompany = async () => {
-	const payload = await getPayload()
-
-	if (payload?.status == 200) {
-		store.setCompany(payload.data.company)
-	}
-}
-
-setIdCompany()
 </script>
 
 <style>

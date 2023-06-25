@@ -8,6 +8,7 @@ export interface IDepartment {
 	responsible: string
 	ramal: string
 	email: string
+	idCompany: string
 }
 
 export interface IUsers {
@@ -18,4 +19,5 @@ export interface IUsers {
 	ramal: string
 	id: string | undefined
 	idDepartment: string | undefined
+	idCompany: string | undefined
 }

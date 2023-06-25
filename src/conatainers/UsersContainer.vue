@@ -39,10 +39,11 @@
 
 	<div
 		class="flex justify-between items-center ml-10 w-full"
-		v-if="totalPages.length > 1">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
+		v-if="totalPages.length > 1 || itemsPerPage > 10">
+		<ItemsPerPage @setItemsPerPage="setItemsPerPage" :key="itemsPerPageKey" />
 
 		<Pagination
+			:key="paginationKey"
 			:pageCount="totalPages.length"
 			:items="totalPages"
 			@paginate="setPagination" />
@@ -72,6 +73,8 @@ import {
 	deleteUser,
 } from "@/api/user"
 
+import { getPayload } from "@/api/signin"
+
 const headers = ["Nome", "Username", "Email", "Departamento", "Ramal"]
 
 const actions = ["Atualizar", "Deletar"]
@@ -92,19 +95,37 @@ let usernames = ref<string[]>([])
 let nameDepartments = ref<string[]>([])
 let allDepartments = ref<string[]>([])
 let idDepartment = ref<any[]>([])
+let userSelected = ref(false)
+let idCompany = ref("")
+let userId = ref()
+let paginationKey = ref(0)
+let itemsPerPageKey = ref(0)
 let departmentInfo = reactive({
 	name: "",
 	id: "",
+	ramal: "",
 })
-let userSelected = ref(false)
-let userId = ref()
 
 const setPagination = (currentPage: number) => {
-	page.value = currentPage
+	if (page.value != currentPage) {
+		page.value = currentPage
+		getAllUsersByPage(currentPage, itemsPerPage.value)
+	}
 }
 
 const setItemsPerPage = (value: number) => {
-	itemsPerPage.value = value
+	if (itemsPerPage.value != value) {
+		itemsPerPage.value = value
+		getAllUsersByPage(page.value, value)
+	}
+}
+
+const resetPaginationAndItemsPerPage = () => {
+	page.value = 1
+	itemsPerPage.value = 10
+
+	paginationKey.value = new Date().getMilliseconds()
+	itemsPerPageKey.value = new Date().getMilliseconds()
 }
 
 const openUserModal = (action: string, id?: string) => {
@@ -128,7 +149,7 @@ const userFilterCleaning = async () => {
 const selectUser = async (username: string) => {
 	showLoading.value = true
 
-	const res: any = await takeUserByUsername(username)
+	const res: any = await takeUserByUsername(username, idCompany.value)
 
 	if (res?.status == 200) {
 		parseUser([res?.data])
@@ -146,7 +167,12 @@ const selectUserByDepartment = async (department: string) => {
 	showLoading.value = true
 	const id = idDepartment.value.find((d) => d.name == department)
 
-	const res: any = await takeAllUsers(page.value, itemsPerPage.value, id.id)
+	const res: any = await takeAllUsers(
+		page.value,
+		itemsPerPage.value,
+		idCompany.value,
+		id.id
+	)
 
 	if (res?.status == 200 && res?.data.users.length > 0) {
 		parseUser(res?.data.users)
@@ -171,6 +197,8 @@ const handleApiResponse = (
 	subTitle.value = subtitleResponse
 
 	if (status == 201 || status == 200) {
+		resetPaginationAndItemsPerPage()
+
 		getAllUsersByPage(page.value, itemsPerPage.value)
 
 		getAllDepartment()
@@ -192,7 +220,7 @@ const validateDataToCreateUser = (user: IUsers) => {
 		}
 	}
 
-	if (validate.length == 5) showButton.value = true
+	if (validate.length == 4) showButton.value = true
 	else showButton.value = false
 }
 
@@ -233,12 +261,20 @@ const createUsers = async (user: IUsers) => {
 	if (departmentInfo.name != "") {
 		user.department = departmentInfo.name
 		user.idDepartment = departmentInfo.id
+		user.ramal = departmentInfo.ramal
 	}
+
+	user.idCompany = idCompany.value
 
 	const res: any = await createUser(user)
 
 	if (res?.status == 201) {
 		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER, 201)
+	} else if (res?.status == 409) {
+		handleApiResponse(
+			Messages.TITLE_EXISTING_USER,
+			Messages.SUBTITLE_EXISTING_USER
+		)
 	} else {
 		handleApiResponse(
 			Messages.TITLE_ERROR_REGISTER,
@@ -254,6 +290,7 @@ const updateUsers = async (user: IUsers) => {
 	if (departmentInfo.name != "") {
 		user.department = departmentInfo.name
 		user.idDepartment = departmentInfo.id
+		user.ramal = departmentInfo.ramal
 	}
 
 	const res: any = await updateUser(user, userId.value)
@@ -263,6 +300,11 @@ const updateUsers = async (user: IUsers) => {
 			Messages.TITLE_UPDATE_REGISTER,
 			Messages.SUBTITLE_UPDATE_REGISTER,
 			201
+		)
+	} else if (res?.status == 409) {
+		handleApiResponse(
+			Messages.TITLE_EXISTING_USER,
+			Messages.SUBTITLE_EXISTING_USER
 		)
 	} else {
 		handleApiResponse(
@@ -300,12 +342,14 @@ const deleteUsers = async () => {
 const selectTheDepartmentToCreateTheUser = async (department: string) => {
 	showLoading.value = true
 
-	const res: any = await takeDepartmentsByName(department)
+	const res: any = await takeDepartmentsByName(department, idCompany.value)
 
 	if (res?.status == 200) {
 		departmentInfo.id = res.data._id
 
 		departmentInfo.name = res.data.name
+
+		departmentInfo.ramal = res.data.ramal
 
 		showLoading.value = false
 	} else {
@@ -314,7 +358,7 @@ const selectTheDepartmentToCreateTheUser = async (department: string) => {
 }
 
 const getAllDepartment = async () => {
-	const res: any = await takeAllDepartments()
+	const res: any = await takeAllDepartments(idCompany.value)
 
 	if (res?.status == 200) {
 		allDepartments.value = res.data.map((d: any) => d.name)
@@ -328,7 +372,7 @@ const getAllDepartment = async () => {
 }
 
 const getAllUsernames = async () => {
-	const res: any = await takeAllUsernames()
+	const res: any = await takeAllUsernames(idCompany.value)
 
 	if (res?.status == 200) {
 		usernames.value = res?.data.map((n: any) => n.username)
@@ -343,7 +387,7 @@ const getAllUsernames = async () => {
 const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 	showLoading.value = true
 
-	const res: any = await takeAllUsers(page, itemsPerPage)
+	const res: any = await takeAllUsers(page, itemsPerPage, idCompany.value)
 
 	if (res?.status == 200) {
 		parseUser(res?.data.users)
@@ -351,6 +395,12 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 		setTotalPages(res?.data.totalPages)
 
 		showLoading.value = false
+	} else if (res?.status == 404) {
+		handleApiResponse(
+			Messages.TITLE_THERE_ARE_NO_RECORDS,
+			Messages.SUBTITLE_THERE_ARE_NO_RECORDS
+		)
+		showNotificationModal.value = true
 	} else {
 		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
 		showNotificationModal.value = true
@@ -367,6 +417,7 @@ const parseUser = (data: any[]) => {
 			id: d._id,
 			department: d.department,
 			idDepartment: d.idDepartment,
+			idCompany: d.idCompany,
 		}
 	})
 }
@@ -379,9 +430,19 @@ const setTotalPages = (pages: number) => {
 	}
 }
 
+const setIdCompany = async () => {
+	const payload = await getPayload()
+
+	if (payload?.status == 200) {
+		idCompany.value = payload.data.company
+
+		getAllUsersByPage(page.value, itemsPerPage.value)
+		getAllDepartment()
+		getAllUsernames()
+	}
+}
+
 onMounted(() => {
-	getAllUsersByPage(page.value, itemsPerPage.value)
-	getAllDepartment()
-	getAllUsernames()
+	setIdCompany()
 })
 </script>

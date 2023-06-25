@@ -2,13 +2,17 @@ import { useClient } from "@/clients/AxiosClient"
 import { Routes } from "@/utils/enum"
 import { IDepartment } from "@/utils/interfaces"
 
-export const createDepartment = async (department: IDepartment) => {
+export const createDepartment = async (
+	department: IDepartment,
+	idCompany: string
+) => {
 	try {
 		const data = {
 			name: department.name.toUpperCase(),
 			responsible: department.responsible,
 			email: department.email,
 			ramal: department.ramal,
+			idCompany,
 		}
 
 		const res = await useClient().post(Routes.CREATE_DEPARTMENT, data)
@@ -21,12 +25,14 @@ export const createDepartment = async (department: IDepartment) => {
 
 export const takeDepartmentsByPage = async (
 	page: number,
-	itemsPerPage: number
+	itemsPerPage: number,
+	idCompany: string
 ) => {
 	try {
 		const data = {
 			page,
 			itemsPerPage,
+			idCompany,
 		}
 
 		const res = await useClient().post(Routes.GET_DEPARTMENT_BY_PAGE, data)
@@ -37,9 +43,13 @@ export const takeDepartmentsByPage = async (
 	}
 }
 
-export const takeAllDepartments = async () => {
+export const takeAllDepartments = async (idCompany: string) => {
 	try {
-		const res = await useClient().post(Routes.GET_ALL_DEPARTMENT)
+		const data = {
+			idCompany,
+		}
+
+		const res = await useClient().post(Routes.GET_ALL_DEPARTMENT, data)
 
 		return res
 	} catch (error) {
@@ -47,10 +57,14 @@ export const takeAllDepartments = async () => {
 	}
 }
 
-export const takeDepartmentsByName = async (name: string) => {
+export const takeDepartmentsByName = async (
+	name: string,
+	idCompany: string
+) => {
 	try {
 		const data = {
 			name,
+			idCompany,
 		}
 		const res = await useClient().post(Routes.GET_DEPARTMENT_BY_NAME, data)
 
@@ -70,9 +84,15 @@ export const deleteDepartments = async (id: string) => {
 	}
 }
 
-export const updateDepartment = async (department: IDepartment, id: string) => {
+export const updateDepartment = async (
+	department: IDepartment,
+	idDepartment: string,
+	idCompany: string
+) => {
 	try {
-		const data: Partial<IDepartment> = {}
+		const data: Partial<IDepartment> = {
+			idCompany,
+		}
 
 		for (const key in department) {
 			if (
@@ -83,7 +103,10 @@ export const updateDepartment = async (department: IDepartment, id: string) => {
 			}
 		}
 
-		const res = await useClient().put(`${Routes.UPDATE_DEPARTMENT}${id}`, data)
+		const res = await useClient().put(
+			`${Routes.UPDATE_DEPARTMENT}${idDepartment}`,
+			data
+		)
 
 		return res
 	} catch (error) {

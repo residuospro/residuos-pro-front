@@ -1,6 +1,5 @@
 //import { removeItems } from "@/utils/permissions"
 import { AxiosResponse, InternalAxiosRequestConfig } from "axios"
-import { setCompany } from "@/store/setCompany"
 
 abstract class Interceptor {
 	abstract onRequest(
@@ -16,12 +15,6 @@ export class Interceptors implements Interceptor {
 	async onRequest(
 		options: InternalAxiosRequestConfig<any>
 	): Promise<InternalAxiosRequestConfig<any>> {
-		const idCompany = setCompany().getCompany
-
-		if (idCompany != "") {
-			options.data = { ...options.data, idCompany }
-		}
-
 		return options
 	}
 

@@ -35,11 +35,12 @@
 
 	<div
 		class="flex justify-between items-center ml-10 w-full"
-		v-if="totalPages.length > 1">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
+		v-if="totalPages.length > 1 || itemsPerPage > 10">
+		<ItemsPerPage @setItemsPerPage="setItemsPerPage" :key="itemsPerPageKey" />
 
 		<Pagination
 			:pageCount="totalPages.length"
+			:key="paginationKey"
 			:items="totalPages"
 			@paginate="setPagination" />
 	</div>
@@ -65,6 +66,7 @@ import {
 import Notification from "@/components/molecules/Notification.vue"
 import { Actions, Messages } from "@/utils/enum"
 import { onMounted } from "vue"
+import { getPayload } from "@/api/signin"
 
 let showDeleteModal = ref(false)
 let showLoading = ref(false)
@@ -81,19 +83,34 @@ let departments = ref<IDepartment[]>([])
 let departmentsName = ref<string[]>([])
 let totalPages = ref<number[]>([])
 let departmentSelected = ref(false)
+let paginationKey = ref(0)
+let itemsPerPageKey = ref(0)
+let idCompany = ref("")
 
 const headers = ["Departamento", "Responsável", "Ramal", "Email"]
 
 const actions = ["Atualizar", "Deletar"]
 
 const setPagination = (currentPage: number) => {
-	page.value = currentPage
-	getDepartmentsByPage(currentPage, itemsPerPage.value)
+	if (page.value != currentPage) {
+		page.value = currentPage
+		getDepartmentsByPage(currentPage, itemsPerPage.value)
+	}
 }
 
 const setItemsPerPage = (value: number) => {
-	itemsPerPage.value = value
-	getDepartmentsByPage(page.value, value)
+	if (itemsPerPage.value != value) {
+		itemsPerPage.value = value
+		getDepartmentsByPage(page.value, value)
+	}
+}
+
+const resetPaginationAndItemsPerPage = () => {
+	page.value = 1
+	itemsPerPage.value = 10
+
+	paginationKey.value = new Date().getMilliseconds()
+	itemsPerPageKey.value = new Date().getMilliseconds()
 }
 
 const openDeleteModal = (id: string) => {
@@ -116,7 +133,10 @@ const handleApiResponse = (
 	subTitle.value = subtitleResponse
 
 	if (status == 201 || status == 200) {
+		resetPaginationAndItemsPerPage()
+
 		getDepartmentsByPage(page.value, itemsPerPage.value)
+
 		getAllDepartment()
 	} else {
 		showLoading.value = false
@@ -168,7 +188,11 @@ const createOrUpdateDepartment = (department: IDepartment, action: string) => {
 }
 
 const updateDepartments = async (departament: IDepartment) => {
-	const res: any = await updateDepartment(departament, idDepartment.value)
+	const res: any = await updateDepartment(
+		departament,
+		idDepartment.value,
+		idCompany.value
+	)
 
 	if (res?.status == 201) {
 		handleApiResponse(
@@ -193,7 +217,7 @@ const updateDepartments = async (departament: IDepartment) => {
 }
 
 const createDepartments = async (department: IDepartment) => {
-	const res: any = await createDepartment(department)
+	const res: any = await createDepartment(department, idCompany.value)
 
 	if (res?.status == 201) {
 		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER, 201)
@@ -238,7 +262,11 @@ const deleteDepartment = async () => {
 const getDepartmentsByPage = async (page: number, itemsPerPage: number) => {
 	showLoading.value = true
 
-	const res: any = await takeDepartmentsByPage(page, itemsPerPage)
+	const res: any = await takeDepartmentsByPage(
+		page,
+		itemsPerPage,
+		idCompany.value
+	)
 
 	if (res?.status == 200) {
 		parseDepartment(res?.data.departments)
@@ -246,6 +274,12 @@ const getDepartmentsByPage = async (page: number, itemsPerPage: number) => {
 		setTotalPages(res?.data.totalPages)
 
 		showLoading.value = false
+	} else if (res?.status == 404) {
+		handleApiResponse(
+			Messages.TITLE_THERE_ARE_NO_RECORDS,
+			Messages.SUBTITLE_THERE_ARE_NO_RECORDS
+		)
+		showNotificationModal.value = true
 	} else {
 		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
 		showNotificationModal.value = true
@@ -253,7 +287,7 @@ const getDepartmentsByPage = async (page: number, itemsPerPage: number) => {
 }
 
 const getAllDepartment = async () => {
-	const res: any = await takeAllDepartments()
+	const res: any = await takeAllDepartments(idCompany.value)
 
 	if (res?.status == 200)
 		departmentsName.value = res.data.map((n: any) => n.name)
@@ -271,7 +305,7 @@ const selectDepartment = async (department: string) => {
 
 	departmentSelected.value = true
 
-	const res: any = await takeDepartmentsByName(department)
+	const res: any = await takeDepartmentsByName(department, idCompany.value)
 
 	if (res?.status == 200) {
 		parseDepartment([res.data])
@@ -300,12 +334,23 @@ const parseDepartment = (data: any[]) => {
 			ramal: d.ramal,
 			email: d.email,
 			id: d._id,
+			idCompany: d.idCompany,
 		}
 	})
 }
 
+const setIdCompany = async () => {
+	const payload = await getPayload()
+
+	if (payload?.status == 200) {
+		idCompany.value = payload.data.company
+
+		getDepartmentsByPage(page.value, itemsPerPage.value)
+		getAllDepartment()
+	}
+}
+
 onMounted(() => {
-	getDepartmentsByPage(page.value, itemsPerPage.value)
-	getAllDepartment()
+	setIdCompany()
 })
 </script>

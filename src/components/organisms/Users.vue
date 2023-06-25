@@ -44,8 +44,8 @@
 			</Container>
 
 			<div class="min-h-[28rem] bg-transparent">
-				<div v-for="items in content" :key="items.id">
-					<Container type="userContent">
+				<div v-for="(items, index) in content" :key="items.id">
+					<Container type="userContent" :class="index % 2 == 0 && 'bg-v_gray'">
 						<h1>{{ items.name }}</h1>
 
 						<h1>{{ items.username }}</h1>
@@ -55,7 +55,7 @@
 						</div>
 
 						<div class="relative">
-							<h1 class="overflow w-36">{{ items.department }}</h1>
+							<h1 class="overflow w-[13rem]">{{ items.department }}</h1>
 						</div>
 
 						<h1>{{ items.ramal }}</h1>

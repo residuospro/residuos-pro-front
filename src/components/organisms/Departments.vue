@@ -31,8 +31,10 @@
 			</Container>
 
 			<div class="min-h-[28rem] bg-transparent">
-				<div v-for="items in content" :key="items.id">
-					<Container type="departmentContent">
+				<div v-for="(items, index) in content" :key="items.id">
+					<Container
+						type="departmentContent"
+						:class="index % 2 == 0 && 'bg-v_gray'">
 						<div class="relative">
 							<h1 class="overflow w-[15rem]">{{ items.name }}</h1>
 						</div>

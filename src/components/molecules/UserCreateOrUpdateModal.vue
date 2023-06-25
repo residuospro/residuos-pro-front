@@ -25,13 +25,6 @@
 						:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
 						@input="(value: string) => user.name = value" />
 
-					<Input
-						input="input"
-						type="number"
-						placeholder="Ramal:"
-						:class="user.ramal !== '' ? '!w-full bg-white' : '!w-full'"
-						@input="(value: number) => user.ramal = String(value)" />
-
 					<v-autocomplete
 						:onUpdate:modelValue="selectDepartment"
 						:items="departments"
@@ -41,8 +34,8 @@
 
 					<button
 						v-if="typeAction == Actions.UPDATE"
-						class="absolute left-[35rem] top-[10.6rem]"
-						@click="() => (user.department = null)">
+						class="absolute left-[35rem] top-[9.5rem]"
+						@click="() => (user.department = undefined)">
 						<mdicon name="close-thick" />
 					</button>
 				</div>
@@ -74,12 +67,15 @@ import { PropType, reactive, watch, ref, computed } from "vue"
 import { IUsers } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 
-const user = reactive({
+const user: IUsers = reactive({
 	name: "",
 	username: "",
 	email: "",
-	department: null,
+	department: undefined,
 	ramal: "",
+	id: "",
+	idDepartment: "",
+	idCompany: "",
 })
 
 const props = defineProps({

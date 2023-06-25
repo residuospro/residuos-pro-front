@@ -56,4 +56,10 @@ export enum Messages {
 
 	SUBTITLE_EXISTENT_DEPARTMENT = "O departamento que você está tentando criar já existe em nosso banco",
 	SUBTITLE_ERROR_UPDATE_DEPARTMENT = "Esse nome de departamento já existe em nosso banco",
+
+	TITLE_THERE_ARE_NO_RECORDS = "Não há registros",
+	SUBTITLE_THERE_ARE_NO_RECORDS = "Não foram encontrados registros para essa busca",
+
+	TITLE_EXISTING_USER = "Username inválido",
+	SUBTITLE_EXISTING_USER = "O nome de usuário fornecido já existe em nosso banco",
 }
