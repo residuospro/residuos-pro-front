@@ -25,7 +25,9 @@ export const signin = async (user: any) => {
 
 		const payload: any = await getPayload()
 
-		const company = payload.data.company
+		const userId = payload.data.userId
+
+		const idCompany = payload.data.company
 
 		const roles = payload.data.permission
 
@@ -33,7 +35,7 @@ export const signin = async (user: any) => {
 
 		setPermission(roles)
 
-		return { res, company }
+		return { res, userId, idCompany }
 	} catch (error) {
 		return error
 	}

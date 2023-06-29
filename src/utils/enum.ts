@@ -13,6 +13,7 @@ export enum Routes {
 	GET_USER_BY_USERNAME = "/user/by-username",
 	UPDATE_USER = "/user/update/",
 	DELETE_USER = "/user/",
+	REFRESH_TOKEN = "/refresh_token",
 }
 
 export enum TypeErrors {

@@ -60,10 +60,10 @@ import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import UserModal from "@/components/molecules/UserCreateOrUpdateModal.vue"
 import { IUsers } from "@/utils/interfaces"
-import { reactive, ref } from "vue"
+import { onMounted, reactive, ref } from "vue"
 import { Actions, Messages } from "@/utils/enum"
 import { takeAllDepartments, takeDepartmentsByName } from "@/api/department"
-import { onMounted } from "vue"
+import { setIdCompany } from "@/store/setIdCompany"
 import {
 	createUser,
 	takeAllUsers,
@@ -72,8 +72,9 @@ import {
 	updateUser,
 	deleteUser,
 } from "@/api/user"
+import { getPermission } from "@/utils/permissions"
 
-import { getPayload } from "@/api/signin"
+const idCompanyStore = setIdCompany()
 
 const headers = ["Nome", "Username", "Email", "Departamento", "Ramal"]
 
@@ -100,6 +101,7 @@ let idCompany = ref("")
 let userId = ref()
 let paginationKey = ref(0)
 let itemsPerPageKey = ref(0)
+let permission = ref<string[]>([])
 let departmentInfo = reactive({
 	name: "",
 	id: "",
@@ -149,7 +151,11 @@ const userFilterCleaning = async () => {
 const selectUser = async (username: string) => {
 	showLoading.value = true
 
-	const res: any = await takeUserByUsername(username, idCompany.value)
+	const res: any = await takeUserByUsername(
+		username,
+		idCompany.value,
+		permission.value
+	)
 
 	if (res?.status == 200) {
 		parseUser([res?.data])
@@ -266,7 +272,7 @@ const createUsers = async (user: IUsers) => {
 
 	user.idCompany = idCompany.value
 
-	const res: any = await createUser(user)
+	const res: any = await createUser(user, permission.value)
 
 	if (res?.status == 201) {
 		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER, 201)
@@ -372,7 +378,7 @@ const getAllDepartment = async () => {
 }
 
 const getAllUsernames = async () => {
-	const res: any = await takeAllUsernames(idCompany.value)
+	const res: any = await takeAllUsernames(idCompany.value, permission.value)
 
 	if (res?.status == 200) {
 		usernames.value = res?.data.map((n: any) => n.username)
@@ -387,7 +393,12 @@ const getAllUsernames = async () => {
 const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 	showLoading.value = true
 
-	const res: any = await takeAllUsers(page, itemsPerPage, idCompany.value)
+	const res: any = await takeAllUsers(
+		page,
+		itemsPerPage,
+		idCompany.value,
+		permission.value
+	)
 
 	if (res?.status == 200) {
 		parseUser(res?.data.users)
@@ -430,19 +441,18 @@ const setTotalPages = (pages: number) => {
 	}
 }
 
-const setIdCompany = async () => {
-	const payload = await getPayload()
+const getIdCompany = async () => {
+	idCompany.value = idCompanyStore.getIdCompany
 
-	if (payload?.status == 200) {
-		idCompany.value = payload.data.company
-
-		getAllUsersByPage(page.value, itemsPerPage.value)
-		getAllDepartment()
-		getAllUsernames()
-	}
+	getAllUsersByPage(page.value, itemsPerPage.value)
+	getAllDepartment()
+	getAllUsernames()
 }
 
 onMounted(() => {
-	setIdCompany()
+	permission.value = getPermission()
+	console.log("per", permission.value)
+
+	getIdCompany()
 })
 </script>

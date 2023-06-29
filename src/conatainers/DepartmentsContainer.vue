@@ -66,7 +66,9 @@ import {
 import Notification from "@/components/molecules/Notification.vue"
 import { Actions, Messages } from "@/utils/enum"
 import { onMounted } from "vue"
-import { getPayload } from "@/api/signin"
+import { setIdCompany } from "@/store/setIdCompany"
+
+const idCompanyStore = setIdCompany()
 
 let showDeleteModal = ref(false)
 let showLoading = ref(false)
@@ -339,18 +341,14 @@ const parseDepartment = (data: any[]) => {
 	})
 }
 
-const setIdCompany = async () => {
-	const payload = await getPayload()
+const getIdCompany = async () => {
+	idCompany.value = idCompanyStore.getIdCompany
 
-	if (payload?.status == 200) {
-		idCompany.value = payload.data.company
-
-		getDepartmentsByPage(page.value, itemsPerPage.value)
-		getAllDepartment()
-	}
+	getDepartmentsByPage(page.value, itemsPerPage.value)
+	getAllDepartment()
 }
 
 onMounted(() => {
-	setIdCompany()
+	getIdCompany()
 })
 </script>

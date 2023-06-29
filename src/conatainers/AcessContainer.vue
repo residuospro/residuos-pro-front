@@ -18,9 +18,11 @@ import Loading from "@/components/molecules/Loading.vue"
 import router from "@/router"
 import { reactive, ref, watch } from "vue"
 import { TypeErrors } from "@/utils/enum"
-import { setCompany } from "@/store/setCompany"
+import { setUserId } from "@/store/setUserId"
+import { setIdCompany } from "@/store/setIdCompany"
 
-const store = setCompany()
+const userIdStore = setUserId()
+const idCompanyStore = setIdCompany()
 
 let eyeIcon = ref(false)
 let validationError = ref(false)
@@ -68,7 +70,8 @@ const login = async () => {
 	if (response.res?.status == 200) {
 		router.push("/Painel")
 
-		store.setCompany(response.company)
+		userIdStore.setUserId(response.userId)
+		idCompanyStore.setIdCompany(response.idCompany)
 	} else if (response.data.error == TypeErrors.INCORRECT_PASSWORD) {
 		validationError.value = true
 
@@ -91,3 +94,4 @@ const login = async () => {
 	showLoading.value = false
 }
 </script>
+@/store/setUserId

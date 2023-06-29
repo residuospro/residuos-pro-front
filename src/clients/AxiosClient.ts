@@ -1,7 +1,5 @@
 import axios, { AxiosInstance } from "axios"
-import { Interceptors } from "./Interceptors"
-
-const interceptors = new Interceptors()
+import { interceptors } from "./Interceptors"
 
 let restClient: AxiosInstance
 
@@ -14,13 +12,13 @@ export const setupClient = (baseUrl: string | undefined) => {
 	})
 
 	restClient.interceptors.request.use(
-		interceptors.onRequest,
-		interceptors.onError
+		interceptors.handleRequest,
+		interceptors.handleError
 	)
 
 	restClient.interceptors.response.use(
-		interceptors.onResponse,
-		interceptors.onError
+		interceptors.handleResponse,
+		interceptors.handleError
 	)
 }
 

@@ -1,53 +1,49 @@
-//import { removeItems } from "@/utils/permissions"
-import { AxiosResponse, InternalAxiosRequestConfig } from "axios"
+import { getNewToken } from "@/api/refreshToken"
+import axios, {
+	AxiosRequestConfig,
+	AxiosResponse,
+	InternalAxiosRequestConfig,
+} from "axios"
+import { setUserId } from "@/store/setUserId"
+import { removeItems } from "@/utils/permissions"
 
-abstract class Interceptor {
-	abstract onRequest(
-		options: InternalAxiosRequestConfig
-	): Promise<InternalAxiosRequestConfig>
-
-	abstract onResponse(response: AxiosResponse): Promise<AxiosResponse>
-
-	abstract onError(error: any): Promise<never>
+export const handleRequest = async (
+	options: InternalAxiosRequestConfig
+): Promise<InternalAxiosRequestConfig> => {
+	return options
 }
 
-export class Interceptors implements Interceptor {
-	async onRequest(
-		options: InternalAxiosRequestConfig<any>
-	): Promise<InternalAxiosRequestConfig<any>> {
-		return options
+export const handleResponse = async (
+	response: AxiosResponse
+): Promise<AxiosResponse<any, any>> => {
+	if (response.status === 401) {
+		const userId = setUserId().getUserId
+		const token = await getNewToken(userId)
+
+		if (token) {
+			const instance = axios.create()
+			response.config.headers["Authorization"] = `Bearer ${token}`
+
+			const result = await instance.request({
+				...response.config,
+			})
+
+			return result
+		} else {
+			removeItems()
+			location.href = "/"
+		}
 	}
 
-	async onResponse(
-		response: AxiosResponse<any, any>
-	): Promise<AxiosResponse<any, any>> {
-		// if (response.status === 401) {
-		// 	const token = await getNewToken()
+	return response
+}
 
-		// 	if (token) {
-		// 		const instance = axios.create()
+export const handleError = (error: any): Promise<never> => {
+	return Promise.reject(error)
+}
 
-		// 		response.config.headers["Authorization"] = `Bearer ${token}`
-
-		// 		const result = await instance.request({
-		// 			...response.config,
-		// 		})
-
-		// 		return result
-		// 	} else {
-		// 		alert(
-		// 			"Sua sessão expirou. Você será redirecionado para a página de login."
-		// 		)
-
-		// 		removeItems()
-		// 		location.href = "/"
-		// 	}
-		// }
-
-		return response
-	}
-
-	onError(error: any): Promise<never> {
-		return Promise.reject(error)
-	}
+export const interceptors = {
+	handleRequest,
+	handleResponse,
+	handleError,
 }

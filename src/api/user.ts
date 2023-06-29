@@ -1,11 +1,8 @@
 import { useClient } from "@/clients/AxiosClient"
 import { AuthorizationUser, Routes } from "@/utils/enum"
 import { IUsers } from "@/utils/interfaces"
-import { getPermission } from "@/utils/permissions"
 
-const permission = getPermission()
-
-export const createUser = async (user: IUsers) => {
+export const createUser = async (user: IUsers, permission: string[]) => {
 	try {
 		const data = {
 			name: user.name,
@@ -30,6 +27,7 @@ export const takeAllUsers = async (
 	page: number,
 	itemsPerPage: number,
 	idCompany: string,
+	permission: string[],
 	idDepartment?: string
 ) => {
 	try {
@@ -41,14 +39,13 @@ export const takeAllUsers = async (
 
 		if (permission.includes(AuthorizationUser.ADMIN)) {
 			data = { ...data, role: [AuthorizationUser.MANAGER] }
-		} else {
+		} else if (permission.includes(AuthorizationUser.MANAGER)) {
 			data = { ...data, role: [AuthorizationUser.COLLABORATOR] }
 		}
 
 		if (idDepartment) {
 			data = { ...data, idDepartment }
 		}
-
 		const res = await useClient().post(Routes.GET_ALL_USERS, data)
 
 		return res
@@ -57,7 +54,10 @@ export const takeAllUsers = async (
 	}
 }
 
-export const takeAllUsernames = async (idCompany: string) => {
+export const takeAllUsernames = async (
+	idCompany: string,
+	permission: string[]
+) => {
 	try {
 		const data: any = {
 			role: [],
@@ -66,7 +66,7 @@ export const takeAllUsernames = async (idCompany: string) => {
 
 		if (permission.includes(AuthorizationUser.ADMIN)) {
 			data.role.push(AuthorizationUser.MANAGER)
-		} else {
+		} else if (permission.includes(AuthorizationUser.MANAGER)) {
 			data.role.push(AuthorizationUser.COLLABORATOR)
 		}
 
@@ -80,7 +80,8 @@ export const takeAllUsernames = async (idCompany: string) => {
 
 export const takeUserByUsername = async (
 	username: string,
-	idCompany: string
+	idCompany: string,
+	permission: string[]
 ) => {
 	try {
 		let data: any = {

@@ -21,6 +21,7 @@ export const getExp = (): number => {
 
 export const removeItems = () => {
 	localStorage.removeItem("token")
+	localStorage.removeItem("refresh_token")
 	localStorage.removeItem("user_permissions")
 }
 
@@ -37,4 +38,8 @@ export const setIsAuthenticated = (token: string, exp: number) => {
 
 export const isAuthenticated = (): string => {
 	return JSON.parse(localStorage.getItem("token") || "[]")
+}
+
+export const getRefreshToken = (): string => {
+	return JSON.parse(localStorage.getItem("refresh_token") || "[]")
 }

@@ -59,6 +59,9 @@ const routes: Array<RouteRecordRaw> = [
 				path: "Departamentos",
 				name: "Departamentos",
 				component: Departments,
+				beforeEnter: (to, from) => {
+					if (from.path == "/") return ""
+				},
 				meta: {
 					protected: true,
 					permissions: [AuthorizationUser.ADMIN],
@@ -68,6 +71,9 @@ const routes: Array<RouteRecordRaw> = [
 				path: "Usuarios",
 				name: "Usuarios",
 				component: Users,
+				beforeEnter: (to, from) => {
+					if (from.path == "/") return ""
+				},
 				meta: {
 					protected: true,
 					permissions: [AuthorizationUser.ADMIN, AuthorizationUser.MANAGER],
