@@ -4,18 +4,18 @@
 			<div
 				class="flex justify-between items-center w-auto min-w-[23rem] space-x-5">
 				<v-autocomplete
-					:onUpdate:modelValue="selectDepartment"
-					v-model="departmentSelected"
-					:items="departments"
+					:onUpdate:modelValue="selectSediments"
+					v-model="sedimentSelected"
+					:items="sediments"
 					chips
-					label="Buscar Departamento"></v-autocomplete>
+					label="Buscar Resíduos"></v-autocomplete>
 
 				<button class="mt-7" @click="clearFilter">Limpar pesquisa</button>
 			</div>
 
 			<Button
 				buttonType="submit"
-				@click="openDepartmentModal(Actions.SAVE)"
+				@click="openSedimentsModal(Actions.SAVE)"
 				class="bg-white">
 				<p class="text-v_dark_gray">Cadastrar</p>
 			</Button>
@@ -56,8 +56,7 @@
 
 							<v-list>
 								<v-list-item>
-									<button
-										@click="openDepartmentModal(Actions.UPDATE, items.id)">
+									<button @click="openSedimentsModal(Actions.UPDATE, items.id)">
 										Atualizar
 									</button>
 								</v-list-item>
@@ -88,13 +87,13 @@ import { Actions } from "@/utils/enum"
 const props = defineProps({
 	headers: { type: Array as PropType<string[]>, required: true },
 
-	departments: { type: Array as PropType<string[]>, required: true },
+	sediments: { type: Array as PropType<string[]>, required: true },
 
 	actions: { type: Array as PropType<string[]>, required: true },
 
 	content: { type: Array as PropType<any[]>, required: true },
 
-	selectDepartment: {
+	selectSediments: {
 		type: Function as PropType<(department: string) => void>,
 		required: true,
 	},
@@ -104,34 +103,34 @@ const props = defineProps({
 		required: true,
 	},
 
-	openDepartmentModal: {
+	openSedimentsModal: {
 		type: Function as PropType<(action: string, id?: string) => void>,
 		required: true,
 	},
 
-	departmentFilterCleaning: {
+	sedimentsFilterCleaning: {
 		type: Function as unknown as () => () => void,
 		required: true,
 	},
 })
 
-let departmentSelected = ref()
+let sedimentSelected = ref()
 
 const clearFilter = () => {
-	props.departmentFilterCleaning()
-	departmentSelected.value = null
+	props.sedimentsFilterCleaning()
+	sedimentSelected.value = null
 }
 
 const autocompleteHeight = computed(() => {
 	let height = "3rem"
 
-	if (departmentSelected.value) height = "3.8rem"
+	if (sedimentSelected.value) height = "3.8rem"
 
 	return height
 })
 
 useHead({
-	title: "Resíduos Pro - Departamentos",
+	title: "Resíduos Pro - Resíduos",
 })
 </script>
 

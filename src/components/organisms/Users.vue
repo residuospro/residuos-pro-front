@@ -2,7 +2,12 @@
 	<div class="w-full ml-8 mt-2">
 		<div class="flex items-center w-full justify-between mb-8">
 			<div
-				class="flex justify-between items-center w-auto min-w-[43rem] space-x-5">
+				class="flex justify-between items-center space-x-5"
+				:style="
+					hasPermission([AuthorizationUser.ADMIN])
+						? 'width: 43rem'
+						: 'width: 25rem'
+				">
 				<v-autocomplete
 					v-model="usersSelected"
 					:onUpdate:modelValue="selectUser"
@@ -11,9 +16,10 @@
 					density="comfortable"
 					label="Buscar Usuário"></v-autocomplete>
 
-				<h1 class="mt-7">ou</h1>
+				<h1 class="mt-7" v-if="hasPermission([AuthorizationUser.ADMIN])">ou</h1>
 
 				<v-autocomplete
+					v-if="hasPermission([AuthorizationUser.ADMIN])"
 					v-model="departamentSelected"
 					:onUpdate:modelValue="selectUserByDepartment"
 					:items="departments"
@@ -45,7 +51,9 @@
 
 			<div class="min-h-[28rem] bg-transparent">
 				<div v-for="(items, index) in content" :key="items.id">
-					<Container type="userContent" :class="index % 2 == 0 && 'bg-v_gray'">
+					<Container
+						type="userContent"
+						:class="index % 2 == 0 && 'bg-v_white_one'">
 						<h1>{{ items.name }}</h1>
 
 						<h1>{{ items.username }}</h1>
@@ -97,6 +105,8 @@ import Button from "../atoms/Button.vue"
 import { PropType, computed, ref } from "vue"
 import { IUsers } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
+import { hasPermission } from "@/utils/permissions"
+import { AuthorizationUser } from "@/utils/enum"
 
 let usersSelected = ref()
 let departamentSelected = ref()

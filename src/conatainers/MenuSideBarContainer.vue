@@ -57,6 +57,13 @@ const menuIcons = [
 			AuthorizationUser.COLLABORATOR,
 		],
 	},
+	{
+		id: "sediments",
+		icon: "delete-variant",
+		path: "/Painel/Residuos",
+		label: "Resíduos",
+		permissions: [AuthorizationUser.MANAGER],
+	},
 ]
 
 let idBtn = ref("")

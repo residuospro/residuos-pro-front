@@ -40,6 +40,7 @@ module.exports = {
 					"Select",
 					"DeleteModal",
 					"Notification",
+					"Sediments",
 				],
 			},
 		],

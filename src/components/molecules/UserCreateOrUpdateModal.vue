@@ -1,23 +1,26 @@
 <template>
 	<Container type="backgroundContainer">
 		<Container type="modalContainer">
-			<Container type="actionsModalContainer" class="h-[22.5rem]">
+			<Container type="actionsModalContainer" class="min-h-[18rem]">
 				<Typograph type="H2" class="text-v_medium_gray">
 					{{ typeAction }} usuário
 				</Typograph>
 
-				<div class="flex flex-wrap w-full justify-between h-64 mt-2 relative">
-					<Input
-						input="input"
-						placeholder="Username:"
-						:class="user.username !== '' ? ' bg-white' : ''"
-						@input="(value: string) => user.username = value" />
+				<div
+					class="flex flex-wrap w-full justify-between min-h-[8rem] mt-2 relative space-y-3">
+					<div class="space-x-6">
+						<Input
+							input="input"
+							placeholder="Username:"
+							:class="user.username !== '' ? ' bg-white' : ''"
+							@input="(value: string) => user.username = value" />
 
-					<Input
-						input="input"
-						placeholder="Email:"
-						:class="user.email !== '' ? 'bg-white' : ''"
-						@input="(value: string) => user.email = value" />
+						<Input
+							input="input"
+							placeholder="Email:"
+							:class="user.email !== '' ? 'bg-white' : ''"
+							@input="(value: string) => user.email = value" />
+					</div>
 
 					<Input
 						input="input"
@@ -26,6 +29,7 @@
 						@input="(value: string) => user.name = value" />
 
 					<v-autocomplete
+						v-if="hasPermission([AuthorizationUser.ADMIN])"
 						:onUpdate:modelValue="selectDepartment"
 						:items="departments"
 						v-model="user.department"
@@ -33,14 +37,17 @@
 						label="Departamento"></v-autocomplete>
 
 					<button
-						v-if="typeAction == Actions.UPDATE"
-						class="absolute left-[35rem] top-[9.5rem]"
+						v-if="
+							typeAction == Actions.UPDATE &&
+							hasPermission([AuthorizationUser.ADMIN])
+						"
+						class="absolute left-[35rem] top-[6.8rem]"
 						@click="() => (user.department = undefined)">
 						<mdicon name="close-thick" />
 					</button>
 				</div>
 
-				<div class="flex justify-end w-full space-x-5 mt-2">
+				<div class="flex justify-end w-full space-x-5 mt-4">
 					<Button buttonType="closeButton" @click="closeUserModal">
 						Cancelar
 					</Button>
@@ -63,9 +70,10 @@ import Container from "../atoms/Container.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
-import { PropType, reactive, watch, ref, computed } from "vue"
+import { PropType, reactive, watch, computed } from "vue"
 import { IUsers } from "@/utils/interfaces"
-import { Actions } from "@/utils/enum"
+import { Actions, AuthorizationUser } from "@/utils/enum"
+import { hasPermission } from "@/utils/permissions"
 
 const user: IUsers = reactive({
 	name: "",

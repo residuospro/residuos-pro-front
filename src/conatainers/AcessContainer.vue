@@ -18,11 +18,6 @@ import Loading from "@/components/molecules/Loading.vue"
 import router from "@/router"
 import { reactive, ref, watch } from "vue"
 import { TypeErrors } from "@/utils/enum"
-import { setUserId } from "@/store/setUserId"
-import { setIdCompany } from "@/store/setIdCompany"
-
-const userIdStore = setUserId()
-const idCompanyStore = setIdCompany()
 
 let eyeIcon = ref(false)
 let validationError = ref(false)
@@ -55,6 +50,7 @@ const showPassord = () => {
 	eyeIcon.value = !eyeIcon.value
 
 	let input = document.querySelector("#pass")
+
 	if (input?.getAttribute("type") == "password") {
 		input.setAttribute("type", "text")
 	} else {
@@ -69,9 +65,6 @@ const login = async () => {
 
 	if (response.res?.status == 200) {
 		router.push("/Painel")
-
-		userIdStore.setUserId(response.userId)
-		idCompanyStore.setIdCompany(response.idCompany)
 	} else if (response.data.error == TypeErrors.INCORRECT_PASSWORD) {
 		validationError.value = true
 

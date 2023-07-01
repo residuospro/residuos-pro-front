@@ -19,7 +19,7 @@
 			</div>
 		</Container>
 		<Container type="menuIconContainer">
-			<button @click="logout" class="btnColor">
+			<button @click="logout" class="btnColor text-v_medium_gray">
 				<mdicon name="logout-variant" />
 				<v-tooltip activator="parent" location="start">Sair</v-tooltip>
 			</button>

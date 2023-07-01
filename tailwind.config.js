@@ -6,6 +6,7 @@ module.exports = {
 			colors: {
 				v_white_one: "#F8f8f8",
 				v_white_two: "#f0f7da",
+				v_white_three: "#f3f4f6",
 				v_dark_green: "#234d20",
 				v_light_green: "#77ab59",
 				v_green: "#36802d",

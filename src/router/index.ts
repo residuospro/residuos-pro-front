@@ -6,6 +6,7 @@ import Users from "@/conatainers/UsersContainer.vue"
 import Departments from "@/conatainers/DepartmentsContainer.vue"
 import Dashboard from "@/components/organisms/Dashboard.vue"
 import Settings from "@/components/organisms/Settings.vue"
+import Sediments from "@/conatainers/SedimentsContainer.vue"
 import { AuthorizationUser } from "@/utils/enum"
 import { setBearerAuthorization, useClient } from "@/clients/AxiosClient"
 import { hasPermission, isAuthenticated } from "@/utils/permissions"
@@ -86,6 +87,18 @@ const routes: Array<RouteRecordRaw> = [
 				meta: {
 					protected: true,
 					permissions: [AuthorizationUser.ADMIN, AuthorizationUser.MANAGER],
+				},
+			},
+			{
+				path: "Residuos",
+				name: "Residuos",
+				component: Sediments,
+				beforeEnter: (to, from) => {
+					if (from.path == "/") return ""
+				},
+				meta: {
+					protected: true,
+					permissions: [AuthorizationUser.MANAGER],
 				},
 			},
 		],

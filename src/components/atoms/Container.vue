@@ -96,7 +96,7 @@ const containerClass = computed(() => {
 
 				menuContainer: `
 					w-[5.6rem]
-					bg-v_white_two
+					bg-white
 					z-10
 					flex
 					flex-col

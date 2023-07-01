@@ -23,7 +23,7 @@
 		:create-or-update-user="createOrUpdateUser"
 		:validateDataToCreateUser="validateDataToCreateUser"
 		:validateDataToUpdateUser="validateDataToUpdateUser"
-		:selectDepartment="selectTheDepartmentToCreateTheUser" />
+		:selectDepartment="selectTheDepartmentToCreateTheManager" />
 
 	<Users
 		:headers="headers"
@@ -61,9 +61,10 @@ import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import UserModal from "@/components/molecules/UserCreateOrUpdateModal.vue"
 import { IUsers } from "@/utils/interfaces"
 import { onMounted, reactive, ref } from "vue"
-import { Actions, Messages } from "@/utils/enum"
+import { Actions, AuthorizationUser, Messages } from "@/utils/enum"
 import { takeAllDepartments, takeDepartmentsByName } from "@/api/department"
 import { setIdCompany } from "@/store/setIdCompany"
+import { setDepartment } from "@/store/setDepartment"
 import {
 	createUser,
 	takeAllUsers,
@@ -72,9 +73,10 @@ import {
 	updateUser,
 	deleteUser,
 } from "@/api/user"
-import { getPermission } from "@/utils/permissions"
+import { getPermission, hasPermission } from "@/utils/permissions"
 
 const idCompanyStore = setIdCompany()
+const departmentStore = setDepartment()
 
 const headers = ["Nome", "Username", "Email", "Departamento", "Ramal"]
 
@@ -101,6 +103,7 @@ let idCompany = ref("")
 let userId = ref()
 let paginationKey = ref(0)
 let itemsPerPageKey = ref(0)
+let userDepartment = ref("")
 let permission = ref<string[]>([])
 let departmentInfo = reactive({
 	name: "",
@@ -226,8 +229,16 @@ const validateDataToCreateUser = (user: IUsers) => {
 		}
 	}
 
-	if (validate.length == 4) showButton.value = true
-	else showButton.value = false
+	if (validate.length == 4 && hasPermission([AuthorizationUser.ADMIN])) {
+		showButton.value = true
+	} else if (
+		validate.length == 3 &&
+		hasPermission([AuthorizationUser.MANAGER])
+	) {
+		showButton.value = true
+	} else {
+		showButton.value = false
+	}
 }
 
 const validateDataToUpdateUser = (user: IUsers) => {
@@ -247,6 +258,8 @@ const validateDataToUpdateUser = (user: IUsers) => {
 	if (user.email != "") {
 		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email)
 	}
+
+	console.log(validate, regex)
 
 	if (validate.length > 0 && regex) showButton.value = true
 	else if (!regex) showButton.value = false
@@ -345,7 +358,7 @@ const deleteUsers = async () => {
 	showNotificationModal.value = true
 }
 
-const selectTheDepartmentToCreateTheUser = async (department: string) => {
+const selectTheDepartmentToCreateTheManager = async (department: string) => {
 	showLoading.value = true
 
 	const res: any = await takeDepartmentsByName(department, idCompany.value)
@@ -363,6 +376,16 @@ const selectTheDepartmentToCreateTheUser = async (department: string) => {
 	}
 }
 
+const selectTheDepartmentToCreateTheCollaborator = () => {
+	const department = departmentStore.getDepartment
+
+	departmentInfo.id = department.id
+
+	departmentInfo.name = department.name
+
+	departmentInfo.ramal = String(department.ramal)
+}
+
 const getAllDepartment = async () => {
 	const res: any = await takeAllDepartments(idCompany.value)
 
@@ -378,7 +401,11 @@ const getAllDepartment = async () => {
 }
 
 const getAllUsernames = async () => {
-	const res: any = await takeAllUsernames(idCompany.value, permission.value)
+	const res: any = await takeAllUsernames(
+		idCompany.value,
+		permission.value,
+		userDepartment.value
+	)
 
 	if (res?.status == 200) {
 		usernames.value = res?.data.map((n: any) => n.username)
@@ -397,7 +424,8 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 		page,
 		itemsPerPage,
 		idCompany.value,
-		permission.value
+		permission.value,
+		userDepartment.value
 	)
 
 	if (res?.status == 200) {
@@ -441,18 +469,30 @@ const setTotalPages = (pages: number) => {
 	}
 }
 
-const getIdCompany = async () => {
+const getUserDepartment = () => {
+	userDepartment.value = departmentStore.getIdDepartment
+	selectTheDepartmentToCreateTheCollaborator()
+}
+
+const loadsAllUsersAndTheirInfo = () => {
 	idCompany.value = idCompanyStore.getIdCompany
 
 	getAllUsersByPage(page.value, itemsPerPage.value)
-	getAllDepartment()
+
+	if (hasPermission([AuthorizationUser.ADMIN])) {
+		getAllDepartment()
+	}
+
 	getAllUsernames()
 }
 
 onMounted(() => {
 	permission.value = getPermission()
-	console.log("per", permission.value)
 
-	getIdCompany()
+	if (hasPermission([AuthorizationUser.MANAGER])) {
+		getUserDepartment()
+	}
+
+	loadsAllUsersAndTheirInfo()
 })
 </script>

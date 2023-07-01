@@ -8,7 +8,7 @@ export interface IDepartment {
 	responsible: string
 	ramal: string
 	email: string
-	idCompany: string
+	idCompany?: string
 }
 
 export interface IUsers {
@@ -20,4 +20,20 @@ export interface IUsers {
 	id: string | undefined
 	idDepartment: string | undefined
 	idCompany: string | undefined
+}
+
+export interface IUserDepartmentInfo {
+	name: string
+	ramal: number
+	id: string
+}
+
+export interface ISediments {
+	name: string
+	classification: string | undefined
+	risk: string | undefined
+	state: string | undefined
+	feature: string | undefined
+	composition: string | undefined
+	pH: number
 }

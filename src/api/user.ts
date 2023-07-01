@@ -46,6 +46,10 @@ export const takeAllUsers = async (
 		if (idDepartment) {
 			data = { ...data, idDepartment }
 		}
+
+		console.log("dd", idDepartment)
+		console.log("dad", data)
+
 		const res = await useClient().post(Routes.GET_ALL_USERS, data)
 
 		return res
@@ -56,10 +60,11 @@ export const takeAllUsers = async (
 
 export const takeAllUsernames = async (
 	idCompany: string,
-	permission: string[]
+	permission: string[],
+	idDepartment?: string
 ) => {
 	try {
-		const data: any = {
+		let data: any = {
 			role: [],
 			idCompany,
 		}
@@ -68,6 +73,10 @@ export const takeAllUsernames = async (
 			data.role.push(AuthorizationUser.MANAGER)
 		} else if (permission.includes(AuthorizationUser.MANAGER)) {
 			data.role.push(AuthorizationUser.COLLABORATOR)
+		}
+
+		if (idDepartment) {
+			data = { ...data, idDepartment }
 		}
 
 		const res = await useClient().post(Routes.GET_ALL_USERNAMES, data)
