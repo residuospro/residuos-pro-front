@@ -71,7 +71,7 @@
 						<v-menu transition="slide-y-transition">
 							<template v-slot:activator="{ props }">
 								<button v-bind="props">
-									<mdicon name="pencil-box-outline" class="" />
+									<v-icon icon="mdi-pencil-box-outline" class="" />
 								</button>
 							</template>
 

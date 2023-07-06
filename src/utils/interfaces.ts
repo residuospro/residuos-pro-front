@@ -35,5 +35,5 @@ export interface ISediments {
 	state: string | undefined
 	feature: string | undefined
 	composition: string | undefined
-	pH: number
+	packaging: string
 }

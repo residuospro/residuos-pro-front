@@ -1,7 +1,7 @@
 <template>
 	<Container type="paginationContainer">
 		<button @click="previous" :disabled="maxPage === 0 ? true : false">
-			<mdicon name="chevron-left" :size="45" class="text-v_dark_gray" />
+			<v-icon icon="mdi-chevron-left" :size="45" class="text-v_dark_gray" />
 		</button>
 
 		<Button
@@ -9,7 +9,7 @@
 			class="bg-[#ccc] text-black"
 			@click="less"
 			:disabled="page < 5 ? true : false">
-			<mdicon name="dots-horizontal" :size="20" />
+			<v-icon icon="mdi-dots-horizontal" :size="20" />
 		</Button>
 
 		<div id="divBtn" class="flex items-center">
@@ -37,11 +37,11 @@
 			class="ml-3 bg-[#ccc] text-black"
 			@click="plus"
 			:disabled="maxPage === 0 ? true : false">
-			<mdicon name="dots-horizontal" :size="20" />
+			<v-icon icon="mdi-dots-horizontal" :size="20" />
 		</Button>
 
 		<button @click="next" :disabled="maxPage === 0 ? true : false">
-			<mdicon name="chevron-right" :size="45" class="text-v_dark_gray" />
+			<v-icon icon="mdi-chevron-right" :size="45" class="text-v_dark_gray" />
 		</button>
 	</Container>
 </template>

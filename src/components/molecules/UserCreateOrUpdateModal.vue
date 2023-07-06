@@ -43,7 +43,7 @@
 						"
 						class="absolute left-[35rem] top-[6.8rem]"
 						@click="() => (user.department = undefined)">
-						<mdicon name="close-thick" />
+						<v-icon icon="mdi-close-thick" />
 					</button>
 				</div>
 

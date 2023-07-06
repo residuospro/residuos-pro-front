@@ -16,13 +16,15 @@
 
 						<Input
 							input="input"
-							type="number"
-							placeholder="pH:"
-							:class="sediment.pH >= 0 ? 'bg-white' : ''"
-							@input="(value: number) => sediment.pH = value" />
+							type="text"
+							placeholder="Acondicionamento:"
+							:class="sediment.packaging != '' ? 'bg-white' : ''"
+							@input="(value: string) => sediment.packaging = value" />
 					</div>
 
 					<v-autocomplete
+						clearable
+						:active="true"
 						:items="classifications"
 						v-model="sediment.classification"
 						:class="
@@ -30,11 +32,16 @@
 								? 'bg-v_white_three'
 								: '!bg-white'
 						"
-						style="width: 20rem !important; height: 3.5rem !important"
+						style="
+							width: 20rem !important;
+							height: 3.5rem !important;
+							display: block !important;
+						"
 						chips
 						label="Classificação"></v-autocomplete>
 
 					<v-autocomplete
+						clearable
 						:items="risk"
 						v-model="sediment.risk"
 						:class="
@@ -45,6 +52,7 @@
 						label="Risco"></v-autocomplete>
 
 					<v-autocomplete
+						clearable
 						:items="states"
 						v-model="sediment.state"
 						:class="
@@ -53,28 +61,6 @@
 						style="width: 20rem !important; height: 3.5rem !important"
 						chips
 						label="Estado"></v-autocomplete>
-
-					<v-autocomplete
-						:items="classifications"
-						v-model="sediment.feature"
-						:class="
-							sediment.feature == undefined ? 'bg-v_white_three' : '!bg-white'
-						"
-						style="width: 20rem !important; height: 3.5rem !important"
-						chips
-						label="Característica"></v-autocomplete>
-
-					<v-autocomplete
-						:items="classifications"
-						v-model="sediment.composition"
-						:class="
-							sediment.composition == undefined
-								? 'bg-v_white_three'
-								: '!bg-white'
-						"
-						style="width: 20rem !important; height: 3.5rem !important"
-						chips
-						label="Composição"></v-autocomplete>
 				</div>
 
 				<div class="flex justify-end w-full space-x-5 mt-4">
@@ -100,7 +86,7 @@ import Container from "../atoms/Container.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
-import { computed, reactive, watch } from "vue"
+import { reactive, watch } from "vue"
 import { PropType } from "vue"
 import { Actions } from "@/utils/enum"
 import { ISediments } from "@/utils/interfaces"
@@ -112,7 +98,7 @@ let sediment: ISediments = reactive({
 	state: undefined,
 	feature: undefined,
 	composition: undefined,
-	pH: -1,
+	packaging: "",
 })
 
 const props = defineProps({
@@ -169,4 +155,14 @@ watch(sediment, () => {
 })
 </script>
 
-<style scoped></style>
+<style>
+/* .v-field__clearable,
+.mdi-close-circle,
+.mdi,
+.v-icon,
+.v-icon--size-default,
+.v-icon--clickable {
+	background: #000 !important;
+	color: #ccc;
+} */
+</style>

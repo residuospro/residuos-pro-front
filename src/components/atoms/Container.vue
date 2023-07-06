@@ -57,8 +57,9 @@ const containerClass = computed(() => {
 					flex-col
 					justify-evenly
 					items-center
-					h-[25rem]
-					mt-[-2rem] relative`,
+					h-[20rem]
+					mt-[-2rem] 
+					relative`,
 
 				loadingContainer: `
 					w-full

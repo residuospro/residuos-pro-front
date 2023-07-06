@@ -16,7 +16,7 @@ import router from "@/router"
 const menuIcons = [
 	{
 		id: "recycle",
-		icon: "recycle",
+		icon: "mdi-recycle",
 		path: "/Painel/Coletas",
 		label: "Coletas",
 		permissions: [
@@ -27,28 +27,28 @@ const menuIcons = [
 	},
 	{
 		id: "dash",
-		icon: "tablet-dashboard",
+		icon: "mdi-tablet-dashboard",
 		path: "/Painel/Dashboard",
 		label: "Dashboard",
 		permissions: [AuthorizationUser.ADMIN, AuthorizationUser.MANAGER],
 	},
 	{
 		id: "user",
-		icon: "account",
+		icon: "mdi-account",
 		path: "/Painel/Usuarios",
 		label: "Usuários",
 		permissions: [AuthorizationUser.ADMIN, AuthorizationUser.MANAGER],
 	},
 	{
 		id: "departments",
-		icon: "office-building",
+		icon: "mdi-office-building",
 		path: "/Painel/Departamentos",
 		label: "Departamentos",
 		permissions: [AuthorizationUser.ADMIN],
 	},
 	{
 		id: "config",
-		icon: "cog-outline",
+		icon: "mdi-cog-outline",
 		path: "/Painel/Configurações",
 		label: "Configurações",
 		permissions: [
@@ -59,7 +59,7 @@ const menuIcons = [
 	},
 	{
 		id: "sediments",
-		icon: "delete-variant",
+		icon: "mdi-delete-variant",
 		path: "/Painel/Residuos",
 		label: "Resíduos",
 		permissions: [AuthorizationUser.MANAGER],

@@ -16,9 +16,9 @@
 						input="loginInput"
 						@keyup="getUsername($event.target.value)" />
 
-					<mdicon
-						name="account"
-						class="absolute top-[3.4rem] left-[1rem] text-v_gray3 transform sm:left-[3.5rem]" />
+					<v-icon
+						icon="mdi-account"
+						class="absolute top-[-3.2rem] left-[-10rem] text-v_gray3 transform sm:left-[3.5rem]" />
 
 					<Input
 						placeholder="Senha:"
@@ -27,18 +27,19 @@
 						id="pass"
 						@keyup="getPassword($event.target.value)" />
 
-					<mdicon
-						name="lock"
-						class="absolute top-[9.7rem] left-[1rem] text-v_gray3 sm:left-[3.5rem]" />
+					<v-icon
+						icon="mdi-lock"
+						class="absolute top-[-3.2rem] left-[-10rem] text-v_gray3 sm:left-[3.5rem]" />
 
 					<button
-						class="absolute top-[9.7rem] left-[21rem] text-v_gray3 sm:left-[16rem]"
+						class="absolute top-[8.3rem] left-[21rem] text-v_gray3 sm:left-[16rem]"
 						@click="showPassord">
-						<mdicon :name="eyeIcon ? 'eye-outline' : 'eye-off-outline'" />
+						<v-icon
+							:icon="eyeIcon ? 'mdi-eye-outline' : 'mdi-eye-off-outline'" />
 					</button>
 
 					<p
-						class="text-v_red text-center text-[0.75rem] absolute top-[13rem]"
+						class="text-v_red text-center text-[0.75rem] absolute top-[12rem]"
 						v-if="validationError">
 						{{ errorMessage }}. Tente novamente
 					</p>
@@ -86,26 +87,33 @@ import { PropType } from "vue"
 
 defineProps({
 	eyeIcon: { type: Boolean, required: true },
+
+	validationError: { type: Boolean, required: true },
+
+	showButton: { type: Boolean, required: true },
+
+	errorMessage: {
+		type: String,
+		required: true,
+	},
+
 	showPassord: {
 		type: Function as unknown as () => (event: MouseEvent) => void,
 		required: true,
 	},
-	validationError: { type: Boolean, required: true },
-	showButton: { type: Boolean, required: true },
+
 	getUsername: {
 		type: Function as PropType<(username: string) => void>,
 		required: true,
 	},
+
 	getPassword: {
 		type: Function as PropType<(password: string) => void>,
 		required: true,
 	},
+
 	login: {
 		type: Function as unknown as () => (event: MouseEvent) => void,
-		required: true,
-	},
-	errorMessage: {
-		type: String,
 		required: true,
 	},
 })

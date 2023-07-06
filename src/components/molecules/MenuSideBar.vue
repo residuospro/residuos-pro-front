@@ -9,7 +9,7 @@
 					"
 					v-if="hasPermission(menu.permissions)">
 					<RouterLink :to="menu.path">
-						<mdicon :name="menu.icon" />
+						<v-icon :icon="menu.icon" />
 
 						<v-tooltip activator="parent" location="start">{{
 							menu.label
@@ -20,7 +20,7 @@
 		</Container>
 		<Container type="menuIconContainer">
 			<button @click="logout" class="btnColor text-v_medium_gray">
-				<mdicon name="logout-variant" />
+				<v-icon icon="mdi-logout-variant" />
 				<v-tooltip activator="parent" location="start">Sair</v-tooltip>
 			</button>
 		</Container>
