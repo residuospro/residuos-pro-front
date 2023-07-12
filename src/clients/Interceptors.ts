@@ -1,9 +1,5 @@
 import { getNewToken } from "@/api/refreshToken"
-import axios, {
-	AxiosRequestConfig,
-	AxiosResponse,
-	InternalAxiosRequestConfig,
-} from "axios"
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios"
 import { setUserId } from "@/store/setUserId"
 import { removeItems } from "@/utils/permissions"
 

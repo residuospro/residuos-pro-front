@@ -29,11 +29,9 @@ export const hasPermission = (permission: string[]) => {
 	return getPermission().filter((e) => permission.includes(e)).length > 0
 }
 
-export const setIsAuthenticated = (token: string, exp: number) => {
+export const setIsAuthenticated = (token: string, refresh_token: number) => {
 	localStorage.setItem("token", JSON.stringify(token))
-	localStorage.setItem("refresh_token", JSON.stringify(exp))
-
-	return
+	localStorage.setItem("refresh_token", JSON.stringify(refresh_token))
 }
 
 export const isAuthenticated = (): string => {

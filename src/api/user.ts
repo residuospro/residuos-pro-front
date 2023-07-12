@@ -47,9 +47,6 @@ export const takeAllUsers = async (
 			data = { ...data, idDepartment }
 		}
 
-		console.log("dd", idDepartment)
-		console.log("dad", data)
-
 		const res = await useClient().post(Routes.GET_ALL_USERS, data)
 
 		return res

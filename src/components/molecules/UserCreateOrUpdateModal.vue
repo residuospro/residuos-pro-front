@@ -30,21 +30,13 @@
 
 					<v-autocomplete
 						v-if="hasPermission([AuthorizationUser.ADMIN])"
+						clearable
+						:on-click:clear="() => (user.department = undefined)"
 						:onUpdate:modelValue="selectDepartment"
 						:items="departments"
 						v-model="user.department"
 						chips
 						label="Departamento"></v-autocomplete>
-
-					<button
-						v-if="
-							typeAction == Actions.UPDATE &&
-							hasPermission([AuthorizationUser.ADMIN])
-						"
-						class="absolute left-[35rem] top-[6.8rem]"
-						@click="() => (user.department = undefined)">
-						<v-icon icon="mdi-close-thick" />
-					</button>
 				</div>
 
 				<div class="flex justify-end w-full space-x-5 mt-4">

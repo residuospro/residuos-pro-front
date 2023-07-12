@@ -1,5 +1,6 @@
 <template>
 	<Loading v-if="showLoading" />
+
 	<Acess
 		:eye-icon="eyeIcon"
 		:showPassord="showPassord"
@@ -24,6 +25,7 @@ let validationError = ref(false)
 let showButton = ref(false)
 let showLoading = ref(false)
 let errorMessage = ref("")
+let isActive = ref(true)
 let user = reactive({
 	username: "",
 	password: "",

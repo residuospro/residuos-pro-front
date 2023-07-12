@@ -24,7 +24,6 @@ const idDepartmentStore = setDepartment()
 
 const getUserInfo = async () => {
 	const payload = await getPayload()
-	console.log(payload)
 
 	userIdStore.setUserId(payload.data.userId)
 	idCompanyStore.setIdCompany(payload.data.company)

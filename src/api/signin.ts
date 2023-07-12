@@ -14,7 +14,7 @@ export const signin = async (user: any) => {
 
 		const res = await useClient().post(Routes.LOGIN)
 
-		if (res?.status == 401) {
+		if (res?.status == 403) {
 			return res
 		}
 

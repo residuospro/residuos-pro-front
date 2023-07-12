@@ -66,12 +66,10 @@ const headers = [
 	"Classificação",
 	"Risco Associado",
 	"Estado",
-	"Característica",
-	"Composição",
-	"pH",
+	"Acondicionamento",
 ]
 
-const states = ["Líquido", "Sólido"]
+const states = ["Líquido", "Sólido", "Gasoso"]
 
 const classifications = ["Classe I", "Classe II A", "Classe II B"]
 

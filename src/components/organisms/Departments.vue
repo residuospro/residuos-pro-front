@@ -1,16 +1,15 @@
 <template>
 	<div class="w-full ml-8 mt-2">
 		<div class="flex items-center w-full justify-between mb-8">
-			<div
-				class="flex justify-between items-center w-auto min-w-[23rem] space-x-5">
+			<div class="w-auto min-w-[23rem] space-x-5">
 				<v-autocomplete
+					clearable
+					:on-click:clear="clearFilter"
 					:onUpdate:modelValue="selectDepartment"
 					v-model="departmentSelected"
 					:items="departments"
 					chips
 					label="Buscar Departamento"></v-autocomplete>
-
-				<button class="mt-7" @click="clearFilter">Limpar pesquisa</button>
 			</div>
 
 			<Button

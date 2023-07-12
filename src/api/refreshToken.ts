@@ -16,7 +16,7 @@ export const getNewToken = async (userId: string) => {
 
 		if (res?.status == 200) {
 			const token = res.data.token
-			const refresh_token = res.data.refresh_token
+			const refresh_token = res.data.refreshToken
 
 			setBearerAuthorization(useClient(), token)
 

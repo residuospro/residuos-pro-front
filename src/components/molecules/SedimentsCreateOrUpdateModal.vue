@@ -154,15 +154,3 @@ watch(sediment, () => {
 	}
 })
 </script>
-
-<style>
-/* .v-field__clearable,
-.mdi-close-circle,
-.mdi,
-.v-icon,
-.v-icon--size-default,
-.v-icon--clickable {
-	background: #000 !important;
-	color: #ccc;
-} */
-</style>

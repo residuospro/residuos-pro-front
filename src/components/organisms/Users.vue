@@ -10,6 +10,8 @@
 				">
 				<v-autocomplete
 					v-model="usersSelected"
+					clearable
+					:on-click:clear="userFilterCleaning"
 					:onUpdate:modelValue="selectUser"
 					:items="users"
 					chips
@@ -20,16 +22,14 @@
 
 				<v-autocomplete
 					v-if="hasPermission([AuthorizationUser.ADMIN])"
+					clearable
+					:on-click:clear="userFilterCleaning"
 					v-model="departamentSelected"
 					:onUpdate:modelValue="selectUserByDepartment"
 					:items="departments"
 					chips
 					label="Buscar por departamento">
 				</v-autocomplete>
-
-				<button class="mt-7" @click="userFilterCleaning">
-					Limpar pesquisa
-				</button>
 			</div>
 
 			<Button

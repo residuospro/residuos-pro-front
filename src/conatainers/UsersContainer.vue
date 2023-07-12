@@ -152,49 +152,54 @@ const userFilterCleaning = async () => {
 }
 
 const selectUser = async (username: string) => {
-	showLoading.value = true
+	if (username) {
+		showLoading.value = true
 
-	const res: any = await takeUserByUsername(
-		username,
-		idCompany.value,
-		permission.value
-	)
+		const res: any = await takeUserByUsername(
+			username,
+			idCompany.value,
+			permission.value
+		)
 
-	if (res?.status == 200) {
-		parseUser([res?.data])
+		if (res?.status == 200) {
+			parseUser([res?.data])
 
-		userSelected.value = true
-	} else {
-		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
-		showNotificationModal.value = true
+			userSelected.value = true
+		} else {
+			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+			showNotificationModal.value = true
+		}
+
+		showLoading.value = false
 	}
-
-	showLoading.value = false
 }
 
 const selectUserByDepartment = async (department: string) => {
-	showLoading.value = true
-	const id = idDepartment.value.find((d) => d.name == department)
+	if (department) {
+		showLoading.value = true
+		const id = idDepartment.value.find((d) => d.name == department)
 
-	const res: any = await takeAllUsers(
-		page.value,
-		itemsPerPage.value,
-		idCompany.value,
-		id.id
-	)
+		const res: any = await takeAllUsers(
+			page.value,
+			itemsPerPage.value,
+			idCompany.value,
+			permission.value,
+			id.id
+		)
 
-	if (res?.status == 200 && res?.data.users.length > 0) {
-		parseUser(res?.data.users)
+		if (res?.status == 200 && res?.data.users.length > 0) {
+			parseUser(res?.data.users)
 
-		setTotalPages(res?.data.totalPages)
+			setTotalPages(res?.data.totalPages)
 
-		userSelected.value = true
-	} else {
-		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
-		showNotificationModal.value = true
+			userSelected.value = true
+		} else {
+			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+			showNotificationModal.value = true
+		}
+
+		showLoading.value = false
 	}
-
-	showLoading.value = false
 }
 
 const handleApiResponse = (
@@ -246,11 +251,7 @@ const validateDataToUpdateUser = (user: IUsers) => {
 	let regex = true
 
 	for (const key in user) {
-		if (
-			user[key as keyof IUsers] != "" &&
-			user[key as keyof IUsers] &&
-			key !== "email"
-		) {
+		if (user[key as keyof IUsers] != "" && user[key as keyof IUsers]) {
 			validate.push(key)
 		}
 	}
@@ -258,8 +259,6 @@ const validateDataToUpdateUser = (user: IUsers) => {
 	if (user.email != "") {
 		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email)
 	}
-
-	console.log(validate, regex)
 
 	if (validate.length > 0 && regex) showButton.value = true
 	else if (!regex) showButton.value = false
@@ -359,20 +358,21 @@ const deleteUsers = async () => {
 }
 
 const selectTheDepartmentToCreateTheManager = async (department: string) => {
-	showLoading.value = true
+	if (department) {
+		showLoading.value = true
+		const res: any = await takeDepartmentsByName(department, idCompany.value)
 
-	const res: any = await takeDepartmentsByName(department, idCompany.value)
+		if (res?.status == 200) {
+			departmentInfo.id = res.data._id
 
-	if (res?.status == 200) {
-		departmentInfo.id = res.data._id
+			departmentInfo.name = res.data.name
 
-		departmentInfo.name = res.data.name
+			departmentInfo.ramal = res.data.ramal
 
-		departmentInfo.ramal = res.data.ramal
-
-		showLoading.value = false
-	} else {
-		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+			showLoading.value = false
+		} else {
+			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+		}
 	}
 }
 
@@ -439,6 +439,11 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 			Messages.TITLE_THERE_ARE_NO_RECORDS,
 			Messages.SUBTITLE_THERE_ARE_NO_RECORDS
 		)
+
+		if (res.data.message) {
+			users.value = []
+		}
+
 		showNotificationModal.value = true
 	} else {
 		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)

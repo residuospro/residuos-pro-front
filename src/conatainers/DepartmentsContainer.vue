@@ -165,7 +165,7 @@ const validateDataToUpdateDepartment = (department: IDepartment) => {
 	let regex = true
 
 	for (const key in department) {
-		if (department[key as keyof IDepartment] != "" && key !== "email") {
+		if (department[key as keyof IDepartment] != "") {
 			validate.push(key)
 		}
 	}
@@ -281,6 +281,11 @@ const getDepartmentsByPage = async (page: number, itemsPerPage: number) => {
 			Messages.TITLE_THERE_ARE_NO_RECORDS,
 			Messages.SUBTITLE_THERE_ARE_NO_RECORDS
 		)
+
+		if (res?.data.message) {
+			departments.value = []
+		}
+
 		showNotificationModal.value = true
 	} else {
 		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
@@ -303,20 +308,22 @@ const departmentFilterCleaning = () => {
 }
 
 const selectDepartment = async (department: string) => {
-	showLoading.value = true
+	if (department) {
+		showLoading.value = true
 
-	departmentSelected.value = true
+		departmentSelected.value = true
 
-	const res: any = await takeDepartmentsByName(department, idCompany.value)
+		const res: any = await takeDepartmentsByName(department, idCompany.value)
 
-	if (res?.status == 200) {
-		parseDepartment([res.data])
+		if (res?.status == 200) {
+			parseDepartment([res.data])
 
-		totalPages.value = []
+			totalPages.value = []
 
-		showLoading.value = false
-	} else {
-		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+			showLoading.value = false
+		} else {
+			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+		}
 	}
 }
 
