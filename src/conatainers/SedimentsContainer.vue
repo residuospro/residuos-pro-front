@@ -128,7 +128,7 @@ const openSedimentsModal = (action: string, id?: string) => {
 }
 
 const sedimentsFilterCleaning = () => {
-	console.log("clear ")
+	console.log("clear")
 }
 
 const deleteSediments = () => {
