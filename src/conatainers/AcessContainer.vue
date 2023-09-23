@@ -25,7 +25,6 @@ let validationError = ref(false)
 let showButton = ref(false)
 let showLoading = ref(false)
 let errorMessage = ref("")
-
 let user = reactive({
 	username: "",
 	password: "",
