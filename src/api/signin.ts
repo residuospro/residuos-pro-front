@@ -2,6 +2,7 @@ import {
 	setBearerAuthorization,
 	useClient,
 	setBasicAuthorization,
+	useAuthClient,
 } from "@/clients/AxiosClient"
 import { Routes } from "@/utils/enum"
 import { setIsAuthenticated, setPermission } from "@/utils/permissions"
@@ -10,9 +11,9 @@ export const signin = async (user: any) => {
 	try {
 		const encode = btoa(`${user.username}:${user.password}`)
 
-		setBasicAuthorization(useClient(), encode)
+		setBasicAuthorization(useAuthClient(), encode)
 
-		const res = await useClient().post(Routes.LOGIN)
+		const res = await useAuthClient().post(Routes.LOGIN)
 
 		if (res?.status == 403) {
 			return res
@@ -22,6 +23,7 @@ export const signin = async (user: any) => {
 		const refresh_token = res.data.refreshToken
 
 		setBearerAuthorization(useClient(), token)
+		setBearerAuthorization(useAuthClient(), token)
 
 		const payload: any = await getPayload()
 
@@ -43,7 +45,7 @@ export const signin = async (user: any) => {
 
 export const getPayload = async () => {
 	try {
-		const res = await useClient().get(Routes.PAYLOAD)
+		const res = await useAuthClient().get(Routes.PAYLOAD)
 
 		return res
 	} catch (error: any) {

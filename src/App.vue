@@ -5,12 +5,17 @@
 
 <script setup lang="ts">
 import { isAuthenticated } from "./utils/permissions"
-import { setBearerAuthorization, useClient } from "./clients/AxiosClient"
+import {
+	setBearerAuthorization,
+	useAuthClient,
+	useClient,
+} from "./clients/AxiosClient"
 
 const token = isAuthenticated()
 
 if (token.length > 0) {
 	setBearerAuthorization(useClient(), token)
+	setBearerAuthorization(useAuthClient(), token)
 }
 </script>
 

@@ -1,6 +1,6 @@
 export enum Routes {
-	LOGIN = "/login",
-	PAYLOAD = "/payload",
+	LOGIN = "/api/login",
+	PAYLOAD = "/api/payload",
 	CREATE_DEPARTMENT = "/department/save",
 	GET_ALL_DEPARTMENT = "/department",
 	GET_DEPARTMENT_BY_PAGE = "/department/pagineted",

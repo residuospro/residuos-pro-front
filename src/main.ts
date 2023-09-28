@@ -10,7 +10,7 @@ import { createVuetify } from "vuetify"
 import * as components from "vuetify/components"
 import * as directives from "vuetify/directives"
 
-setupClient(process.env.VUE_APP_BACK)
+setupClient(process.env.VUE_APP_BACK, process.env.VUE_APP_AUTH)
 
 const vuetify = createVuetify({
 	components,

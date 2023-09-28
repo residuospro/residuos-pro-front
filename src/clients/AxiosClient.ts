@@ -2,10 +2,21 @@ import axios, { AxiosInstance } from "axios"
 import { interceptors } from "./Interceptors"
 
 let restClient: AxiosInstance
+let authClient: AxiosInstance
 
-export const setupClient = (baseUrl: string | undefined) => {
+export const setupClient = (
+	baseUrl: string | undefined,
+	authUrl: string | undefined
+) => {
 	restClient = axios.create({
 		baseURL: baseUrl,
+		validateStatus(status) {
+			return status < 500
+		},
+	})
+
+	authClient = axios.create({
+		baseURL: authUrl,
 		validateStatus(status) {
 			return status < 500
 		},
@@ -17,6 +28,16 @@ export const setupClient = (baseUrl: string | undefined) => {
 	)
 
 	restClient.interceptors.response.use(
+		interceptors.handleResponse,
+		interceptors.handleError
+	)
+
+	authClient.interceptors.request.use(
+		interceptors.handleRequest,
+		interceptors.handleError
+	)
+
+	authClient.interceptors.response.use(
 		interceptors.handleResponse,
 		interceptors.handleError
 	)
@@ -41,3 +62,4 @@ export const setContentType = (client: AxiosInstance) => {
 }
 
 export const useClient = () => restClient
+export const useAuthClient = () => authClient
