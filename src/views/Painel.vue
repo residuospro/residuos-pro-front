@@ -26,9 +26,12 @@ const getUserInfo = async () => {
 	const payload = await getPayload()
 
 	userIdStore.setUserId(payload.data.userId)
-	idCompanyStore.setIdCompany(payload.data.company)
+	idCompanyStore.setIdCompany(payload.data.idCompany)
+	console.log("fora", payload.data)
 
 	if (payload.data.idDepartment) {
+		console.log("aqui")
+
 		const config = {
 			name: payload.data.department,
 			ramal: payload.data.ramal,

@@ -8,7 +8,7 @@ export enum Routes {
 	DELETE_DEPARTMENT = "/department/",
 	UPDATE_DEPARTMENT = "/department/update/",
 	GET_ALL_USERS = "/users",
-	SAVE_USER = "/user/save",
+	SAVE_USER = "/api/user/save",
 	GET_ALL_USERNAMES = "/user/all",
 	GET_USER_BY_USERNAME = "/user/by-username",
 	UPDATE_USER = "/user/update/",

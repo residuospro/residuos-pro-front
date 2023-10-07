@@ -8,19 +8,11 @@
 
 				<div
 					class="flex flex-wrap w-full justify-between min-h-[8rem] mt-2 relative space-y-3">
-					<div class="space-x-6">
-						<Input
-							input="input"
-							placeholder="Username:"
-							:class="user.username !== '' ? ' bg-white' : ''"
-							@input="(value: string) => user.username = value" />
-
-						<Input
-							input="input"
-							placeholder="Email:"
-							:class="user.email !== '' ? 'bg-white' : ''"
-							@input="(value: string) => user.email = value" />
-					</div>
+					<Input
+						input="input"
+						placeholder="Email:"
+						:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
+						@input="(value: string) => user.email = value" />
 
 					<Input
 						input="input"

@@ -18,7 +18,7 @@
 				v-for="(_, index) in items.slice(0, perPage)"
 				:id="String(index + start)"
 				:style="
-					id === Number(index) + start
+					page === Number(index) + start
 						? 'background: #77ab59; color: #fff'
 						: 'background: #fff; color: #9d9797'
 				"
@@ -54,16 +54,15 @@ import Button from "../atoms/Button.vue"
 let props = defineProps({
 	pageCount: { type: Number, required: true },
 	items: { type: Array as PropType<number[]>, required: true },
+	currentPage: { type: Number, required: true },
 })
 
-let page = ref(1)
-let id = ref(0)
+let page = ref(props.currentPage)
 let perPage = ref(4)
 let start = ref(1)
 const emit = defineEmits(["paginate"])
 
 const count = (value: number) => {
-	id.value = value
 	page.value = value
 	emit("paginate", page.value, "pagination")
 }
@@ -75,7 +74,6 @@ const next = () => {
 	if (page.value < maxPage.value) {
 		page.value++
 		emit("paginate", page.value, "pagination")
-		id = page
 	}
 
 	if (page.value > btn) {
@@ -94,7 +92,6 @@ const previous = () => {
 	if (page.value > 1) {
 		page.value--
 		emit("paginate", page.value, "pagination")
-		id = page
 
 		if (page.value < btn) {
 			start.value--
@@ -111,14 +108,11 @@ const plus = () => {
 	if (increment > maxPage.value) {
 		start.value = maxPage.value
 		page.value = maxPage.value
-		id.value = maxPage.value
 	} else if (increment === maxPage.value) {
 		page.value = increment
-		id.value = increment
 	} else {
 		start.value += 4
 		page.value = Number(firstBtn) + 4
-		id = page
 	}
 }
 
@@ -129,7 +123,6 @@ const less = () => {
 	if (page.value >= 5) {
 		start.value -= 4
 		page.value = Number(firstBtn) - 4
-		id = page
 
 		if (start.value <= 0 && page.value <= 0) {
 			start.value = 1
@@ -137,8 +130,4 @@ const less = () => {
 		}
 	}
 }
-
-watchEffect(() => {
-	id = page
-})
 </script>

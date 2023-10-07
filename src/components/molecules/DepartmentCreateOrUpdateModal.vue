@@ -2,47 +2,52 @@
 	<Container type="backgroundContainer">
 		<Container type="modalContainer">
 			<Container type="actionsModalContainer">
-				<Typograph type="H2" class="text-v_medium_gray">
-					{{ typeAction }} departamento
-				</Typograph>
+				<form
+					@submit.prevent="createOrUpdateDepartment(department, typeAction)">
+					<Typograph type="H2" class="text-v_medium_gray">
+						{{ typeAction }} departamento
+					</Typograph>
 
-				<div class="flex flex-wrap w-full justify-between h-36 mt-2">
-					<Input
-						input="input"
-						placeholder="Departamento:"
-						:class="department.name !== '' ? 'bg-white' : ''"
-						@input="(value: string) => department.name = value" />
-					<Input
-						input="input"
-						placeholder="Responsável:"
-						:class="department.responsible !== '' ? 'bg-white' : ''"
-						@input="(value: string) => department.responsible = value" />
-					<Input
-						input="input"
-						type="number"
-						placeholder="Ramal:"
-						:class="department.ramal !== '' ? 'bg-white' : ''"
-						@input="(value: number) => department.ramal = String(value)" />
-					<Input
-						input="input"
-						placeholder="Email:"
-						:class="department.email !== '' ? 'bg-white' : ''"
-						@input="(value: string) => department.email = value" />
-				</div>
+					<div class="flex flex-wrap w-full justify-between h-36 mt-2">
+						<Input
+							input="input"
+							placeholder="Departamento:"
+							:class="department.name !== '' ? 'bg-white' : ''"
+							@input="(value: string) => department.name = value" />
+						<Input
+							input="input"
+							placeholder="Responsável:"
+							:class="department.responsible !== '' ? 'bg-white' : ''"
+							@input="(value: string) => department.responsible = value" />
+						<Input
+							input="input"
+							type="number"
+							placeholder="Ramal:"
+							:class="department.ramal !== '' ? 'bg-white' : ''"
+							@input="(value: number) => department.ramal = String(value)" />
+						<Input
+							input="input"
+							placeholder="Email:"
+							:class="department.email !== '' ? 'bg-white' : ''"
+							@input="(value: string) => department.email = value" />
+					</div>
 
-				<div class="flex justify-end w-full space-x-5 mt-2">
-					<Button buttonType="closeButton" @click="closeDepartmentModal">
-						Cancelar
-					</Button>
+					<div class="flex justify-end w-full space-x-5 mt-2">
+						<Button
+							buttonType="confirmButton"
+							:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
+							:disabled="!showButton"
+							type="submit">
+							<p class="text-white">{{ typeAction }}</p>
+						</Button>
 
-					<Button
-						buttonType="confirmButton"
-						:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
-						:disabled="!showButton"
-						@click="createOrUpdateDepartment(department, typeAction)">
-						<p class="text-white">{{ typeAction }}</p>
-					</Button>
-				</div>
+						<Button
+							buttonType="closeButton"
+							@click.prevent="closeDepartmentModal">
+							Cancelar
+						</Button>
+					</div>
+				</form>
 			</Container>
 		</Container>
 	</Container>
@@ -70,10 +75,12 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
+
 	closeDepartmentModal: {
-		type: Function as any as () => (event: MouseEvent) => void,
+		type: Function as PropType<(event: Event) => void>,
 		required: true,
 	},
+
 	createOrUpdateDepartment: {
 		type: Function as PropType<
 			(department: IDepartment, action: string) => void

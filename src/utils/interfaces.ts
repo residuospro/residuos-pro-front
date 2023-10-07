@@ -9,6 +9,7 @@ export interface IDepartment {
 	ramal: string
 	email: string
 	idCompany?: string
+	id?: string
 }
 
 export interface IUsers {

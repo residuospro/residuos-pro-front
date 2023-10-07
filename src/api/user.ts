@@ -1,4 +1,4 @@
-import { useClient } from "@/clients/AxiosClient"
+import { useAuthClient } from "@/clients/AxiosClient"
 import { AuthorizationUser, Routes } from "@/utils/enum"
 import { IUsers } from "@/utils/interfaces"
 
@@ -13,9 +13,10 @@ export const createUser = async (user: IUsers, permission: string[]) => {
 			ramal: user.ramal,
 			role: permission,
 			idCompany: user.idCompany,
+			service: "Residuos-Pro",
 		}
 
-		const res = await useClient().post(Routes.SAVE_USER, data)
+		const res = await useAuthClient().post(Routes.SAVE_USER, data)
 
 		return res
 	} catch (error) {
@@ -47,7 +48,7 @@ export const takeAllUsers = async (
 			data = { ...data, idDepartment }
 		}
 
-		const res = await useClient().post(Routes.GET_ALL_USERS, data)
+		const res = await useAuthClient().post(Routes.GET_ALL_USERS, data)
 
 		return res
 	} catch (error) {
@@ -76,7 +77,7 @@ export const takeAllUsernames = async (
 			data = { ...data, idDepartment }
 		}
 
-		const res = await useClient().post(Routes.GET_ALL_USERNAMES, data)
+		const res = await useAuthClient().post(Routes.GET_ALL_USERNAMES, data)
 
 		return res
 	} catch (error) {
@@ -101,7 +102,7 @@ export const takeUserByUsername = async (
 			data = { ...data, role: [AuthorizationUser.COLLABORATOR] }
 		}
 
-		const res = await useClient().post(Routes.GET_USER_BY_USERNAME, data)
+		const res = await useAuthClient().post(Routes.GET_USER_BY_USERNAME, data)
 
 		return res
 	} catch (error) {
@@ -122,7 +123,7 @@ export const updateUser = async (user: IUsers, id: string) => {
 			}
 		}
 
-		const res = await useClient().put(`${Routes.UPDATE_USER}${id}`, data)
+		const res = await useAuthClient().put(`${Routes.UPDATE_USER}${id}`, data)
 
 		return res
 	} catch (error) {
@@ -132,7 +133,7 @@ export const updateUser = async (user: IUsers, id: string) => {
 
 export const deleteUser = async (userId: string) => {
 	try {
-		const res = await useClient().delete(`${Routes.DELETE_USER}${userId}`)
+		const res = await useAuthClient().delete(`${Routes.DELETE_USER}${userId}`)
 
 		return res
 	} catch (error) {

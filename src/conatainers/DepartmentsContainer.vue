@@ -4,7 +4,7 @@
 	<Notification
 		:title="title"
 		:subTitle="subTitle"
-		@closeModal="(value: boolean) => showNotificationModal = value"
+		@closeModal="closeModal"
 		v-if="showNotificationModal" />
 
 	<DepartmentModal
@@ -13,7 +13,7 @@
 		:validateDataToUpdateDepartment="validateDataToUpdateDepartment"
 		:validateDataToCreateDepartment="validateDataToCreateDepartment"
 		:typeAction="typeAction"
-		:closeDepartmentModal="() => (showDepartmentModal = false)"
+		:closeDepartmentModal="closeDepartmentModal"
 		:create-or-update-department="createOrUpdateDepartment" />
 
 	<DeleteModal
@@ -28,6 +28,7 @@
 		:content="departments"
 		:departments="departmentsName"
 		:headers="headers"
+		:itemsPerPage="Number(itemsPerPage)"
 		:showDeleteModal="openDeleteModal"
 		:selectDepartment="selectDepartment"
 		:departmentFilterCleaning="departmentFilterCleaning"
@@ -36,12 +37,12 @@
 	<div
 		class="flex justify-between items-center ml-10 w-full"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" :key="itemsPerPageKey" />
+		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
 
 		<Pagination
 			:pageCount="totalPages.length"
-			:key="paginationKey"
 			:items="totalPages"
+			:current-page="page"
 			@paginate="setPagination" />
 	</div>
 </template>
@@ -85,8 +86,6 @@ let departments = ref<IDepartment[]>([])
 let departmentsName = ref<string[]>([])
 let totalPages = ref<number[]>([])
 let departmentSelected = ref(false)
-let paginationKey = ref(0)
-let itemsPerPageKey = ref(0)
 let idCompany = ref("")
 
 const headers = ["Departamento", "Responsável", "Ramal", "Email"]
@@ -107,14 +106,6 @@ const setItemsPerPage = (value: number) => {
 	}
 }
 
-const resetPaginationAndItemsPerPage = () => {
-	page.value = 1
-	itemsPerPage.value = 10
-
-	paginationKey.value = new Date().getMilliseconds()
-	itemsPerPageKey.value = new Date().getMilliseconds()
-}
-
 const openDeleteModal = (id: string) => {
 	idDepartment.value = id
 	showDeleteModal.value = true
@@ -126,23 +117,20 @@ const openDepartmentModal = (action: string, id?: string) => {
 	idDepartment.value = id
 }
 
-const handleApiResponse = (
-	titleResponse: string,
-	subtitleResponse: string,
-	status?: number
-) => {
+const closeDepartmentModal = (event: Event) => {
+	event.stopPropagation()
+	showDepartmentModal.value = false
+}
+
+const closeModal = () => {
+	getAllDepartment()
+
+	showNotificationModal.value = false
+}
+
+const handleApiResponse = (titleResponse: string, subtitleResponse: string) => {
 	title.value = titleResponse
 	subTitle.value = subtitleResponse
-
-	if (status == 201 || status == 200) {
-		resetPaginationAndItemsPerPage()
-
-		getDepartmentsByPage(page.value, itemsPerPage.value)
-
-		getAllDepartment()
-	} else {
-		showLoading.value = false
-	}
 }
 
 const validateDataToCreateDepartment = (department: IDepartment) => {
@@ -199,9 +187,10 @@ const updateDepartments = async (departament: IDepartment) => {
 	if (res?.status == 201) {
 		handleApiResponse(
 			Messages.TITLE_UPDATE_REGISTER,
-			Messages.SUBTITLE_UPDATE_REGISTER,
-			201
+			Messages.SUBTITLE_UPDATE_REGISTER
 		)
+
+		parseUpdateDepartment([res?.data])
 	} else if (res?.status == 409) {
 		handleApiResponse(
 			Messages.TITLE_ERROR_UPDATE_REGISTER,
@@ -214,15 +203,18 @@ const updateDepartments = async (departament: IDepartment) => {
 		)
 	}
 
-	showDepartmentModal.value = false
-	showNotificationModal.value = true
+	changeVariableState()
 }
 
 const createDepartments = async (department: IDepartment) => {
 	const res: any = await createDepartment(department, idCompany.value)
 
 	if (res?.status == 201) {
-		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER, 201)
+		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER)
+
+		parseDepartment([res?.data.department], Actions.SAVE)
+
+		setTotalPages(res?.data.totalPages)
 	} else if (res?.status == 409) {
 		handleApiResponse(
 			Messages.TITLE_ERROR_REGISTER,
@@ -235,8 +227,7 @@ const createDepartments = async (department: IDepartment) => {
 		)
 	}
 
-	showDepartmentModal.value = false
-	showNotificationModal.value = true
+	changeVariableState()
 }
 
 const deleteDepartment = async () => {
@@ -244,12 +235,13 @@ const deleteDepartment = async () => {
 
 	const res: any = await deleteDepartments(idDepartment.value)
 
-	if (res?.status == 200) {
+	if (res?.status == 204) {
 		handleApiResponse(
 			Messages.TITLE_DELETE_REGISTER,
-			Messages.SUBTITLE_DELETE_REGISTER,
-			200
+			Messages.SUBTITLE_DELETE_REGISTER
 		)
+
+		removeDepartmentFromArray()
 	} else {
 		handleApiResponse(
 			Messages.TITLE_ERROR_DELETE_REGISTER,
@@ -257,40 +249,46 @@ const deleteDepartment = async () => {
 		)
 	}
 
-	showDeleteModal.value = false
-	showNotificationModal.value = true
+	changeVariableState()
 }
 
-const getDepartmentsByPage = async (page: number, itemsPerPage: number) => {
+const changeVariableState = () => {
+	showDeleteModal.value = false
+	showNotificationModal.value = true
+
+	showDepartmentModal.value = false
+	showLoading.value = false
+	showButton.value = false
+}
+
+const getDepartmentsByPage = async (
+	currentPage: number,
+	itemsPerPage: number
+) => {
 	showLoading.value = true
 
+	departments.value = []
+
 	const res: any = await takeDepartmentsByPage(
-		page,
+		currentPage,
 		itemsPerPage,
 		idCompany.value
 	)
 
 	if (res?.status == 200) {
-		parseDepartment(res?.data.departments)
+		parseDepartment(res?.data.departments, Actions.SAVE)
 
 		setTotalPages(res?.data.totalPages)
-
-		showLoading.value = false
 	} else if (res?.status == 404) {
-		handleApiResponse(
-			Messages.TITLE_THERE_ARE_NO_RECORDS,
-			Messages.SUBTITLE_THERE_ARE_NO_RECORDS
-		)
-
 		if (res?.data.message) {
 			departments.value = []
 		}
-
-		showNotificationModal.value = true
 	} else {
 		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
 		showNotificationModal.value = true
 	}
+
+	showLoading.value = false
 }
 
 const getAllDepartment = async () => {
@@ -302,6 +300,7 @@ const getAllDepartment = async () => {
 
 const departmentFilterCleaning = () => {
 	if (departmentSelected.value) {
+		departments.value = []
 		getDepartmentsByPage(page.value, itemsPerPage.value)
 		departmentSelected.value = false
 	}
@@ -316,6 +315,8 @@ const selectDepartment = async (department: string) => {
 		const res: any = await takeDepartmentsByName(department, idCompany.value)
 
 		if (res?.status == 200) {
+			departments.value = []
+
 			parseDepartment([res.data])
 
 			totalPages.value = []
@@ -335,8 +336,8 @@ const setTotalPages = (pages: number) => {
 	}
 }
 
-const parseDepartment = (data: any[]) => {
-	departments.value = data.map((d) => {
+const parseDepartment = (data: any[], typeAction?: string): IDepartment => {
+	const parsedData = data.map((d) => {
 		return {
 			name: d.name,
 			responsible: d.responsible,
@@ -346,13 +347,35 @@ const parseDepartment = (data: any[]) => {
 			idCompany: d.idCompany,
 		}
 	})
+
+	if (typeAction == Actions.SAVE) {
+		departments.value = [...departments.value, ...parsedData]
+	}
+
+	return parsedData[0]
+}
+
+const parseUpdateDepartment = (data: any[]) => {
+	const updateDepartment = departments.value.find((d) => d.name == data[0].name)
+
+	if (updateDepartment) {
+		const index = departments.value.indexOf(updateDepartment)
+
+		departments.value[index] = parseDepartment(data)
+	}
+}
+
+const removeDepartmentFromArray = () => {
+	departments.value = departments.value.filter(
+		(d) => d.id != idDepartment.value
+	)
 }
 
 const getIdCompany = async () => {
 	idCompany.value = idCompanyStore.getIdCompany
 
-	getDepartmentsByPage(page.value, itemsPerPage.value)
-	getAllDepartment()
+	await getDepartmentsByPage(page.value, itemsPerPage.value)
+	await getAllDepartment()
 }
 
 onMounted(() => {

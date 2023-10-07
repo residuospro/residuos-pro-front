@@ -234,10 +234,10 @@ const validateDataToCreateUser = (user: IUsers) => {
 		}
 	}
 
-	if (validate.length == 4 && hasPermission([AuthorizationUser.ADMIN])) {
+	if (validate.length == 3 && hasPermission([AuthorizationUser.ADMIN])) {
 		showButton.value = true
 	} else if (
-		validate.length == 3 &&
+		validate.length == 2 &&
 		hasPermission([AuthorizationUser.MANAGER])
 	) {
 		showButton.value = true

@@ -88,4 +88,3 @@ const login = async () => {
 	showLoading.value = false
 }
 </script>
-@/store/setUserId

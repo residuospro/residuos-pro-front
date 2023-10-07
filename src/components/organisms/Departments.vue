@@ -29,8 +29,10 @@
 				<Typograph type="H3">Ajustar</Typograph>
 			</Container>
 
-			<div class="min-h-[28rem] bg-transparent">
-				<div v-for="(items, index) in content" :key="items.id">
+			<div class="min-h-[28rem] bg-transparent relative">
+				<div
+					v-for="(items, index) in content.slice(0, itemsPerPage)"
+					:key="items.id">
 					<Container
 						type="departmentContent"
 						:class="index % 2 == 0 && 'bg-v_white_one'">
@@ -70,6 +72,11 @@
 
 					<hr className=" border-[1px] w-full" />
 				</div>
+				<p
+					class="text-v_medium_gray absolute top-[12rem] w-full text-center"
+					v-if="content.length == 0">
+					Não há registros, crie o seu primeiro departamento!
+				</p>
 			</div>
 		</Container>
 	</div>
@@ -85,6 +92,8 @@ import { PropType, ref, computed } from "vue"
 import { Actions } from "@/utils/enum"
 
 const props = defineProps({
+	itemsPerPage: { type: Number, required: true },
+
 	headers: { type: Array as PropType<string[]>, required: true },
 
 	departments: { type: Array as PropType<string[]>, required: true },

@@ -19,6 +19,8 @@ export const setDepartment = defineStore("setDepartment", {
 	},
 	actions: {
 		setIdDepartment(details: IUserDepartmentInfo) {
+			console.log("d", details)
+
 			this.department = { ...details }
 		},
 	},
