@@ -148,14 +148,17 @@ const containerClass = computed(() => {
 				`,
 
 				departmentContent: `
-					grid
-					grid-cols-[27%_26%_20%_23%_5%]
+					items-center
+					justify-between
+					flex
 					h-12 
 					px-6
 					w-full
-					items-center
+					
 					font-[700]
 					text-black
+					text-left
+					bg-[#ccc]
 				`,
 
 				userContent: `

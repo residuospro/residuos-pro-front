@@ -40,69 +40,82 @@
 			</Button>
 		</div>
 
-		<Container type="dataTableContainer">
-			<Container type="headersContainer" class="text-white">
-				<Typograph type="H3" v-for="(items, index) in headers" :key="index">
-					{{ items }}
-				</Typograph>
+		<div class="glass-effect rounded-md min-h-[30rem]">
+			<table>
+				<thead>
+					<tr>
+						<th v-for="(items, index) in headers" :key="index">
+							{{ items }}
+						</th>
 
-				<Typograph type="H3">Ajustar</Typograph>
-			</Container>
+						<th type="H3">Ajustar</th>
+					</tr>
+				</thead>
 
-			<div class="min-h-[28rem] bg-transparent">
-				<div v-for="(items, index) in content" :key="items.id">
-					<Container
-						type="userContent"
-						:class="index % 2 == 0 && 'bg-v_white_one'">
-						<h1>{{ items.name }}</h1>
+				<tbody style="height: auto">
+					<tr
+						v-for="(items, index) in content"
+						:key="items.id"
+						class="font-medium">
+						<td :class="setTableBackground(index)">
+							{{ items.name }}
+						</td>
 
-						<h1>{{ items.username }}</h1>
+						<td
+							v-if="items.username == undefined"
+							:class="setTableBackground(index)">
+							---
+						</td>
 
-						<div class="relative">
-							<h1 class="overflow w-36">{{ items.email }}</h1>
-						</div>
+						<td v-else :class="setTableBackground(index)">
+							{{ items.username }}
+						</td>
 
-						<div class="relative">
-							<h1 class="overflow w-[13rem]">{{ items.department }}</h1>
-						</div>
+						<td :class="setTableBackground(index)">
+							{{ items.email }}
+						</td>
 
-						<h1>{{ items.ramal }}</h1>
+						<td :class="setTableBackground(index)">
+							{{ items.department }}
+						</td>
 
-						<v-menu transition="slide-y-transition">
-							<template v-slot:activator="{ props }">
-								<button v-bind="props">
-									<v-icon icon="mdi-pencil-box-outline" class="" />
-								</button>
-							</template>
+						<td :class="setTableBackground(index)">
+							{{ items.ramal }}
+						</td>
 
-							<v-list>
-								<v-list-item>
-									<button @click="openUserModal(Actions.UPDATE, items.id)">
-										Atualizar
+						<td :class="setTableBackground(index)">
+							<v-menu transition="slide-y-transition">
+								<template v-slot:activator="{ props }">
+									<button v-bind="props">
+										<v-icon icon="mdi-pencil-box-outline" class="" />
 									</button>
-								</v-list-item>
+								</template>
 
-								<v-list-item>
-									<button @click="showDeleteModal(items.id)">Deletar</button>
-								</v-list-item>
-							</v-list>
-						</v-menu>
-					</Container>
+								<v-list>
+									<v-list-item>
+										<button @click="openUserModal(Actions.UPDATE, items.id)">
+											Atualizar
+										</button>
+									</v-list-item>
 
-					<hr className=" border-[1px] w-full" />
-				</div>
-			</div>
-		</Container>
+									<v-list-item>
+										<button @click="showDeleteModal(items.id)">Deletar</button>
+									</v-list-item>
+								</v-list>
+							</v-menu>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
 import { useHead } from "@vueuse/head"
-import Container from "../atoms/Container.vue"
-import Typograph from "../atoms/Typograph.vue"
 import Button from "../atoms/Button.vue"
-import { PropType, computed, ref } from "vue"
+import { PropType, computed, ref, onMounted } from "vue"
 import { IUsers } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
@@ -129,6 +142,11 @@ let props = defineProps({
 
 	selectUser: {
 		type: Function as PropType<(user: string) => void>,
+		required: true,
+	},
+
+	setTableBackground: {
+		type: Function as PropType<(index: number) => string>,
 		required: true,
 	},
 
@@ -177,6 +195,32 @@ useHead({
 </script>
 
 <style>
+table {
+	border-collapse: collapse;
+	border-top-right-radius: 8rem;
+	width: 100%;
+}
+
+th,
+td {
+	text-align: left;
+	padding: 0 2rem;
+}
+
+th {
+	background-color: #77ab59;
+	color: #fff;
+	height: 3rem;
+}
+
+tbody td {
+	line-height: 3;
+}
+
+tr:first-child {
+	border-bottom-left-radius: 1.5rem;
+}
+
 .overflow {
 	overflow: hidden;
 	-ms-text-overflow: ellipsis;
@@ -204,5 +248,13 @@ useHead({
 	height: v-bind(autocompleteHeight);
 	color: #606060;
 	font-weight: bold;
+}
+
+.glass-effect {
+	background: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(13.5px);
+	border: 1px solid rgba(255, 255, 255, 0.18);
 }
 </style>

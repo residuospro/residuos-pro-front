@@ -31,6 +31,7 @@
 		:content="users"
 		:users="usernames"
 		:departments="nameDepartments"
+		:setTableBackground="setTableBackground"
 		:show-delete-modal="openDeleteModal"
 		:open-user-modal="openUserModal"
 		:selectUserByDepartment="selectUserByDepartment"
@@ -489,6 +490,14 @@ const loadsAllUsersAndTheirInfo = () => {
 	}
 
 	getAllUsernames()
+}
+
+const setTableBackground = (index: number) => {
+	if (index % 2 == 0) {
+		return "bg-v_white_one"
+	}
+
+	return ""
 }
 
 onMounted(() => {

@@ -68,6 +68,7 @@ import Notification from "@/components/molecules/Notification.vue"
 import { Actions, Messages } from "@/utils/enum"
 import { onMounted } from "vue"
 import { setIdCompany } from "@/store/setIdCompany"
+import { getPermission } from "@/utils/permissions"
 
 const idCompanyStore = setIdCompany()
 
@@ -83,6 +84,7 @@ let subTitle = ref("")
 let page = ref(1)
 let itemsPerPage = ref(10)
 let departments = ref<IDepartment[]>([])
+let permission = ref<string[]>([])
 let departmentsName = ref<string[]>([])
 let totalPages = ref<number[]>([])
 let departmentSelected = ref(false)
@@ -241,7 +243,7 @@ const deleteDepartment = async () => {
 			Messages.SUBTITLE_DELETE_REGISTER
 		)
 
-		removeDepartmentFromArray()
+		getAllDepartment()
 	} else {
 		handleApiResponse(
 			Messages.TITLE_ERROR_DELETE_REGISTER,
@@ -317,14 +319,14 @@ const selectDepartment = async (department: string) => {
 		if (res?.status == 200) {
 			departments.value = []
 
-			parseDepartment([res.data])
+			parseDepartment([res.data], Actions.SAVE)
 
 			totalPages.value = []
-
-			showLoading.value = false
 		} else {
 			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
 		}
+
+		showLoading.value = false
 	}
 }
 
@@ -379,6 +381,8 @@ const getIdCompany = async () => {
 }
 
 onMounted(() => {
+	permission.value = getPermission()
+
 	getIdCompany()
 })
 </script>

@@ -14,17 +14,20 @@
 							placeholder="Departamento:"
 							:class="department.name !== '' ? 'bg-white' : ''"
 							@input="(value: string) => department.name = value" />
-						<Input
-							input="input"
-							placeholder="Responsável:"
-							:class="department.responsible !== '' ? 'bg-white' : ''"
-							@input="(value: string) => department.responsible = value" />
+
 						<Input
 							input="input"
 							type="number"
 							placeholder="Ramal:"
 							:class="department.ramal !== '' ? 'bg-white' : ''"
 							@input="(value: number) => department.ramal = String(value)" />
+
+						<Input
+							input="input"
+							placeholder="Responsável:"
+							:class="department.responsible !== '' ? 'bg-white' : ''"
+							@input="(value: string) => department.responsible = value" />
+
 						<Input
 							input="input"
 							placeholder="Email:"
