@@ -9,15 +9,15 @@
 				<Typograph type="Paragraph">{{ subTitle }}</Typograph>
 
 				<div class="flex items-center space-x-5 mt-3">
-					<Button buttonType="closeButton" @click="closeDeleteModal">
-						Não
-					</Button>
-
 					<Button
 						buttonType="confirmButton"
 						class="text-white bg-v_green"
 						@click="deleteFunction">
 						Sim
+					</Button>
+
+					<Button buttonType="closeButton" @click="closeDeleteModal">
+						Não
 					</Button>
 				</div>
 			</Container>

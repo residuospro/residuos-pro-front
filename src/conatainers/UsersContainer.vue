@@ -31,7 +31,6 @@
 		:content="users"
 		:users="usernames"
 		:departments="nameDepartments"
-		:setTableBackground="setTableBackground"
 		:show-delete-modal="openDeleteModal"
 		:open-user-modal="openUserModal"
 		:selectUserByDepartment="selectUserByDepartment"
@@ -41,10 +40,10 @@
 	<div
 		class="flex justify-between items-center ml-10 w-full"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" :key="itemsPerPageKey" />
+		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
 
 		<Pagination
-			:key="paginationKey"
+			:current-page="page"
 			:pageCount="totalPages.length"
 			:items="totalPages"
 			@paginate="setPagination" />
@@ -60,23 +59,26 @@ import Pagination from "@/components/molecules/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import UserModal from "@/components/molecules/UserCreateOrUpdateModal.vue"
-import { IUsers } from "@/utils/interfaces"
+import { IDepartment, IMessage, IUsers } from "@/utils/interfaces"
 import { onMounted, reactive, ref } from "vue"
 import { Actions, AuthorizationUser, Messages } from "@/utils/enum"
-import { takeAllDepartments, takeDepartmentsByName } from "@/api/department"
+import { takeAllDepartments } from "@/api/department"
 import { setIdCompany } from "@/store/setIdCompany"
 import { setDepartment } from "@/store/setDepartment"
 import {
 	createUser,
 	takeAllUsers,
 	takeAllUsernames,
-	takeUserByUsername,
 	updateUser,
 	deleteUser,
 } from "@/api/user"
 import { getPermission, hasPermission } from "@/utils/permissions"
+import useProps from "../context/useProps"
+
+const { parseDepartment } = useProps()
 
 const idCompanyStore = setIdCompany()
+
 const departmentStore = setDepartment()
 
 const headers = ["Nome", "Username", "Email", "Departamento", "Ramal"]
@@ -102,14 +104,16 @@ let idDepartment = ref<any[]>([])
 let userSelected = ref(false)
 let idCompany = ref("")
 let userId = ref()
-let paginationKey = ref(0)
-let itemsPerPageKey = ref(0)
+let departments = ref<IDepartment[]>([])
 let userDepartment = ref("")
 let permission = ref<string[]>([])
-let departmentInfo = reactive({
+let departmentInfo = reactive<IDepartment>({
 	name: "",
-	id: "",
+	responsible: "",
 	ramal: "",
+	id: "",
+	email: "",
+	idCompany: "",
 })
 
 const setPagination = (currentPage: number) => {
@@ -124,14 +128,6 @@ const setItemsPerPage = (value: number) => {
 		itemsPerPage.value = value
 		getAllUsersByPage(page.value, value)
 	}
-}
-
-const resetPaginationAndItemsPerPage = () => {
-	page.value = 1
-	itemsPerPage.value = 10
-
-	paginationKey.value = new Date().getMilliseconds()
-	itemsPerPageKey.value = new Date().getMilliseconds()
 }
 
 const openUserModal = (action: string, id?: string) => {
@@ -153,75 +149,26 @@ const userFilterCleaning = async () => {
 }
 
 const selectUser = async (username: string) => {
-	if (username) {
-		showLoading.value = true
+	const user = users.value.filter(
+		(d) => d.username == username || d.email == username
+	)
 
-		const res: any = await takeUserByUsername(
-			username,
-			idCompany.value,
-			permission.value
-		)
+	userSelected.value = true
 
-		if (res?.status == 200) {
-			parseUser([res?.data])
-
-			userSelected.value = true
-		} else {
-			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
-			showNotificationModal.value = true
-		}
-
-		showLoading.value = false
-	}
+	parseUser(user)
 }
 
 const selectUserByDepartment = async (department: string) => {
-	if (department) {
-		showLoading.value = true
-		const id = idDepartment.value.find((d) => d.name == department)
+	const byDepartment = users.value.filter((d) => d.department == department)
 
-		const res: any = await takeAllUsers(
-			page.value,
-			itemsPerPage.value,
-			idCompany.value,
-			permission.value,
-			id.id
-		)
+	parseUser(byDepartment)
 
-		if (res?.status == 200 && res?.data.users.length > 0) {
-			parseUser(res?.data.users)
-
-			setTotalPages(res?.data.totalPages)
-
-			userSelected.value = true
-		} else {
-			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
-			showNotificationModal.value = true
-		}
-
-		showLoading.value = false
-	}
+	userSelected.value = true
 }
 
-const handleApiResponse = (
-	titleResponse: string,
-	subtitleResponse: string,
-	status?: number
-) => {
-	title.value = titleResponse
-	subTitle.value = subtitleResponse
-
-	if (status == 201 || status == 200) {
-		resetPaginationAndItemsPerPage()
-
-		getAllUsersByPage(page.value, itemsPerPage.value)
-
-		getAllDepartment()
-
-		getAllUsernames()
-	} else {
-		showLoading.value = false
-	}
+const handleApiResponse = (message: IMessage) => {
+	title.value = message.title
+	subTitle.value = message.subTitle
 }
 
 const validateDataToCreateUser = (user: IUsers) => {
@@ -359,39 +306,25 @@ const deleteUsers = async () => {
 }
 
 const selectTheDepartmentToCreateTheManager = async (department: string) => {
-	if (department) {
-		showLoading.value = true
-		const res: any = await takeDepartmentsByName(department, idCompany.value)
+	const departmentMatch = departments.value.find((d) => d.name === department)
 
-		if (res?.status == 200) {
-			departmentInfo.id = res.data._id
-
-			departmentInfo.name = res.data.name
-
-			departmentInfo.ramal = res.data.ramal
-
-			showLoading.value = false
-		} else {
-			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
-		}
-	}
+	Object.assign(departmentInfo, departmentMatch)
 }
 
 const selectTheDepartmentToCreateTheCollaborator = () => {
 	const department = departmentStore.getDepartment
 
-	departmentInfo.id = department.id
-
-	departmentInfo.name = department.name
-
-	departmentInfo.ramal = String(department.ramal)
+	Object.assign(departmentInfo, department)
 }
 
 const getAllDepartment = async () => {
 	const res: any = await takeAllDepartments(idCompany.value)
 
 	if (res?.status == 200) {
-		allDepartments.value = res.data.map((d: any) => d.name)
+		allDepartments.value = res?.data.map((d: any) => d.name)
+
+		departments.value = parseDepartment(res?.data)
+
 		idDepartment.value = res?.data.map((d: any) => {
 			return {
 				name: d.name,
@@ -409,7 +342,10 @@ const getAllUsernames = async () => {
 	)
 
 	if (res?.status == 200) {
-		usernames.value = res?.data.map((n: any) => n.username)
+		usernames.value = res?.data.map((n: any) =>
+			n.username == undefined ? n.email : n.username
+		)
+
 		res?.data.forEach((user: any) => {
 			if (!nameDepartments.value.includes(user.department)) {
 				nameDepartments.value.push(user.department)
@@ -428,28 +364,20 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 		permission.value,
 		userDepartment.value
 	)
+	console.log("aqui", res)
 
 	if (res?.status == 200) {
 		parseUser(res?.data.users)
 
 		setTotalPages(res?.data.totalPages)
-
-		showLoading.value = false
 	} else if (res?.status == 404) {
-		handleApiResponse(
-			Messages.TITLE_THERE_ARE_NO_RECORDS,
-			Messages.SUBTITLE_THERE_ARE_NO_RECORDS
-		)
-
-		if (res.data.message) {
-			users.value = []
-		}
-
-		showNotificationModal.value = true
+		users.value = []
 	} else {
-		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+		handleApiResponse(res?.data.message)
 		showNotificationModal.value = true
 	}
+
+	showLoading.value = false
 }
 
 const parseUser = (data: any[]) => {
@@ -490,14 +418,6 @@ const loadsAllUsersAndTheirInfo = () => {
 	}
 
 	getAllUsernames()
-}
-
-const setTableBackground = (index: number) => {
-	if (index % 2 == 0) {
-		return "bg-v_white_one"
-	}
-
-	return ""
 }
 
 onMounted(() => {

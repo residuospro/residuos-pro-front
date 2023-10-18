@@ -40,15 +40,18 @@
 			</Button>
 		</div>
 
-		<div class="glass-effect rounded-md min-h-[30rem]">
+		<Container type="dataTableContainer">
 			<table>
 				<thead>
 					<tr>
-						<th v-for="(items, index) in headers" :key="index">
+						<th
+							v-for="(items, index) in headers"
+							:key="index"
+							:class="index == 0 ? 'rounded-tl-md' : ''">
 							{{ items }}
 						</th>
 
-						<th type="H3">Ajustar</th>
+						<th type="H3" class="rounded-tr-md">Ajustar</th>
 					</tr>
 				</thead>
 
@@ -105,9 +108,15 @@
 							</v-menu>
 						</td>
 					</tr>
+
+					<p
+						class="text-v_medium_gray absolute top-[12rem] w-full text-center"
+						v-if="content.length == 0">
+						Não há registros, crie o seu primeiro usuário!
+					</p>
 				</tbody>
 			</table>
-		</div>
+		</Container>
 	</div>
 </template>
 
@@ -115,11 +124,15 @@
 /* eslint-disable no-undef */
 import { useHead } from "@vueuse/head"
 import Button from "../atoms/Button.vue"
-import { PropType, computed, ref, onMounted } from "vue"
+import { PropType, computed, ref } from "vue"
 import { IUsers } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
 import { AuthorizationUser } from "@/utils/enum"
+import Container from "@/components/atoms/Container.vue"
+import useProps from "../../context/useProps"
+
+const { setTableBackground } = useProps()
 
 let usersSelected = ref()
 let departamentSelected = ref()
@@ -142,11 +155,6 @@ let props = defineProps({
 
 	selectUser: {
 		type: Function as PropType<(user: string) => void>,
-		required: true,
-	},
-
-	setTableBackground: {
-		type: Function as PropType<(index: number) => string>,
 		required: true,
 	},
 
@@ -197,7 +205,6 @@ useHead({
 <style>
 table {
 	border-collapse: collapse;
-	border-top-right-radius: 8rem;
 	width: 100%;
 }
 
@@ -215,10 +222,6 @@ th {
 
 tbody td {
 	line-height: 3;
-}
-
-tr:first-child {
-	border-bottom-left-radius: 1.5rem;
 }
 
 .overflow {

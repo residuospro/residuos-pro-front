@@ -35,7 +35,7 @@
 		:openDepartmentModal="openDepartmentModal" />
 
 	<div
-		class="flex justify-between items-center ml-10 w-full"
+		class="flex justify-between items-center ml-10 w-full mt-5"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
 
@@ -55,20 +55,22 @@ import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import DepartmentModal from "@/components/molecules/DepartmentCreateOrUpdateModal.vue"
 import { ref } from "vue"
-import { IDepartment } from "@/utils/interfaces"
+import { IDepartment, IMessage } from "@/utils/interfaces"
 import {
 	createDepartment,
 	takeDepartmentsByPage,
 	takeAllDepartments,
-	takeDepartmentsByName,
 	deleteDepartments,
 	updateDepartment,
 } from "@/api/department"
 import Notification from "@/components/molecules/Notification.vue"
-import { Actions, Messages } from "@/utils/enum"
+import { Actions } from "@/utils/enum"
 import { onMounted } from "vue"
 import { setIdCompany } from "@/store/setIdCompany"
 import { getPermission } from "@/utils/permissions"
+import useProps from "../context/useProps"
+
+const { parseDepartment } = useProps()
 
 const idCompanyStore = setIdCompany()
 
@@ -130,9 +132,9 @@ const closeModal = () => {
 	showNotificationModal.value = false
 }
 
-const handleApiResponse = (titleResponse: string, subtitleResponse: string) => {
-	title.value = titleResponse
-	subTitle.value = subtitleResponse
+const handleApiResponse = (message: IMessage) => {
+	title.value = message.title
+	subTitle.value = message.subTitle
 }
 
 const validateDataToCreateDepartment = (department: IDepartment) => {
@@ -187,23 +189,10 @@ const updateDepartments = async (departament: IDepartment) => {
 	)
 
 	if (res?.status == 201) {
-		handleApiResponse(
-			Messages.TITLE_UPDATE_REGISTER,
-			Messages.SUBTITLE_UPDATE_REGISTER
-		)
-
-		parseUpdateDepartment([res?.data])
-	} else if (res?.status == 409) {
-		handleApiResponse(
-			Messages.TITLE_ERROR_UPDATE_REGISTER,
-			Messages.SUBTITLE_ERROR_UPDATE_DEPARTMENT
-		)
-	} else {
-		handleApiResponse(
-			Messages.TITLE_ERROR_UPDATE_REGISTER,
-			Messages.SUBTITLE_ERROR_UPDATE_REGISTER
-		)
+		parseUpdateDepartment([res?.data.department])
 	}
+
+	handleApiResponse(res?.data.message)
 
 	changeVariableState()
 }
@@ -212,22 +201,15 @@ const createDepartments = async (department: IDepartment) => {
 	const res: any = await createDepartment(department, idCompany.value)
 
 	if (res?.status == 201) {
-		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER)
-
-		parseDepartment([res?.data.department], Actions.SAVE)
+		departments.value = [
+			...departments.value,
+			...parseDepartment([res?.data.department]),
+		]
 
 		setTotalPages(res?.data.totalPages)
-	} else if (res?.status == 409) {
-		handleApiResponse(
-			Messages.TITLE_ERROR_REGISTER,
-			Messages.SUBTITLE_EXISTENT_DEPARTMENT
-		)
-	} else {
-		handleApiResponse(
-			Messages.TITLE_ERROR_REGISTER,
-			Messages.SUBTITLE_ERROR_REGISTER
-		)
 	}
+
+	handleApiResponse(res?.data.message)
 
 	changeVariableState()
 }
@@ -237,18 +219,12 @@ const deleteDepartment = async () => {
 
 	const res: any = await deleteDepartments(idDepartment.value)
 
-	if (res?.status == 204) {
-		handleApiResponse(
-			Messages.TITLE_DELETE_REGISTER,
-			Messages.SUBTITLE_DELETE_REGISTER
-		)
+	if (res?.status == 201) {
+		handleApiResponse(res?.data.message)
 
-		getAllDepartment()
-	} else {
-		handleApiResponse(
-			Messages.TITLE_ERROR_DELETE_REGISTER,
-			Messages.SUBTITLE_ERROR_DELETE_REGISTER
-		)
+		await getDepartmentsByPage(page.value, itemsPerPage.value)
+
+		await getAllDepartment()
 	}
 
 	changeVariableState()
@@ -278,15 +254,14 @@ const getDepartmentsByPage = async (
 	)
 
 	if (res?.status == 200) {
-		parseDepartment(res?.data.departments, Actions.SAVE)
+		departments.value = parseDepartment(res?.data.departments)
 
 		setTotalPages(res?.data.totalPages)
 	} else if (res?.status == 404) {
-		if (res?.data.message) {
-			departments.value = []
-		}
+		departments.value = []
 	} else {
-		handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
+		handleApiResponse(res?.data.message)
+
 		showNotificationModal.value = true
 	}
 
@@ -309,25 +284,9 @@ const departmentFilterCleaning = () => {
 }
 
 const selectDepartment = async (department: string) => {
-	if (department) {
-		showLoading.value = true
+	departmentSelected.value = true
 
-		departmentSelected.value = true
-
-		const res: any = await takeDepartmentsByName(department, idCompany.value)
-
-		if (res?.status == 200) {
-			departments.value = []
-
-			parseDepartment([res.data], Actions.SAVE)
-
-			totalPages.value = []
-		} else {
-			handleApiResponse(Messages.TITLE_ERROR, Messages.SUBTITLE_ERROR)
-		}
-
-		showLoading.value = false
-	}
+	departments.value = departments.value.filter((d) => d.name == department)
 }
 
 const setTotalPages = (pages: number) => {
@@ -338,39 +297,14 @@ const setTotalPages = (pages: number) => {
 	}
 }
 
-const parseDepartment = (data: any[], typeAction?: string): IDepartment => {
-	const parsedData = data.map((d) => {
-		return {
-			name: d.name,
-			responsible: d.responsible,
-			ramal: d.ramal,
-			email: d.email,
-			id: d._id,
-			idCompany: d.idCompany,
-		}
-	})
-
-	if (typeAction == Actions.SAVE) {
-		departments.value = [...departments.value, ...parsedData]
-	}
-
-	return parsedData[0]
-}
-
 const parseUpdateDepartment = (data: any[]) => {
-	const updateDepartment = departments.value.find((d) => d.name == data[0].name)
+	const updateDepartment = departments.value.find((d) => d.id == data[0]._id)
 
 	if (updateDepartment) {
 		const index = departments.value.indexOf(updateDepartment)
 
-		departments.value[index] = parseDepartment(data)
+		departments.value[index] = parseDepartment(data)[0]
 	}
-}
-
-const removeDepartmentFromArray = () => {
-	departments.value = departments.value.filter(
-		(d) => d.id != idDepartment.value
-	)
 }
 
 const getIdCompany = async () => {

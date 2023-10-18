@@ -3,6 +3,16 @@ export interface Credential {
 	password: string
 }
 
+export interface IUseProps {
+	setTableBackground: (index: number) => string
+	parseDepartment: (data: any[]) => Array<IDepartment>
+}
+
+export interface IMessage {
+	title: string
+	subTitle: string
+}
+
 export interface IDepartment {
 	name: string
 	responsible: string

@@ -123,53 +123,9 @@ const containerClass = computed(() => {
 					`,
 
 				dataTableContainer: `
-					w-full
 					min-h-[30rem]
-					pt-12
-					mb-5
-					v_medium_gray
 					glass-effect
 					rounded-lg
-				`,
-
-				headersContainer: `
-					flex
-					bg-v_light_green
-					h-12
-					px-8
-					w-full
-					items-center
-					justify-between
-					rounded-tl-lg
-					rounded-tr-lg
-					fixed
-					z-10
-					top-0
-				`,
-
-				departmentContent: `
-					items-center
-					justify-between
-					flex
-					h-12 
-					px-6
-					w-full
-					
-					font-[700]
-					text-black
-					text-left
-					bg-[#ccc]
-				`,
-
-				userContent: `
-					grid
-					grid-cols-[17%_20%_17%_23%_19%_5%]
-					h-12 
-					px-8
-					w-full
-					items-center
-					font-[700]
-					text-black
 				`,
 
 				paginationContainer: `
