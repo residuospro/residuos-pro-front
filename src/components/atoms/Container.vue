@@ -161,7 +161,7 @@ const containerClass = computed(() => {
 					flex-col 
 					py-5
 					px-5
-					min-h-[17rem] 
+					min-h-[20rem] 
 					w-[40rem] 
 					text-black 
 					rounded-md

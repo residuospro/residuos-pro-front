@@ -4,13 +4,14 @@
 			<div
 				class="flex justify-between items-center w-auto min-w-[23rem] space-x-5">
 				<v-autocomplete
+					:class="handleAutoCompleteStyle(sedimentSelected)"
+					:on-click:clear="clearFilter"
 					:onUpdate:modelValue="selectSediments"
+					:active="true"
 					v-model="sedimentSelected"
 					:items="sediments"
 					chips
 					label="Buscar Resíduos"></v-autocomplete>
-
-				<button class="mt-7" @click="clearFilter">Limpar pesquisa</button>
 			</div>
 
 			<Button
@@ -22,55 +23,72 @@
 		</div>
 
 		<Container type="dataTableContainer">
-			<Container type="headersContainer" class="text-white">
-				<Typograph type="H3" v-for="(items, index) in headers" :key="index">
-					{{ items }}
-				</Typograph>
+			<table>
+				<thead>
+					<tr>
+						<th
+							v-for="(items, index) in headers"
+							:key="index"
+							:class="index == 0 ? 'rounded-tl-md' : ''">
+							{{ items }}
+						</th>
 
-				<Typograph type="H3">Ajustar</Typograph>
-			</Container>
+						<th type="H3" class="rounded-tr-md">Ajustar</th>
+					</tr>
+				</thead>
 
-			<div class="min-h-[28rem] bg-transparent">
-				<div v-for="(items, index) in content" :key="items.id">
-					<Container
-						type="departmentContent"
-						:class="index % 2 == 0 && 'bg-v_white_one'">
-						<div class="relative">
-							<h1 class="overflow w-[15rem]">{{ items.name }}</h1>
-						</div>
+				<tbody style="height: auto">
+					<tr
+						v-for="(items, index) in content.slice(0, itemsPerPage)"
+						:key="items.id"
+						class="font-medium">
+						<td :class="setTableBackground(index)">
+							{{ items.name }}
+						</td>
 
-						<h1>{{ items.responsible }}</h1>
+						<td :class="setTableBackground(index)">
+							{{ items.responsible }}
+						</td>
 
-						<h1>{{ items.ramal }}</h1>
+						<td :class="setTableBackground(index)">
+							{{ items.ramal }}
+						</td>
 
-						<div class="relative">
-							<h1 class="overflow w-44">{{ items.email }}</h1>
-						</div>
+						<td :class="setTableBackground(index)">
+							{{ items.email }}
+						</td>
 
-						<v-menu transition="slide-y-transition">
-							<template v-slot:activator="{ props }">
-								<button v-bind="props">
-									<v-icon icon="mdi-pencil-box-outline" class="" />
-								</button>
-							</template>
-
-							<v-list>
-								<v-list-item>
-									<button @click="openSedimentsModal(Actions.UPDATE, items.id)">
-										Atualizar
+						<td :class="setTableBackground(index)">
+							<v-menu transition="slide-y-transition">
+								<template v-slot:activator="{ props }">
+									<button v-bind="props">
+										<v-icon icon="mdi-pencil-box-outline" class="" />
 									</button>
-								</v-list-item>
+								</template>
 
-								<v-list-item>
-									<button @click="showDeleteModal(items.id)">Deletar</button>
-								</v-list-item>
-							</v-list>
-						</v-menu>
-					</Container>
+								<v-list>
+									<v-list-item>
+										<button
+											@click="openSedimentsModal(Actions.UPDATE, items.id)">
+											Atualizar
+										</button>
+									</v-list-item>
 
-					<hr className=" border-[1px] w-full" />
-				</div>
-			</div>
+									<v-list-item>
+										<button @click="showDeleteModal(items.id)">Deletar</button>
+									</v-list-item>
+								</v-list>
+							</v-menu>
+						</td>
+					</tr>
+
+					<p
+						class="text-v_medium_gray absolute top-[12rem] w-full text-center"
+						v-if="content.length == 0">
+						Não há registros, crie o seu primeiro resíduo!
+					</p>
+				</tbody>
+			</table>
 		</Container>
 	</div>
 </template>
@@ -79,12 +97,16 @@
 /* eslint-disable no-undef */
 import { useHead } from "@vueuse/head"
 import Container from "../atoms/Container.vue"
-import Typograph from "../atoms/Typograph.vue"
 import Button from "../atoms/Button.vue"
 import { PropType, ref, computed } from "vue"
 import { Actions } from "@/utils/enum"
+import userProps from "@/context/useProps"
+
+const { handleAutoCompleteStyle, setTableBackground } = userProps()
 
 const props = defineProps({
+	itemsPerPage: { type: Number, required: true },
+
 	headers: { type: Array as PropType<string[]>, required: true },
 
 	sediments: { type: Array as PropType<string[]>, required: true },

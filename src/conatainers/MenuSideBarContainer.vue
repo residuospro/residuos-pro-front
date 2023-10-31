@@ -47,6 +47,13 @@ const menuIcons = [
 		permissions: [AuthorizationUser.ADMIN],
 	},
 	{
+		id: "sediments",
+		icon: "mdi-delete-variant",
+		path: "/Painel/Residuos",
+		label: "Resíduos",
+		permissions: [AuthorizationUser.MANAGER],
+	},
+	{
 		id: "config",
 		icon: "mdi-cog-outline",
 		path: "/Painel/Configurações",
@@ -56,13 +63,6 @@ const menuIcons = [
 			AuthorizationUser.MANAGER,
 			AuthorizationUser.COLLABORATOR,
 		],
-	},
-	{
-		id: "sediments",
-		icon: "mdi-delete-variant",
-		path: "/Painel/Residuos",
-		label: "Resíduos",
-		permissions: [AuthorizationUser.MANAGER],
 	},
 ]
 

@@ -4,8 +4,9 @@
 			<div class="w-auto min-w-[23rem] space-x-5">
 				<v-autocomplete
 					clearable
+					:active="true"
 					:on-click:clear="clearFilter"
-					:onUpdate:modelValue="selectDepartment"
+					:onUpdate:modelValue="filterDepartment"
 					v-model="departmentSelected"
 					:items="departments"
 					chips
@@ -113,7 +114,7 @@ const props = defineProps({
 
 	content: { type: Array as PropType<any[]>, required: true },
 
-	selectDepartment: {
+	filterDepartment: {
 		type: Function as PropType<(department: string) => void>,
 		required: true,
 	},

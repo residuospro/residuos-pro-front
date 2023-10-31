@@ -24,9 +24,18 @@ const useProps = (): IUseProps => {
 		return parsedData
 	}
 
+	const handleAutoCompleteStyle = (value: string | undefined): string => {
+		if (value) {
+			return "bg-[#fff] h-[3.8rem]"
+		} else {
+			return "bg-[#f3f4f6] h-[3rem]"
+		}
+	}
+
 	return {
 		setTableBackground,
 		parseDepartment,
+		handleAutoCompleteStyle,
 	}
 }
 

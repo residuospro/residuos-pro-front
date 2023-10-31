@@ -1,7 +1,7 @@
 <template>
 	<Container type="backgroundContainer">
 		<Container type="modalContainer">
-			<Container type="actionsModalContainer">
+			<Container type="actionsModalContainer" class="!min-h-[17rem]">
 				<form
 					@submit.prevent="createOrUpdateDepartment(department, typeAction)">
 					<Typograph type="H2" class="text-v_medium_gray">

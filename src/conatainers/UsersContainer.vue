@@ -4,7 +4,7 @@
 	<Notification
 		:title="title"
 		:subTitle="subTitle"
-		@closeModal="(value: boolean) => showNotificationModal = value"
+		@closeModal="closeModal"
 		v-if="showNotificationModal" />
 
 	<DeleteModal
@@ -23,7 +23,9 @@
 		:create-or-update-user="createOrUpdateUser"
 		:validateDataToCreateUser="validateDataToCreateUser"
 		:validateDataToUpdateUser="validateDataToUpdateUser"
-		:selectDepartment="selectTheDepartmentToCreateTheManager" />
+		:selectDepartment="selectTheDepartmentToCreateTheManager"
+		:inputWrappingStyle="inputWrappingStyle"
+		:inputContainerStyle="inputContainerStyle" />
 
 	<Users
 		:headers="headers"
@@ -31,6 +33,7 @@
 		:content="users"
 		:users="usernames"
 		:departments="nameDepartments"
+		:itemsPerPage="Number(itemsPerPage)"
 		:show-delete-modal="openDeleteModal"
 		:open-user-modal="openUserModal"
 		:selectUserByDepartment="selectUserByDepartment"
@@ -38,7 +41,7 @@
 		:userFilterCleaning="userFilterCleaning" />
 
 	<div
-		class="flex justify-between items-center ml-10 w-full"
+		class="flex justify-between items-center ml-10 w-full mt-5"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
 
@@ -61,7 +64,7 @@ import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import UserModal from "@/components/molecules/UserCreateOrUpdateModal.vue"
 import { IDepartment, IMessage, IUsers } from "@/utils/interfaces"
 import { onMounted, reactive, ref } from "vue"
-import { Actions, AuthorizationUser, Messages } from "@/utils/enum"
+import { Actions, AuthorizationUser } from "@/utils/enum"
 import { takeAllDepartments } from "@/api/department"
 import { setIdCompany } from "@/store/setIdCompany"
 import { setDepartment } from "@/store/setDepartment"
@@ -71,6 +74,7 @@ import {
 	takeAllUsernames,
 	updateUser,
 	deleteUser,
+	takeUserByUsername,
 } from "@/api/user"
 import { getPermission, hasPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
@@ -116,6 +120,26 @@ let departmentInfo = reactive<IDepartment>({
 	idCompany: "",
 })
 
+const inputWrappingStyle = (): string => {
+	let style = ["flex flex-wrap w-full justify-between mt-2 relative"]
+
+	if (hasPermission([AuthorizationUser.ADMIN])) {
+		style.push("min-h-[15rem]")
+	} else {
+		style.push("min-h-[8rem]")
+	}
+
+	return style.join().replace(",", " ")
+}
+
+const inputContainerStyle = (): string => {
+	if (hasPermission([AuthorizationUser.ADMIN])) {
+		return "min-h-[18rem]"
+	} else {
+		return "min-h-[15rem]"
+	}
+}
+
 const setPagination = (currentPage: number) => {
 	if (page.value != currentPage) {
 		page.value = currentPage
@@ -141,6 +165,22 @@ const openDeleteModal = (id: string | undefined) => {
 	showDeleteModal.value = true
 }
 
+const changeVariableState = () => {
+	showDeleteModal.value = false
+	showNotificationModal.value = true
+
+	showUserModal.value = false
+	showLoading.value = false
+	showButton.value = false
+}
+
+const closeModal = () => {
+	getAllDepartment()
+	getAllUsernames()
+
+	showNotificationModal.value = false
+}
+
 const userFilterCleaning = async () => {
 	if (userSelected.value) {
 		getAllUsersByPage(page.value, itemsPerPage.value)
@@ -149,21 +189,49 @@ const userFilterCleaning = async () => {
 }
 
 const selectUser = async (username: string) => {
-	const user = users.value.filter(
-		(d) => d.username == username || d.email == username
-	)
+	if (username) {
+		showLoading.value = true
 
-	userSelected.value = true
+		const res: any = await takeUserByUsername(
+			username,
+			idCompany.value,
+			permission.value
+		)
 
-	parseUser(user)
+		if (res?.status == 200) {
+			users.value = parseUser(res?.data)
+		}
+
+		showLoading.value = false
+
+		userSelected.value = true
+	}
 }
 
 const selectUserByDepartment = async (department: string) => {
-	const byDepartment = users.value.filter((d) => d.department == department)
+	if (department) {
+		showLoading.value = true
 
-	parseUser(byDepartment)
+		const id = idDepartment.value.find((d) => d.name == department)
 
-	userSelected.value = true
+		const res: any = await takeAllUsers(
+			page.value,
+			itemsPerPage.value,
+			idCompany.value,
+			permission.value,
+			id.id
+		)
+
+		if (res?.status == 200) {
+			users.value = parseUser(res?.data.users)
+
+			setTotalPages(res?.data.totalPages)
+		}
+
+		showLoading.value = false
+
+		userSelected.value = true
+	}
 }
 
 const handleApiResponse = (message: IMessage) => {
@@ -235,21 +303,12 @@ const createUsers = async (user: IUsers) => {
 	const res: any = await createUser(user, permission.value)
 
 	if (res?.status == 201) {
-		handleApiResponse(Messages.TITLE_REGISTER, Messages.SUBTITLE_REGISTER, 201)
-	} else if (res?.status == 409) {
-		handleApiResponse(
-			Messages.TITLE_EXISTING_USER,
-			Messages.SUBTITLE_EXISTING_USER
-		)
-	} else {
-		handleApiResponse(
-			Messages.TITLE_ERROR_REGISTER,
-			Messages.SUBTITLE_ERROR_REGISTER
-		)
+		users.value = [...users.value, ...parseUser([res?.data.createUser])]
 	}
 
-	showUserModal.value = false
-	showNotificationModal.value = true
+	handleApiResponse(res?.data.message)
+
+	changeVariableState()
 }
 
 const updateUsers = async (user: IUsers) => {
@@ -262,25 +321,12 @@ const updateUsers = async (user: IUsers) => {
 	const res: any = await updateUser(user, userId.value)
 
 	if (res?.status == 200) {
-		handleApiResponse(
-			Messages.TITLE_UPDATE_REGISTER,
-			Messages.SUBTITLE_UPDATE_REGISTER,
-			201
-		)
-	} else if (res?.status == 409) {
-		handleApiResponse(
-			Messages.TITLE_EXISTING_USER,
-			Messages.SUBTITLE_EXISTING_USER
-		)
-	} else {
-		handleApiResponse(
-			Messages.TITLE_ERROR_UPDATE_REGISTER,
-			Messages.SUBTITLE_ERROR_UPDATE_REGISTER
-		)
+		parseUpdateUser([res?.data.user])
 	}
 
-	showUserModal.value = false
-	showNotificationModal.value = true
+	handleApiResponse(res?.data.message)
+
+	changeVariableState()
 }
 
 const deleteUsers = async () => {
@@ -289,20 +335,14 @@ const deleteUsers = async () => {
 	const res: any = await deleteUser(userId.value)
 
 	if (res?.status == 200) {
-		handleApiResponse(
-			Messages.TITLE_DELETE_REGISTER,
-			Messages.SUBTITLE_DELETE_REGISTER,
-			200
-		)
-	} else {
-		handleApiResponse(
-			Messages.TITLE_ERROR_DELETE_REGISTER,
-			Messages.SUBTITLE_ERROR_DELETE_REGISTER
-		)
+		await getAllUsersByPage(page.value, itemsPerPage.value)
+
+		await getAllUsernames()
 	}
 
-	showDeleteModal.value = false
-	showNotificationModal.value = true
+	handleApiResponse(res?.data.message)
+
+	changeVariableState()
 }
 
 const selectTheDepartmentToCreateTheManager = async (department: string) => {
@@ -364,10 +404,9 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 		permission.value,
 		userDepartment.value
 	)
-	console.log("aqui", res)
 
 	if (res?.status == 200) {
-		parseUser(res?.data.users)
+		users.value = parseUser(res?.data.users)
 
 		setTotalPages(res?.data.totalPages)
 	} else if (res?.status == 404) {
@@ -381,7 +420,7 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 }
 
 const parseUser = (data: any[]) => {
-	users.value = data.map((d) => {
+	const parsedData = data.map((d) => {
 		return {
 			name: d.name,
 			username: d.username,
@@ -393,6 +432,18 @@ const parseUser = (data: any[]) => {
 			idCompany: d.idCompany,
 		}
 	})
+
+	return parsedData
+}
+
+const parseUpdateUser = (data: any[]) => {
+	const user = users.value.find((d) => d.id == data[0]._id)
+
+	if (user) {
+		const index = users.value.indexOf(user)
+
+		users.value[index] = parseUser(data)[0]
+	}
 }
 
 const setTotalPages = (pages: number) => {
@@ -408,16 +459,16 @@ const getUserDepartment = () => {
 	selectTheDepartmentToCreateTheCollaborator()
 }
 
-const loadsAllUsersAndTheirInfo = () => {
+const loadsAllUsersAndTheirInfo = async () => {
 	idCompany.value = idCompanyStore.getIdCompany
 
-	getAllUsersByPage(page.value, itemsPerPage.value)
+	await getAllUsersByPage(page.value, itemsPerPage.value)
 
 	if (hasPermission([AuthorizationUser.ADMIN])) {
-		getAllDepartment()
+		await getAllDepartment()
 	}
 
-	getAllUsernames()
+	await getAllUsernames()
 }
 
 onMounted(() => {

@@ -11,6 +11,7 @@
 				<v-autocomplete
 					v-model="usersSelected"
 					clearable
+					:active="true"
 					:on-click:clear="userFilterCleaning"
 					:onUpdate:modelValue="selectUser"
 					:items="users"
@@ -23,6 +24,7 @@
 				<v-autocomplete
 					v-if="hasPermission([AuthorizationUser.ADMIN])"
 					clearable
+					:active="true"
 					:on-click:clear="userFilterCleaning"
 					v-model="departamentSelected"
 					:onUpdate:modelValue="selectUserByDepartment"
@@ -57,7 +59,7 @@
 
 				<tbody style="height: auto">
 					<tr
-						v-for="(items, index) in content"
+						v-for="(items, index) in content.slice(0, itemsPerPage)"
 						:key="items.id"
 						class="font-medium">
 						<td :class="setTableBackground(index)">
@@ -138,6 +140,8 @@ let usersSelected = ref()
 let departamentSelected = ref()
 
 let props = defineProps({
+	itemsPerPage: { type: Number, required: true },
+
 	headers: { type: Array as PropType<string[]>, required: true },
 
 	users: { type: Array as PropType<string[]>, required: true },

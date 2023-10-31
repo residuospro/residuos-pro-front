@@ -30,7 +30,7 @@
 		:headers="headers"
 		:itemsPerPage="Number(itemsPerPage)"
 		:showDeleteModal="openDeleteModal"
-		:selectDepartment="selectDepartment"
+		:filterDepartment="filterDepartment"
 		:departmentFilterCleaning="departmentFilterCleaning"
 		:openDepartmentModal="openDepartmentModal" />
 
@@ -62,9 +62,10 @@ import {
 	takeAllDepartments,
 	deleteDepartments,
 	updateDepartment,
+	takeDepartmentsByName,
 } from "@/api/department"
 import Notification from "@/components/molecules/Notification.vue"
-import { Actions } from "@/utils/enum"
+import { Actions, Messages } from "@/utils/enum"
 import { onMounted } from "vue"
 import { setIdCompany } from "@/store/setIdCompany"
 import { getPermission } from "@/utils/permissions"
@@ -284,9 +285,31 @@ const departmentFilterCleaning = () => {
 }
 
 const selectDepartment = async (department: string) => {
+	if (department) {
+		showLoading.value = true
+
+		const res: any = await takeDepartmentsByName(department, idCompany.value)
+
+		if (res?.status == 200) {
+			departments.value = []
+
+			departments.value = parseDepartment([res.data])
+
+			totalPages.value = []
+		} else {
+			handleApiResponse(res?.data.message)
+		}
+
+		showLoading.value = false
+	}
+}
+
+const filterDepartment = async (department: string) => {
 	departmentSelected.value = true
 
 	departments.value = departments.value.filter((d) => d.name == department)
+
+	if (departments.value.length == 0) selectDepartment(department)
 }
 
 const setTotalPages = (pages: number) => {

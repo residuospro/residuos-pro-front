@@ -2,80 +2,67 @@
 	<Container type="backgroundContainer">
 		<Container type="modalContainer">
 			<Container type="actionsModalContainer">
-				<Typograph type="H2" class="text-v_medium_gray">
-					{{ typeAction }} resíduo
-				</Typograph>
+				<form @submit.prevent="createOrUpdateSediments(sediment, typeAction)">
+					<Typograph type="H2" class="text-v_medium_gray">
+						{{ typeAction }} resíduo
+					</Typograph>
 
-				<div class="flex flex-wrap w-full justify-between mt-2 space-y-5">
-					<div class="space-x-6">
+					<div class="flex flex-wrap w-full justify-between mt-2 space-y-5">
+						<v-autocomplete
+							:class="handleAutoCompleteStyle(sediment.classification)"
+							clearable
+							:active="true"
+							:items="classifications"
+							v-model="sediment.classification"
+							chips
+							label="Classificação:"></v-autocomplete>
+
+						<v-autocomplete
+							:class="handleAutoCompleteStyle(sediment.risk)"
+							clearable
+							:active="true"
+							:items="risk"
+							v-model="sediment.risk"
+							chips
+							label="Risco:"></v-autocomplete>
+
+						<v-autocomplete
+							:class="handleAutoCompleteStyle(sediment.state)"
+							clearable
+							:active="true"
+							:items="states"
+							v-model="sediment.state"
+							chips
+							label="Estado:"></v-autocomplete>
+
 						<Input
 							input="input"
 							placeholder="Nome:"
-							:class="sediment.name !== '' ? 'bg-white' : ''"
+							:class="sediment.name !== '' ? 'bg-white w-full' : 'w-full'"
 							@input="(value: string) => sediment.name = value" />
 
 						<Input
 							input="input"
 							type="text"
 							placeholder="Acondicionamento:"
-							:class="sediment.packaging != '' ? 'bg-white' : ''"
+							:class="sediment.packaging != '' ? 'bg-white w-full' : 'w-full'"
 							@input="(value: string) => sediment.packaging = value" />
 					</div>
 
-					<v-autocomplete
-						clearable
-						:active="true"
-						:items="classifications"
-						v-model="sediment.classification"
-						:class="
-							sediment.classification == undefined
-								? 'bg-v_white_three'
-								: '!bg-white'
-						"
-						style="
-							width: 20rem !important;
-							height: 3.5rem !important;
-							display: block !important;
-						"
-						chips
-						label="Classificação"></v-autocomplete>
+					<div class="flex justify-end w-full space-x-5 mt-5">
+						<Button
+							buttonType="confirmButton"
+							:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
+							:disabled="!showButton"
+							@click="createOrUpdateSediments(sediment, typeAction)">
+							<p class="text-white">{{ typeAction }}</p>
+						</Button>
 
-					<v-autocomplete
-						clearable
-						:items="risk"
-						v-model="sediment.risk"
-						:class="
-							sediment.risk == undefined ? 'bg-v_white_three' : '!bg-white'
-						"
-						style="width: 20rem !important; height: 3.5rem !important"
-						chips
-						label="Risco"></v-autocomplete>
-
-					<v-autocomplete
-						clearable
-						:items="states"
-						v-model="sediment.state"
-						:class="
-							sediment.state == undefined ? 'bg-v_white_three' : '!bg-white'
-						"
-						style="width: 20rem !important; height: 3.5rem !important"
-						chips
-						label="Estado"></v-autocomplete>
-				</div>
-
-				<div class="flex justify-end w-full space-x-5 mt-4">
-					<Button buttonType="closeButton" @click="closeSedimentsModal">
-						Cancelar
-					</Button>
-
-					<Button
-						buttonType="confirmButton"
-						:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
-						:disabled="!showButton"
-						@click="createOrUpdateSediments(sediment, typeAction)">
-						<p class="text-white">{{ typeAction }}</p>
-					</Button>
-				</div>
+						<Button buttonType="closeButton" @click="closeSedimentsModal">
+							Cancelar
+						</Button>
+					</div>
+				</form>
 			</Container>
 		</Container>
 	</Container>
@@ -90,16 +77,17 @@ import { reactive, watch } from "vue"
 import { PropType } from "vue"
 import { Actions } from "@/utils/enum"
 import { ISediments } from "@/utils/interfaces"
+import userProps from "@/context/useProps"
 
 let sediment: ISediments = reactive({
 	name: "",
 	classification: undefined,
 	risk: undefined,
 	state: undefined,
-	feature: undefined,
-	composition: undefined,
 	packaging: "",
 })
+
+const { handleAutoCompleteStyle } = userProps()
 
 const props = defineProps({
 	typeAction: {
@@ -154,3 +142,13 @@ watch(sediment, () => {
 	}
 })
 </script>
+
+<style scoped>
+.v-autocomplete--single {
+	box-shadow: 0 0.3rem 0.62rem rgba(0, 0, 0, 0.4);
+	border-radius: 0.375rem;
+	width: 100%;
+	color: #606060;
+	font-weight: bold;
+}
+</style>

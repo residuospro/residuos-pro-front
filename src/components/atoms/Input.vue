@@ -27,7 +27,7 @@ const inputClass = computed(() => {
 			variants: {
 				intent: {
 					loginInput: `w-[24rem] h-[3.75rem] px-14 inputLogin`,
-					input: `w-[18rem] h-[2.5rem] px-4 inputLogin`,
+					input: `w-[18rem] h-[3rem] px-4 inputLogin`,
 				},
 			},
 		}

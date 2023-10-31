@@ -18,19 +18,20 @@
 		v-if="showSedimentsModal"
 		:type-action="typeAction"
 		:closeSedimentsModal="() => (showSedimentsModal = false)"
-		:createOrUpdateSediments="createOrUpdateSediments"
-		:validateDataToCreateSediments="validateDataToCreateSediments"
-		:validateDataToUpdateSediments="validateDataToUpdateSediments"
 		:showButton="showButton"
 		:classifications="classifications"
 		:states="states"
-		:risk="risk" />
+		:risk="risk"
+		:createOrUpdateSediments="createOrUpdateSediments"
+		:validateDataToCreateSediments="validateDataToCreateSediments"
+		:validateDataToUpdateSediments="validateDataToUpdateSediments" />
 
 	<Sediments
 		:headers="headers"
 		:actions="actions"
 		:sediments="sediments"
 		:content="content"
+		:itemsPerPage="itemsPerPage"
 		:select-sediments="selectSediments"
 		:show-delete-modal="openDeleteModal"
 		:openSedimentsModal="openSedimentsModal"
@@ -39,10 +40,10 @@
 	<div
 		class="flex justify-between items-center ml-10 w-full"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" :key="itemsPerPageKey" />
+		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
 
 		<Pagination
-			:key="paginationKey"
+			:current-page="page"
 			:pageCount="totalPages.length"
 			:items="totalPages"
 			@paginate="setPagination" />
@@ -56,7 +57,7 @@ import Notification from "@/components/molecules/Notification.vue"
 import Pagination from "@/components/molecules/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
-import SedimentsCreateOrUpdateModal from "@/components/molecules/SedimentsCreateOrUpdateModal.vue"
+import SedimentsCreateOrUpdateModal from "@/components/organisms/SedimentsCreateOrUpdateModal.vue"
 import { ref } from "vue"
 import { ISediments } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
@@ -97,8 +98,6 @@ let subTitle = ref("")
 let page = ref(1)
 let itemsPerPage = ref(10)
 let totalPages = ref<number[]>([])
-let paginationKey = ref(0)
-let itemsPerPageKey = ref(0)
 let sedimentId = ref()
 
 const setPagination = (currentPage: number) => {
@@ -135,8 +134,19 @@ const deleteSediments = () => {
 	console.log("deleted")
 }
 
-const validateDataToCreateSediments = () => {
-	console.log("validate")
+const validateDataToCreateSediments = (sediment: ISediments) => {
+	let validate = []
+
+	for (const key in sediment) {
+		if (
+			sediment[key as keyof ISediments] != undefined &&
+			sediment[key as keyof ISediments] != ""
+		) {
+			validate.push(key)
+		}
+	}
+
+	showButton.value = validate.length == 5 ? true : false
 }
 
 const validateDataToUpdateSediments = () => {
