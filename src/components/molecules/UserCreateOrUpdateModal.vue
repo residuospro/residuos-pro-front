@@ -10,7 +10,7 @@
 					<div :class="inputWrappingStyle()">
 						<v-autocomplete
 							v-if="hasPermission([AuthorizationUser.ADMIN])"
-							:class="handleAutoCompleteStyle(user.department)"
+							:style="handleAutoCompleteStyle(user.department)"
 							clearable
 							:active="true"
 							:on-click:clear="() => (user.department = undefined)"
@@ -75,6 +75,8 @@ const user: IUsers = reactive({
 	idDepartment: "",
 	idCompany: "",
 })
+
+const style = "flex flex-wrap w-full justify-between mt-2 relative"
 
 const props = defineProps({
 	inputWrappingStyle: {

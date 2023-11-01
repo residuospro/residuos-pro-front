@@ -9,7 +9,7 @@
 
 					<div class="flex flex-wrap w-full justify-between mt-2 space-y-5">
 						<v-autocomplete
-							:class="handleAutoCompleteStyle(sediment.classification)"
+							:style="handleAutoCompleteStyle(sediment.classification)"
 							clearable
 							:active="true"
 							:items="classifications"
@@ -18,7 +18,7 @@
 							label="Classificação:"></v-autocomplete>
 
 						<v-autocomplete
-							:class="handleAutoCompleteStyle(sediment.risk)"
+							:style="handleAutoCompleteStyle(sediment.risk)"
 							clearable
 							:active="true"
 							:items="risk"
@@ -27,7 +27,7 @@
 							label="Risco:"></v-autocomplete>
 
 						<v-autocomplete
-							:class="handleAutoCompleteStyle(sediment.state)"
+							:style="handleAutoCompleteStyle(sediment.state)"
 							clearable
 							:active="true"
 							:items="states"
@@ -85,6 +85,8 @@ let sediment: ISediments = reactive({
 	risk: undefined,
 	state: undefined,
 	packaging: "",
+	idCompany: "",
+	idDepartment: "",
 })
 
 const { handleAutoCompleteStyle } = userProps()

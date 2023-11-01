@@ -4,7 +4,7 @@
 	<Notification
 		:title="title"
 		:subTitle="subTitle"
-		@closeModal="(value: boolean) => showNotificationModal = value"
+		@closeModal="closeModal"
 		v-if="showNotificationModal" />
 
 	<DeleteModal
@@ -59,8 +59,20 @@ import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import SedimentsCreateOrUpdateModal from "@/components/organisms/SedimentsCreateOrUpdateModal.vue"
 import { ref } from "vue"
-import { ISediments } from "@/utils/interfaces"
+import { IMessage, ISediments, ISedimentsApi } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
+import { onMounted } from "vue"
+import { setIdCompany } from "@/store/setIdCompany"
+import { setDepartment } from "@/store/setDepartment"
+import {
+	createSedmentsApi,
+	getNameOfSedimentsApi,
+	getSedimentsByPageApi,
+} from "@/api/sediments"
+
+const idCompanyStore = setIdCompany()
+
+const departmentStore = setDepartment()
 
 const headers = [
 	"Nome",
@@ -81,6 +93,7 @@ const risk = [
 	"Corrosivo",
 	"Tóxico",
 	"Carcinogênico/Mutagênico",
+	"Sem risco",
 ]
 
 const actions = ["Atualizar", "Deletar"]
@@ -99,6 +112,26 @@ let page = ref(1)
 let itemsPerPage = ref(10)
 let totalPages = ref<number[]>([])
 let sedimentId = ref()
+let idCompany = ref("")
+let idDepartment = ref("")
+
+const handleApiResponse = (message: IMessage) => {
+	title.value = message.title
+	subTitle.value = message.subTitle
+}
+
+const changeVariableState = () => {
+	showDeleteModal.value = false
+	showNotificationModal.value = true
+
+	showSedimentsModal.value = false
+	showLoading.value = false
+	showButton.value = false
+}
+
+const closeModal = () => {
+	showNotificationModal.value = false
+}
 
 const setPagination = (currentPage: number) => {
 	if (page.value != currentPage) {
@@ -153,13 +186,109 @@ const validateDataToUpdateSediments = () => {
 	console.log("validate")
 }
 
-const createOrUpdateSediments = (user: ISediments, action: string) => {
+const createOrUpdateSediments = (sediment: ISediments, action: string) => {
 	showLoading.value = true
 
 	if (action == Actions.SAVE) {
-		console.log("create")
+		createSediments(sediment)
 	} else {
 		console.log("update")
 	}
 }
+
+const createSediments = async (sediment: ISediments) => {
+	sediment.idCompany = idCompany.value
+	sediment.idDepartment = idDepartment.value
+
+	const res: any = await createSedmentsApi(sediment)
+
+	console.log("resid", res)
+
+	if (res?.status == 201) {
+		content.value = [...content.value, ...parseData([res?.data.createSediment])]
+
+		setTotalPages(res?.data.totalPages)
+	}
+
+	handleApiResponse(res?.data.message)
+
+	changeVariableState()
+}
+
+const getSedimentsByPage = async (
+	currentPage: number,
+	itemsPerPage: number
+) => {
+	showLoading.value = true
+
+	content.value = []
+
+	const res: any = await getSedimentsByPageApi(
+		currentPage,
+		itemsPerPage,
+		idCompany.value,
+		idDepartment.value
+	)
+
+	if (res?.status == 200) {
+		content.value = parseData(res?.data.sediments)
+
+		setTotalPages(res?.data.totalPages)
+	} else if (res?.status == 404) {
+		content.value = []
+	} else {
+		handleApiResponse(res?.data.message)
+
+		showNotificationModal.value = true
+	}
+
+	showLoading.value = false
+}
+
+const getNameOfSediments = async () => {
+	const res: any = await getNameOfSedimentsApi(
+		idCompany.value,
+		idDepartment.value
+	)
+
+	if (res?.status == 200) sediments.value = res?.data.nameOfSediments
+}
+
+const setTotalPages = (pages: number) => {
+	totalPages.value = []
+
+	for (let i = 0; i <= pages - 1; i++) {
+		totalPages.value.push(i)
+	}
+}
+
+const parseData = (data: any[]): Array<ISediments> => {
+	const parsedData = data.map((d: ISedimentsApi) => {
+		return {
+			name: d.name,
+			classification: d.classification,
+			risk: d.risk,
+			state: d.state,
+			packaging: d.packaging,
+			id: d._id,
+			idCompany: d.idCompany,
+			idDepartment: d.idDepartment,
+		}
+	})
+
+	return parsedData
+}
+
+const getId = () => {
+	idCompany.value = idCompanyStore.getIdCompany
+	idDepartment.value = departmentStore.getIdDepartment
+}
+
+onMounted(async () => {
+	getId()
+
+	await getSedimentsByPage(page.value, itemsPerPage.value)
+
+	await getNameOfSediments()
+})
 </script>

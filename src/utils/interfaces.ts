@@ -6,7 +6,7 @@ export interface Credential {
 export interface IUseProps {
 	setTableBackground: (index: number) => string
 	parseDepartment: (data: any[]) => Array<IDepartment>
-	handleAutoCompleteStyle: (value: string | undefined) => string
+	handleAutoCompleteStyle: (value: string | undefined | null) => string
 }
 
 export interface IMessage {
@@ -46,4 +46,12 @@ export interface ISediments {
 	risk: string | undefined
 	state: string | undefined
 	packaging: string
+	idDepartment: string | undefined
+	idCompany: string | undefined
+
+	id: string | undefined
+}
+
+export interface ISedimentsApi extends ISediments {
+	_id: string | undefined
 }

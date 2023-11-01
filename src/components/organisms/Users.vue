@@ -10,13 +10,13 @@
 				">
 				<v-autocomplete
 					v-model="usersSelected"
+					:style="handleAutoCompleteStyle(usersSelected)"
 					clearable
 					:active="true"
 					:on-click:clear="userFilterCleaning"
 					:onUpdate:modelValue="selectUser"
 					:items="users"
 					chips
-					density="comfortable"
 					label="Buscar Usuário"></v-autocomplete>
 
 				<h1 class="mt-7" v-if="hasPermission([AuthorizationUser.ADMIN])">ou</h1>
@@ -134,10 +134,10 @@ import { AuthorizationUser } from "@/utils/enum"
 import Container from "@/components/atoms/Container.vue"
 import useProps from "../../context/useProps"
 
-const { setTableBackground } = useProps()
+const { setTableBackground, handleAutoCompleteStyle } = useProps()
 
-let usersSelected = ref()
-let departamentSelected = ref()
+let usersSelected = ref(null)
+let departamentSelected = ref(null)
 
 let props = defineProps({
 	itemsPerPage: { type: Number, required: true },

@@ -14,6 +14,9 @@ export enum Routes {
 	UPDATE_USER = "/user/update/",
 	DELETE_USER = "/user/",
 	REFRESH_TOKEN = "/refresh_token",
+	SAVE_SEDIMENTS = "/api/sediments/save",
+	GET_SEDIMENTS_BY_PAGE = "/api/sediments/pagineted",
+	GET_NAME_OF_SEDIMENTS = "/api/sediments/by-name",
 }
 
 export enum TypeErrors {

@@ -4,7 +4,7 @@
 			<div
 				class="flex justify-between items-center w-auto min-w-[23rem] space-x-5">
 				<v-autocomplete
-					:class="handleAutoCompleteStyle(sedimentSelected)"
+					:style="handleAutoCompleteStyle(sedimentSelected)"
 					:on-click:clear="clearFilter"
 					:onUpdate:modelValue="selectSediments"
 					:active="true"
@@ -47,15 +47,19 @@
 						</td>
 
 						<td :class="setTableBackground(index)">
-							{{ items.responsible }}
+							{{ items.classification }}
 						</td>
 
 						<td :class="setTableBackground(index)">
-							{{ items.ramal }}
+							{{ items.risk }}
 						</td>
 
 						<td :class="setTableBackground(index)">
-							{{ items.email }}
+							{{ items.state }}
+						</td>
+
+						<td :class="setTableBackground(index)">
+							{{ items.packaging }}
 						</td>
 
 						<td :class="setTableBackground(index)">
@@ -101,6 +105,7 @@ import Button from "../atoms/Button.vue"
 import { PropType, ref, computed } from "vue"
 import { Actions } from "@/utils/enum"
 import userProps from "@/context/useProps"
+import { ISediments } from "@/utils/interfaces"
 
 const { handleAutoCompleteStyle, setTableBackground } = userProps()
 
@@ -113,7 +118,7 @@ const props = defineProps({
 
 	actions: { type: Array as PropType<string[]>, required: true },
 
-	content: { type: Array as PropType<any[]>, required: true },
+	content: { type: Array as PropType<ISediments[]>, required: true },
 
 	selectSediments: {
 		type: Function as PropType<(department: string) => void>,
@@ -121,7 +126,7 @@ const props = defineProps({
 	},
 
 	showDeleteModal: {
-		type: Function as PropType<(id: string) => void>,
+		type: Function as PropType<(id?: string) => void>,
 		required: true,
 	},
 

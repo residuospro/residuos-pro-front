@@ -24,11 +24,11 @@ const useProps = (): IUseProps => {
 		return parsedData
 	}
 
-	const handleAutoCompleteStyle = (value: string | undefined): string => {
+	const handleAutoCompleteStyle = (value: string | undefined | null): any => {
 		if (value) {
-			return "bg-[#fff] h-[3.8rem]"
+			return { background: "#fff", height: "3.5rem" }
 		} else {
-			return "bg-[#f3f4f6] h-[3rem]"
+			return { background: "#f3f4f6", height: "3rem" }
 		}
 	}
 
