@@ -3,8 +3,12 @@ export interface Credential {
 	password: string
 }
 
+interface IBackground {
+	background: string | undefined
+}
+
 export interface IUseProps {
-	setTableBackground: (index: number) => string
+	setTableBackground: (index: number) => any
 	parseDepartment: (data: any[]) => Array<IDepartment>
 	handleAutoCompleteStyle: (value: string | undefined | null) => string
 }
@@ -48,10 +52,23 @@ export interface ISediments {
 	packaging: string
 	idDepartment: string | undefined
 	idCompany: string | undefined
-
 	id: string | undefined
 }
 
 export interface ISedimentsApi extends ISediments {
 	_id: string | undefined
+}
+
+export interface IInputContainerStyle {
+	minHeight: string
+}
+
+export interface IInputWrappingStyle {
+	display: string
+	width: string
+	justifyContent: string
+	marginTop: string
+	position: string
+	flexWrap: string
+	minHeight: string
 }

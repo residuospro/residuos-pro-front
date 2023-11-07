@@ -1,7 +1,7 @@
 <template>
 	<Container type="loginContainer">
-		<Container type="acessContainer">
-			<Container type="userInputContainer">
+		<Wrapper type="acess">
+			<Wrapper type="userInput">
 				<div class="text-center">
 					<Typograph type="H1" class="!text-v_dark_green"> Entrar </Typograph>
 
@@ -10,7 +10,7 @@
 					</Typograph>
 				</div>
 
-				<Container type="inputContainer">
+				<Wrapper type="input">
 					<Input
 						placeholder="Username:"
 						input="loginInput"
@@ -55,11 +55,11 @@
 					<button class="text-v_dark_green font-[700]">
 						Esqueceu a senha ?
 					</button>
-				</Container>
-			</Container>
-		</Container>
+				</Wrapper>
+			</Wrapper>
+		</Wrapper>
 
-		<Container type="logoContainer">
+		<Wrapper type="logo">
 			<img
 				src="@/assets/logo.png"
 				:width="400"
@@ -73,13 +73,14 @@
 					A maneira inteligente de gerenciar coletas
 				</Typograph>
 			</div>
-		</Container>
+		</Wrapper>
 	</Container>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
 import Container from "@/components/atoms/Container.vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"

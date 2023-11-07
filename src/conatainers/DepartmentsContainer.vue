@@ -35,25 +35,29 @@
 		:openDepartmentModal="openDepartmentModal" />
 
 	<div
-		class="flex justify-between items-center ml-10 w-full mt-5"
+		class="w-full mt-4 ml-10"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
+		<ItemsPerPage
+			@setItemsPerPage="setItemsPerPage"
+			v-show="page == 1"
+			class="float-left" />
 
 		<Pagination
+			:current-page="page"
 			:pageCount="totalPages.length"
 			:items="totalPages"
-			:current-page="page"
-			@paginate="setPagination" />
+			@paginate="setPagination"
+			class="float-right" />
 	</div>
 </template>
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
 import Departments from "@/components/organisms/Departments.vue"
-import Pagination from "../components/molecules/Pagination.vue"
+import Pagination from "../components/organisms/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import Loading from "@/components/molecules/Loading.vue"
-import DepartmentModal from "@/components/molecules/DepartmentCreateOrUpdateModal.vue"
+import DepartmentModal from "@/components/organisms/DepartmentCreateOrUpdateModal.vue"
 import { ref } from "vue"
 import { IDepartment, IMessage } from "@/utils/interfaces"
 import {
@@ -97,17 +101,27 @@ const headers = ["Departamento", "Responsável", "Ramal", "Email"]
 
 const actions = ["Atualizar", "Deletar"]
 
-const setPagination = (currentPage: number) => {
+const callGetDepartmentsByPage = async (page: number, itemsPerPage: number) => {
+	showLoading.value = true
+
+	await getDepartmentsByPage(page, itemsPerPage)
+
+	showLoading.value = false
+}
+
+const setPagination = async (currentPage: number) => {
 	if (page.value != currentPage) {
 		page.value = currentPage
-		getDepartmentsByPage(currentPage, itemsPerPage.value)
+
+		callGetDepartmentsByPage(currentPage, itemsPerPage.value)
 	}
 }
 
 const setItemsPerPage = (value: number) => {
 	if (itemsPerPage.value != value) {
 		itemsPerPage.value = value
-		getDepartmentsByPage(page.value, value)
+
+		callGetDepartmentsByPage(page.value, value)
 	}
 }
 
@@ -201,6 +215,8 @@ const updateDepartments = async (departament: IDepartment) => {
 const createDepartments = async (department: IDepartment) => {
 	const res: any = await createDepartment(department, idCompany.value)
 
+	console.log("refd", res)
+
 	if (res?.status == 201) {
 		departments.value = [
 			...departments.value,
@@ -221,12 +237,12 @@ const deleteDepartment = async () => {
 	const res: any = await deleteDepartments(idDepartment.value)
 
 	if (res?.status == 201) {
-		handleApiResponse(res?.data.message)
-
 		await getDepartmentsByPage(page.value, itemsPerPage.value)
 
 		await getAllDepartment()
 	}
+
+	handleApiResponse(res?.data.message)
 
 	changeVariableState()
 }
@@ -244,10 +260,6 @@ const getDepartmentsByPage = async (
 	currentPage: number,
 	itemsPerPage: number
 ) => {
-	showLoading.value = true
-
-	departments.value = []
-
 	const res: any = await takeDepartmentsByPage(
 		currentPage,
 		itemsPerPage,
@@ -255,18 +267,18 @@ const getDepartmentsByPage = async (
 	)
 
 	if (res?.status == 200) {
+		departments.value = []
+
 		departments.value = parseDepartment(res?.data.departments)
 
 		setTotalPages(res?.data.totalPages)
 	} else if (res?.status == 404) {
 		departments.value = []
 	} else {
-		handleApiResponse(res?.data.message)
+		handleApiResponse(res?.response.data.message)
 
 		showNotificationModal.value = true
 	}
-
-	showLoading.value = false
 }
 
 const getAllDepartment = async () => {
@@ -279,7 +291,9 @@ const getAllDepartment = async () => {
 const departmentFilterCleaning = () => {
 	if (departmentSelected.value) {
 		departments.value = []
-		getDepartmentsByPage(page.value, itemsPerPage.value)
+
+		callGetDepartmentsByPage(page.value, itemsPerPage.value)
+
 		departmentSelected.value = false
 	}
 }
@@ -333,7 +347,8 @@ const parseUpdateDepartment = (data: any[]) => {
 const getIdCompany = async () => {
 	idCompany.value = idCompanyStore.getIdCompany
 
-	await getDepartmentsByPage(page.value, itemsPerPage.value)
+	callGetDepartmentsByPage(page.value, itemsPerPage.value)
+
 	await getAllDepartment()
 }
 

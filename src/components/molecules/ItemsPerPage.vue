@@ -1,6 +1,6 @@
 <template>
 	<Container type="itemsPerPageContainer">
-		<Typograph type="H3" class="text-black">Itens por página</Typograph>
+		<Typograph type="H3" class="text-black">Exibir mais</Typograph>
 
 		<Select type="itemsPerPage" v-model="perPage" @click="getPerPage">
 			<option v-for="(item, index) in items" :value="item" :key="index">

@@ -3,10 +3,10 @@ import { IDepartment, IUseProps } from "@/utils/interfaces"
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
 		if (index % 2 == 0) {
-			return "bg-v_white_one"
+			return { background: "#F8f8f8" }
 		}
 
-		return ""
+		return { background: "transparent" }
 	}
 
 	const parseDepartment = (data: any[]): Array<IDepartment> => {

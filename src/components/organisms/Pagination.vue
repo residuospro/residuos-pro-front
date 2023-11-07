@@ -57,6 +57,8 @@ let props = defineProps({
 	currentPage: { type: Number, required: true },
 })
 
+console.log("page", props.currentPage)
+
 let page = ref(props.currentPage)
 let perPage = ref(4)
 let start = ref(1)

@@ -41,6 +41,7 @@ module.exports = {
 					"DeleteModal",
 					"Notification",
 					"Sediments",
+					"Wrapper",
 				],
 			},
 		],

@@ -1,6 +1,6 @@
 <template>
 	<Container type="menuContainer">
-		<Container type="menuIconContainer">
+		<Wrapper type="menuIcon">
 			<div v-for="menu in menuIcons" :key="menu.id" class="mt-2">
 				<button
 					@click="setIdBtn(menu.path)"
@@ -17,19 +17,21 @@
 					</RouterLink>
 				</button>
 			</div>
-		</Container>
-		<Container type="menuIconContainer">
+		</Wrapper>
+
+		<Wrapper type="menuIcon">
 			<button @click="logout" class="btnColor text-v_medium_gray">
 				<v-icon icon="mdi-logout-variant" />
 				<v-tooltip activator="parent" location="start">Sair</v-tooltip>
 			</button>
-		</Container>
+		</Wrapper>
 	</Container>
 </template>
 
 <script lang="ts" setup>
 /* eslint-disable no-undef */
 import { PropType } from "vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Container from "../atoms/Container.vue"
 import { hasPermission } from "@/utils/permissions"
 

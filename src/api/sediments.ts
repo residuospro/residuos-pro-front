@@ -51,3 +51,54 @@ export const getNameOfSedimentsApi = async (
 		return error
 	}
 }
+
+export const getSedimentByNameApi = async (
+	name: string,
+	idCompany: string,
+	idDepartment: string
+) => {
+	try {
+		const data = {
+			name,
+			idCompany,
+			idDepartment,
+		}
+
+		const res = await useClient().post(Routes.GET_SEDIMENTS_BY_NAME, data)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
+export const updateSedimentsApi = async (sediment: ISediments, id: string) => {
+	try {
+		const data: Partial<ISediments> = {}
+
+		for (const key in sediment) {
+			if (
+				sediment[key as keyof ISediments] != undefined &&
+				sediment[key as keyof ISediments] != ""
+			) {
+				data[key as keyof ISediments] = sediment[key as keyof ISediments]
+			}
+		}
+
+		const res = await useClient().put(`${Routes.UPDATE_SEDIMENTS}${id}`, data)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
+export const deleteSedimentApi = async (id: string) => {
+	try {
+		const res = await useClient().delete(`${Routes.DELETE_SEDIMENT}${id}`)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}

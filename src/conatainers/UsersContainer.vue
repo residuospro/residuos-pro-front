@@ -41,15 +41,19 @@
 		:userFilterCleaning="userFilterCleaning" />
 
 	<div
-		class="flex justify-between items-center ml-10 w-full mt-5"
+		class="w-full mt-4 ml-10 min-h-[15rem]"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
+		<ItemsPerPage
+			@setItemsPerPage="setItemsPerPage"
+			v-show="page == 1"
+			class="float-left" />
 
 		<Pagination
 			:current-page="page"
 			:pageCount="totalPages.length"
 			:items="totalPages"
-			@paginate="setPagination" />
+			@paginate="setPagination"
+			class="float-right" />
 	</div>
 </template>
 
@@ -58,11 +62,17 @@
 import Users from "@/components/organisms/Users.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Notification from "@/components/molecules/Notification.vue"
-import Pagination from "@/components/molecules/Pagination.vue"
+import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
-import UserModal from "@/components/molecules/UserCreateOrUpdateModal.vue"
-import { IDepartment, IMessage, IUsers } from "@/utils/interfaces"
+import UserModal from "@/components/organisms/UserCreateOrUpdateModal.vue"
+import {
+	IDepartment,
+	IInputContainerStyle,
+	IInputWrappingStyle,
+	IMessage,
+	IUsers,
+} from "@/utils/interfaces"
 import { onMounted, reactive, ref } from "vue"
 import { Actions, AuthorizationUser } from "@/utils/enum"
 import { takeAllDepartments } from "@/api/department"
@@ -120,23 +130,35 @@ let departmentInfo = reactive<IDepartment>({
 	idCompany: "",
 })
 
-const inputWrappingStyle = (): string => {
-	let style = ["flex flex-wrap w-full justify-between mt-2 relative"]
+const inputWrappingStyle = () => {
+	let style: IInputWrappingStyle[] = [
+		{
+			display: "flex",
+			width: "100%",
+			justifyContent: "space-between",
+			marginTop: "0.5rem",
+			position: "relative",
+			flexWrap: "wrap",
+			minHeight: "",
+		},
+	]
 
 	if (hasPermission([AuthorizationUser.ADMIN])) {
-		style.push("min-h-[15rem]")
+		style[0].minHeight = "15rem"
 	} else {
-		style.push("min-h-[8rem]")
+		style[0].minHeight = "8rem"
 	}
 
-	return style.join().replace(",", " ")
+	console.log("s", style[0])
+
+	return style[0]
 }
 
-const inputContainerStyle = (): string => {
+const inputContainerStyle = (): IInputContainerStyle => {
 	if (hasPermission([AuthorizationUser.ADMIN])) {
-		return "min-h-[18rem]"
+		return { minHeight: "18rem" }
 	} else {
-		return "min-h-[15rem]"
+		return { minHeight: "15rem" }
 	}
 }
 
@@ -302,8 +324,12 @@ const createUsers = async (user: IUsers) => {
 
 	const res: any = await createUser(user, permission.value)
 
+	console.log("u", res)
+
 	if (res?.status == 201) {
-		users.value = [...users.value, ...parseUser([res?.data.createUser])]
+		users.value = [...users.value, ...parseUser([res?.data.savedUser])]
+
+		setTotalPages(res?.data.totalPages)
 	}
 
 	handleApiResponse(res?.data.message)
@@ -412,7 +438,7 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 	} else if (res?.status == 404) {
 		users.value = []
 	} else {
-		handleApiResponse(res?.data.message)
+		handleApiResponse(res?.response.data.message)
 		showNotificationModal.value = true
 	}
 
@@ -452,6 +478,8 @@ const setTotalPages = (pages: number) => {
 	for (let i = 0; i <= pages - 1; i++) {
 		totalPages.value.push(i)
 	}
+
+	console.log("tp", totalPages.value)
 }
 
 const getUserDepartment = () => {

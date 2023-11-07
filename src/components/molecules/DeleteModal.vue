@@ -1,7 +1,7 @@
 <template>
 	<Container type="backgroundContainer">
-		<Container type="modalContainer">
-			<Container type="deleteModalContainer">
+		<Wrapper type="modal">
+			<Wrapper type="deleteModal">
 				<Typograph type="H2" class="text-v_medium_gray">
 					{{ title }}
 				</Typograph>
@@ -20,13 +20,14 @@
 						Não
 					</Button>
 				</div>
-			</Container>
-		</Container>
+			</Wrapper>
+		</Wrapper>
 	</Container>
 </template>
 
 <script setup lang="ts">
 import Container from "../atoms/Container.vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Button from "../atoms/Button.vue"
 

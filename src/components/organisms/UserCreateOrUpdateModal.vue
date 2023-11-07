@@ -1,18 +1,17 @@
 <template>
 	<Container type="backgroundContainer">
-		<Container type="modalContainer">
-			<Container type="actionsModalContainer" :class="inputContainerStyle()">
+		<Wrapper type="modal">
+			<Wrapper type="actionsModal" :style="inputContainerStyle()">
 				<form @submit.prevent="createOrUpdateUser(user, typeAction)">
 					<Typograph type="H2" class="text-v_medium_gray">
 						{{ typeAction }} usuário
 					</Typograph>
 
-					<div :class="inputWrappingStyle()">
+					<div :style="styles">
 						<v-autocomplete
 							v-if="hasPermission([AuthorizationUser.ADMIN])"
 							:style="handleAutoCompleteStyle(user.department)"
 							clearable
-							:active="true"
 							:on-click:clear="() => (user.department = undefined)"
 							:onUpdate:modelValue="selectDepartment"
 							:items="departments"
@@ -47,21 +46,27 @@
 						</Button>
 					</div>
 				</form>
-			</Container>
-		</Container>
+			</Wrapper>
+		</Wrapper>
 	</Container>
 </template>
 
 <script setup lang="ts">
 import Container from "../atoms/Container.vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
-import { PropType, reactive, watch } from "vue"
-import { IUsers } from "@/utils/interfaces"
+import { PropType, reactive, watch, ref } from "vue"
+import {
+	IInputContainerStyle,
+	IInputWrappingStyle,
+	IUsers,
+} from "@/utils/interfaces"
 import { Actions, AuthorizationUser } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
 import userProps from "@/context/useProps"
+import { onMounted } from "vue"
 
 const { handleAutoCompleteStyle } = userProps()
 
@@ -76,16 +81,14 @@ const user: IUsers = reactive({
 	idCompany: "",
 })
 
-const style = "flex flex-wrap w-full justify-between mt-2 relative"
-
 const props = defineProps({
 	inputWrappingStyle: {
-		type: Function as PropType<() => string>,
+		type: Function as PropType<() => IInputWrappingStyle>,
 		required: true,
 	},
 
 	inputContainerStyle: {
-		type: Function as PropType<() => string>,
+		type: Function as PropType<() => IInputContainerStyle>,
 		required: true,
 	},
 
@@ -128,6 +131,12 @@ const props = defineProps({
 		type: Array as PropType<string[]>,
 		required: true,
 	},
+})
+
+let styles = ref()
+
+onMounted(() => {
+	styles.value = props.inputWrappingStyle()
 })
 
 watch(user, () => {

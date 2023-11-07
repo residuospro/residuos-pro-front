@@ -17,6 +17,9 @@ export enum Routes {
 	SAVE_SEDIMENTS = "/api/sediments/save",
 	GET_SEDIMENTS_BY_PAGE = "/api/sediments/pagineted",
 	GET_NAME_OF_SEDIMENTS = "/api/sediments/by-name",
+	GET_SEDIMENTS_BY_NAME = "/api/sediments/get-name",
+	UPDATE_SEDIMENTS = "/sediments/update/",
+	DELETE_SEDIMENT = "/sediment/",
 }
 
 export enum TypeErrors {

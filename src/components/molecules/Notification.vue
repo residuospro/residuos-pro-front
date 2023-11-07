@@ -1,7 +1,7 @@
 <template>
 	<Container type="backgroundContainer">
-		<Container type="modalContainer">
-			<Container type="notificationContainer">
+		<Wrapper type="modal">
+			<Wrapper type="notification">
 				<TypographVue type="H1" class="text-v_blue">{{ title }}</TypographVue>
 
 				<TypographVue type="H3" class="text-v_medium_gray">
@@ -14,13 +14,14 @@
 					@click="$emit('closeModal', false)">
 					Fechar
 				</Button>
-			</Container>
-		</Container>
+			</Wrapper>
+		</Wrapper>
 	</Container>
 </template>
 
 <script setup lang="ts">
 import Container from "../atoms/Container.vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Button from "../atoms/Button.vue"
 import TypographVue from "../atoms/Typograph.vue"
 

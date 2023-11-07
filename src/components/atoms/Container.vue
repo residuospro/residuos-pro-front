@@ -20,47 +20,6 @@ const containerClass = computed(() => {
 			intent: {
 				loginContainer: "flex justify-between h-screen",
 
-				acessContainer: `
-					bg-white_two
-					flex flex-col
-					justify-center
-					items-center
-					rounded-br-[10rem]`,
-
-				logoContainer: `
-					 bg-gradient-to-r
-					 from-v_green
-					 to-v_dark_green
-					 flex flex-col
-					 justify-center
-					 items-center
-					 w-[65%]
-					 rounded-bl-[50rem]
-					 pl-20 `,
-
-				userInputContainer: `
-					w-[40%]
-					h-[35rem]
-					left-32
-					absolute
-					rounded-lg
-					ml-10 flex
-					flex-col
-					justify-evenly
-					items-center
-					glass-effect
-					sm:z-10
-					userInput`,
-
-				inputContainer: `
-					flex
-					flex-col
-					justify-evenly
-					items-center
-					h-[20rem]
-					mt-[-2rem] 
-					relative`,
-
 				loadingContainer: `
 					w-full
 					h-full 
@@ -83,18 +42,6 @@ const containerClass = computed(() => {
 					top-0 
 					left-0`,
 
-				modalContainer: `
-					w-full
-					h-full
-					absolute
-					top-[50%]
-					left-[50%]
-					flex 
-					flex-col
-					items-center 
-					justify-center
-					modalContainer`,
-
 				menuContainer: `
 					w-[5.6rem]
 					bg-white
@@ -106,14 +53,6 @@ const containerClass = computed(() => {
 					text-v_medium_gray
 					shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.8)]`,
 
-				menuIconContainer: `
-					h-auto
-					flex
-					flex-col
-					items-center
-					justify-between
-					py-5`,
-
 				painelContainer: `
 					grid
 					grid-cols-[5%,1fr]
@@ -122,64 +61,19 @@ const containerClass = computed(() => {
 					bg-v_dark_green
 					`,
 
-				dataTableContainer: `
-					min-h-[30rem]
-					glass-effect
-					rounded-lg
-				`,
-
 				paginationContainer: `
 					flex
 					justify-around
 					items-center
 					text-[#c9c9c9]
 					w-[33%]
-					ml-10
+					
 				`,
 				itemsPerPageContainer: `
 					flex
 					justify-evenly
 					w-[20%]
 					items-center
-				`,
-				deleteModalContainer: `
-					bg-white
-					flex 
-					flex-col 
-					justify-center 
-					items-center 
-					h-[10rem] 
-					min-w-[30rem] 
-					text-black 
-					rounded-md
-					px-8
-				`,
-
-				actionsModalContainer: `
-					bg-white 
-					flex 
-					flex-col 
-					py-5
-					px-5
-					min-h-[20rem] 
-					w-[40rem] 
-					text-black 
-					rounded-md
-				`,
-
-				notificationContainer: `
-					bg-v_white_two 
-					flex 
-					flex-col 
-					justify-center
-					items-center
-					py-5
-					px-8
-					h-[17rem] 
-				
-					text-black 
-					rounded-md
-			
 				`,
 			},
 		},
@@ -196,13 +90,6 @@ const containerClass = computed(() => {
 	backdrop-filter: blur(2px);
 	-webkit-backdrop-filter: blur(13.5px);
 	border: 1px solid rgba(255, 255, 255, 0.18);
-}
-.modalContainer {
-	transform: translate(-50%, -50%);
-	background: rgba(0, 0, 0, 0.5);
-	animation: fadeInAnimation ease 0.3s;
-	animation-iteration-count: 1;
-	animation-fill-mode: forwards;
 }
 
 @keyframes fadeInAnimation {

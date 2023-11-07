@@ -1,7 +1,7 @@
 <template>
 	<Container type="backgroundContainer">
-		<Container type="modalContainer">
-			<Container type="actionsModalContainer" class="!min-h-[17rem]">
+		<Wrapper type="modal">
+			<Wrapper type="actionsModal" class="!min-h-[17rem]">
 				<form
 					@submit.prevent="createOrUpdateDepartment(department, typeAction)">
 					<Typograph type="H2" class="text-v_medium_gray">
@@ -51,13 +51,14 @@
 						</Button>
 					</div>
 				</form>
-			</Container>
-		</Container>
+			</Wrapper>
+		</Wrapper>
 	</Container>
 </template>
 
 <script setup lang="ts">
 import Container from "../atoms/Container.vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"

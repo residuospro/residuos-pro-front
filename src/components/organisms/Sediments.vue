@@ -4,6 +4,7 @@
 			<div
 				class="flex justify-between items-center w-auto min-w-[23rem] space-x-5">
 				<v-autocomplete
+					clearable
 					:style="handleAutoCompleteStyle(sedimentSelected)"
 					:on-click:clear="clearFilter"
 					:onUpdate:modelValue="selectSediments"
@@ -22,7 +23,7 @@
 			</Button>
 		</div>
 
-		<Container type="dataTableContainer">
+		<Wrapper type="dataTable">
 			<table>
 				<thead>
 					<tr>
@@ -42,27 +43,27 @@
 						v-for="(items, index) in content.slice(0, itemsPerPage)"
 						:key="items.id"
 						class="font-medium">
-						<td :class="setTableBackground(index)">
+						<td :style="setTableBackground(index)">
 							{{ items.name }}
 						</td>
 
-						<td :class="setTableBackground(index)">
+						<td :style="setTableBackground(index)">
 							{{ items.classification }}
 						</td>
 
-						<td :class="setTableBackground(index)">
+						<td :style="setTableBackground(index)">
 							{{ items.risk }}
 						</td>
 
-						<td :class="setTableBackground(index)">
+						<td :style="setTableBackground(index)">
 							{{ items.state }}
 						</td>
 
-						<td :class="setTableBackground(index)">
+						<td :style="setTableBackground(index)">
 							{{ items.packaging }}
 						</td>
 
-						<td :class="setTableBackground(index)">
+						<td :style="setTableBackground(index)">
 							<v-menu transition="slide-y-transition">
 								<template v-slot:activator="{ props }">
 									<button v-bind="props">
@@ -93,14 +94,14 @@
 					</p>
 				</tbody>
 			</table>
-		</Container>
+		</Wrapper>
 	</div>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
 import { useHead } from "@vueuse/head"
-import Container from "../atoms/Container.vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Button from "../atoms/Button.vue"
 import { PropType, ref, computed } from "vue"
 import { Actions } from "@/utils/enum"
@@ -121,7 +122,7 @@ const props = defineProps({
 	content: { type: Array as PropType<ISediments[]>, required: true },
 
 	selectSediments: {
-		type: Function as PropType<(department: string) => void>,
+		type: Function as PropType<(sediment: string) => void>,
 		required: true,
 	},
 
@@ -148,46 +149,7 @@ const clearFilter = () => {
 	sedimentSelected.value = null
 }
 
-const autocompleteHeight = computed(() => {
-	let height = "3rem"
-
-	if (sedimentSelected.value) height = "3.8rem"
-
-	return height
-})
-
 useHead({
 	title: "Resíduos Pro - Resíduos",
 })
 </script>
-
-<style scoped>
-.overflow {
-	overflow: hidden;
-	-ms-text-overflow: ellipsis;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	padding: 0.3rem;
-}
-
-.overflow:hover {
-	position: absolute;
-	background: #fff;
-	height: 2rem;
-	margin-top: -1rem;
-	box-shadow: 0 0.3rem 0.62rem rgba(0, 0, 0, 0.4);
-	border-radius: 0.25rem;
-	color: #000;
-	width: auto;
-	z-index: 10;
-}
-
-.v-autocomplete--single {
-	background: #fff;
-	box-shadow: 0 0.3rem 0.62rem rgba(0, 0, 0, 0.4);
-	border-radius: 0.375rem;
-	height: v-bind(autocompleteHeight);
-	color: #606060;
-	font-weight: bold;
-}
-</style>

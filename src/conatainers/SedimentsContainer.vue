@@ -32,21 +32,25 @@
 		:sediments="sediments"
 		:content="content"
 		:itemsPerPage="itemsPerPage"
-		:select-sediments="selectSediments"
+		:select-sediments="filterDepartment"
 		:show-delete-modal="openDeleteModal"
 		:openSedimentsModal="openSedimentsModal"
 		:sedimentsFilterCleaning="sedimentsFilterCleaning" />
 
 	<div
-		class="flex justify-between items-center ml-10 w-full"
+		class="w-full mt-4 ml-10"
 		v-if="totalPages.length > 1 || itemsPerPage > 10">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" />
+		<ItemsPerPage
+			@setItemsPerPage="setItemsPerPage"
+			v-show="page == 1"
+			class="float-left" />
 
 		<Pagination
 			:current-page="page"
 			:pageCount="totalPages.length"
 			:items="totalPages"
-			@paginate="setPagination" />
+			@paginate="setPagination"
+			class="float-right" />
 	</div>
 </template>
 
@@ -54,7 +58,7 @@
 import Sediments from "@/components/organisms/Sediments.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Notification from "@/components/molecules/Notification.vue"
-import Pagination from "@/components/molecules/Pagination.vue"
+import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import SedimentsCreateOrUpdateModal from "@/components/organisms/SedimentsCreateOrUpdateModal.vue"
@@ -66,8 +70,11 @@ import { setIdCompany } from "@/store/setIdCompany"
 import { setDepartment } from "@/store/setDepartment"
 import {
 	createSedmentsApi,
+	deleteSedimentApi,
 	getNameOfSedimentsApi,
+	getSedimentByNameApi,
 	getSedimentsByPageApi,
+	updateSedimentsApi,
 } from "@/api/sediments"
 
 const idCompanyStore = setIdCompany()
@@ -105,6 +112,7 @@ let showNotificationModal = ref(false)
 let showButton = ref(false)
 let typeAction = ref("Cadastrar")
 let sediments = ref<string[]>([])
+let sedimentSelected = ref(false)
 let content = ref<any[]>([])
 let title = ref("")
 let subTitle = ref("")
@@ -114,6 +122,14 @@ let totalPages = ref<number[]>([])
 let sedimentId = ref()
 let idCompany = ref("")
 let idDepartment = ref("")
+
+const callGetSedimentsByPage = async (page: number, itemsPerPage: number) => {
+	showLoading.value = true
+
+	await getSedimentsByPage(page, itemsPerPage)
+
+	showLoading.value = false
+}
 
 const handleApiResponse = (message: IMessage) => {
 	title.value = message.title
@@ -130,27 +146,58 @@ const changeVariableState = () => {
 }
 
 const closeModal = () => {
+	getNameOfSediments()
 	showNotificationModal.value = false
 }
 
 const setPagination = (currentPage: number) => {
 	if (page.value != currentPage) {
 		page.value = currentPage
+		callGetSedimentsByPage(currentPage, itemsPerPage.value)
 	}
 }
 
 const setItemsPerPage = (value: number) => {
 	if (itemsPerPage.value != value) {
 		itemsPerPage.value = value
+		callGetSedimentsByPage(page.value, value)
 	}
 }
 
-const selectSediments = () => {
-	console.log("selected")
+const selectSediments = async (sediment: string) => {
+	if (sediment) {
+		showLoading.value = true
+
+		const res: any = await getSedimentByNameApi(
+			sediment,
+			idCompany.value,
+			idDepartment.value
+		)
+
+		if (res?.status == 200) {
+			content.value = []
+			totalPages.value = []
+
+			content.value = parseData([res?.data])
+		}
+
+		showLoading.value = false
+
+		sedimentSelected.value = true
+	}
+}
+
+const filterDepartment = async (sediment: string) => {
+	sedimentSelected.value = true
+
+	content.value = content.value.filter((d) => d.name == sediment)
+
+	if (content.value.length == 0) selectSediments(sediment)
 }
 
 const openDeleteModal = (id: string | undefined) => {
 	showDeleteModal.value = true
+	sedimentId.value = id
 }
 
 const openSedimentsModal = (action: string, id?: string) => {
@@ -160,11 +207,26 @@ const openSedimentsModal = (action: string, id?: string) => {
 }
 
 const sedimentsFilterCleaning = () => {
-	console.log("clear")
+	if (sedimentSelected.value) {
+		callGetSedimentsByPage(page.value, itemsPerPage.value)
+		sedimentSelected.value = true
+	}
 }
 
-const deleteSediments = () => {
-	console.log("deleted")
+const deleteSediments = async () => {
+	showLoading.value = true
+
+	const res: any = await deleteSedimentApi(sedimentId.value)
+
+	if (res?.status == 201) {
+		await getSedimentsByPage(page.value, itemsPerPage.value)
+
+		await getNameOfSediments()
+	}
+
+	handleApiResponse(res?.data.message)
+
+	changeVariableState()
 }
 
 const validateDataToCreateSediments = (sediment: ISediments) => {
@@ -182,8 +244,19 @@ const validateDataToCreateSediments = (sediment: ISediments) => {
 	showButton.value = validate.length == 5 ? true : false
 }
 
-const validateDataToUpdateSediments = () => {
-	console.log("validate")
+const validateDataToUpdateSediments = (sediment: ISediments) => {
+	let validate = []
+
+	for (const key in sediment) {
+		if (
+			sediment[key as keyof ISediments] != undefined &&
+			sediment[key as keyof ISediments] != ""
+		) {
+			validate.push(key)
+		}
+	}
+
+	showButton.value = validate.length >= 1 ? true : false
 }
 
 const createOrUpdateSediments = (sediment: ISediments, action: string) => {
@@ -192,7 +265,7 @@ const createOrUpdateSediments = (sediment: ISediments, action: string) => {
 	if (action == Actions.SAVE) {
 		createSediments(sediment)
 	} else {
-		console.log("update")
+		updateSediments(sediment)
 	}
 }
 
@@ -201,8 +274,6 @@ const createSediments = async (sediment: ISediments) => {
 	sediment.idDepartment = idDepartment.value
 
 	const res: any = await createSedmentsApi(sediment)
-
-	console.log("resid", res)
 
 	if (res?.status == 201) {
 		content.value = [...content.value, ...parseData([res?.data.createSediment])]
@@ -215,14 +286,25 @@ const createSediments = async (sediment: ISediments) => {
 	changeVariableState()
 }
 
+const updateSediments = async (sediment: ISediments) => {
+	sediment.idCompany = idCompany.value
+	sediment.idDepartment = idDepartment.value
+
+	const res: any = await updateSedimentsApi(sediment, sedimentId.value)
+
+	if (res?.status == 201) {
+		parseUpdateSediments([res?.data.updateSediment])
+	}
+
+	handleApiResponse(res?.data.message)
+
+	changeVariableState()
+}
+
 const getSedimentsByPage = async (
 	currentPage: number,
 	itemsPerPage: number
 ) => {
-	showLoading.value = true
-
-	content.value = []
-
 	const res: any = await getSedimentsByPageApi(
 		currentPage,
 		itemsPerPage,
@@ -231,18 +313,19 @@ const getSedimentsByPage = async (
 	)
 
 	if (res?.status == 200) {
+		content.value = []
+		totalPages.value = []
+
 		content.value = parseData(res?.data.sediments)
 
 		setTotalPages(res?.data.totalPages)
 	} else if (res?.status == 404) {
 		content.value = []
 	} else {
-		handleApiResponse(res?.data.message)
+		handleApiResponse(res?.response.data.message)
 
 		showNotificationModal.value = true
 	}
-
-	showLoading.value = false
 }
 
 const getNameOfSediments = async () => {
@@ -259,6 +342,16 @@ const setTotalPages = (pages: number) => {
 
 	for (let i = 0; i <= pages - 1; i++) {
 		totalPages.value.push(i)
+	}
+}
+
+const parseUpdateSediments = (data: any[]) => {
+	const updateSediments = content.value.find((d) => d.id == data[0]._id)
+
+	if (updateSediments) {
+		const index = content.value.indexOf(updateSediments)
+
+		content.value[index] = parseData(data)[0]
 	}
 }
 
@@ -287,7 +380,7 @@ const getId = () => {
 onMounted(async () => {
 	getId()
 
-	await getSedimentsByPage(page.value, itemsPerPage.value)
+	await callGetSedimentsByPage(page.value, itemsPerPage.value)
 
 	await getNameOfSediments()
 })

@@ -1,7 +1,7 @@
 <template>
 	<Container type="backgroundContainer">
-		<Container type="modalContainer">
-			<Container type="actionsModalContainer">
+		<Wrapper type="modal">
+			<Wrapper type="actionsModal">
 				<form @submit.prevent="createOrUpdateSediments(sediment, typeAction)">
 					<Typograph type="H2" class="text-v_medium_gray">
 						{{ typeAction }} resíduo
@@ -11,7 +11,6 @@
 						<v-autocomplete
 							:style="handleAutoCompleteStyle(sediment.classification)"
 							clearable
-							:active="true"
 							:items="classifications"
 							v-model="sediment.classification"
 							chips
@@ -20,7 +19,6 @@
 						<v-autocomplete
 							:style="handleAutoCompleteStyle(sediment.risk)"
 							clearable
-							:active="true"
 							:items="risk"
 							v-model="sediment.risk"
 							chips
@@ -29,7 +27,6 @@
 						<v-autocomplete
 							:style="handleAutoCompleteStyle(sediment.state)"
 							clearable
-							:active="true"
 							:items="states"
 							v-model="sediment.state"
 							chips
@@ -51,10 +48,10 @@
 
 					<div class="flex justify-end w-full space-x-5 mt-5">
 						<Button
+							type="submit"
 							buttonType="confirmButton"
 							:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
-							:disabled="!showButton"
-							@click="createOrUpdateSediments(sediment, typeAction)">
+							:disabled="!showButton">
 							<p class="text-white">{{ typeAction }}</p>
 						</Button>
 
@@ -63,13 +60,14 @@
 						</Button>
 					</div>
 				</form>
-			</Container>
-		</Container>
+			</Wrapper>
+		</Wrapper>
 	</Container>
 </template>
 
 <script setup lang="ts">
 import Container from "../atoms/Container.vue"
+import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
@@ -87,6 +85,7 @@ let sediment: ISediments = reactive({
 	packaging: "",
 	idCompany: "",
 	idDepartment: "",
+	id: "",
 })
 
 const { handleAutoCompleteStyle } = userProps()
