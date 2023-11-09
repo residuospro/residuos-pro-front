@@ -72,3 +72,8 @@ export interface IInputWrappingStyle {
 	flexWrap: string
 	minHeight: string
 }
+
+export interface ICollectionFilter {
+	label: string
+	value: string
+}

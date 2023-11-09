@@ -62,7 +62,6 @@ const wrapperClass = computed(() => {
 					h-[17rem] 
 					text-black 
 					rounded-md
-			
 				`,
 
 				acess: `

@@ -1,7 +1,7 @@
 <template>
 	<Container type="painelContainer">
 		<MenuSideBarContainer />
-		<div class="rounded-br-[50rem] bg-white w-[89%] ml-4 px-5 py-5 h-full">
+		<div class="rounded-br-[50rem] bg-white w-[95%] ml-4 px-5 py-5 h-full">
 			<router-view :key="$router.currentRoute.value.path"></router-view>
 		</div>
 	</Container>

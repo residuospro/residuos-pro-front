@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
 import Login from "../views/Login.vue"
 import Painel from "../views/Painel.vue"
-import Collections from "@/components/organisms/Collections.vue"
+import Collections from "@/conatainers/ColletionsContainer.vue"
 import Users from "@/conatainers/UsersContainer.vue"
 import Departments from "@/conatainers/DepartmentsContainer.vue"
 import Dashboard from "@/components/organisms/Dashboard.vue"
