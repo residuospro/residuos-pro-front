@@ -37,8 +37,12 @@ export const takeDepartmentsByPage = async (
 
 		const res = await useClient().post(Routes.GET_DEPARTMENT_BY_PAGE, data)
 
+		console.log("rezando", res)
+
 		return res
 	} catch (error) {
+		console.log("error")
+
 		return error
 	}
 }

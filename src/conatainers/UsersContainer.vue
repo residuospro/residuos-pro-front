@@ -77,7 +77,7 @@ import { onMounted, reactive, ref } from "vue"
 import { Actions, AuthorizationUser } from "@/utils/enum"
 import { takeAllDepartments } from "@/api/department"
 import { setIdCompany } from "@/store/setIdCompany"
-import { setDepartment } from "@/store/setDepartment"
+import { departmentStore } from "@/store/departmentStore"
 import {
 	createUser,
 	takeAllUsers,
@@ -93,7 +93,7 @@ const { parseDepartment } = useProps()
 
 const idCompanyStore = setIdCompany()
 
-const departmentStore = setDepartment()
+const getDepartmentStore = departmentStore()
 
 const headers = ["Nome", "Username", "Email", "Departamento", "Ramal"]
 
@@ -378,7 +378,7 @@ const selectTheDepartmentToCreateTheManager = async (department: string) => {
 }
 
 const selectTheDepartmentToCreateTheCollaborator = () => {
-	const department = departmentStore.getDepartment
+	const department = getDepartmentStore.getDepartment
 
 	Object.assign(departmentInfo, department)
 }
@@ -483,7 +483,7 @@ const setTotalPages = (pages: number) => {
 }
 
 const getUserDepartment = () => {
-	userDepartment.value = departmentStore.getIdDepartment
+	userDepartment.value = getDepartmentStore.getIdDepartment
 	selectTheDepartmentToCreateTheCollaborator()
 }
 

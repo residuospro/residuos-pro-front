@@ -11,6 +11,7 @@ export interface IUseProps {
 	setTableBackground: (index: number) => any
 	parseDepartment: (data: any[]) => Array<IDepartment>
 	handleAutoCompleteStyle: (value: string | undefined | null) => string
+	setTotalPages: (page: number) => number[]
 }
 
 export interface IMessage {
@@ -40,8 +41,18 @@ export interface IUsers {
 
 export interface IUserDepartmentInfo {
 	name: string
-	ramal: number
-	id: string
+	ramal: string
+	idCompany?: string
+	id?: string
+	responsible: string
+	email: string
+}
+
+export interface IDepartmentStore {
+	departments: Array<IUserDepartmentInfo>
+	department: IUserDepartmentInfo
+	totalPages: Array<number>
+	idDepartment: string
 }
 
 export interface ISediments {

@@ -67,7 +67,7 @@ import { IMessage, ISediments, ISedimentsApi } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 import { onMounted } from "vue"
 import { setIdCompany } from "@/store/setIdCompany"
-import { setDepartment } from "@/store/setDepartment"
+import { departmentStore } from "@/store/departmentStore"
 import {
 	createSedmentsApi,
 	deleteSedimentApi,
@@ -79,7 +79,7 @@ import {
 
 const idCompanyStore = setIdCompany()
 
-const departmentStore = setDepartment()
+const getDepartmentStore = departmentStore()
 
 const headers = [
 	"Nome",
@@ -374,7 +374,7 @@ const parseData = (data: any[]): Array<ISediments> => {
 
 const getId = () => {
 	idCompany.value = idCompanyStore.getIdCompany
-	idDepartment.value = departmentStore.getIdDepartment
+	idDepartment.value = getDepartmentStore.getIdDepartment!
 }
 
 onMounted(async () => {

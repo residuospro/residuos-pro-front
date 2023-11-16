@@ -10,6 +10,8 @@ const useProps = (): IUseProps => {
 	}
 
 	const parseDepartment = (data: any[]): Array<IDepartment> => {
+		console.log("parse", data)
+
 		const parsedData = data.map((d) => {
 			return {
 				name: d.name,
@@ -24,6 +26,16 @@ const useProps = (): IUseProps => {
 		return parsedData
 	}
 
+	const setTotalPages = (pages: number): number[] => {
+		const totalPages = []
+
+		for (let i = 0; i <= pages - 1; i++) {
+			totalPages.push(i)
+		}
+
+		return totalPages
+	}
+
 	const handleAutoCompleteStyle = (value: string | undefined | null): any => {
 		if (value) {
 			return { background: "#fff", height: "3.5rem" }
@@ -36,6 +48,7 @@ const useProps = (): IUseProps => {
 		setTableBackground,
 		parseDepartment,
 		handleAutoCompleteStyle,
+		setTotalPages,
 	}
 }
 

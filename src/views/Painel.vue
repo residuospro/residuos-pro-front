@@ -14,16 +14,18 @@ import router from "@/router"
 import { onMounted } from "vue"
 import { setUserId } from "../store/setUserId"
 import { setIdCompany } from "@/store/setIdCompany"
-import { setDepartment } from "@/store/setDepartment"
+import { departmentStore } from "@/store/departmentStore"
 
 import { getPayload } from "../api/signin"
 
 const userIdStore = setUserId()
 const idCompanyStore = setIdCompany()
-const idDepartmentStore = setDepartment()
+const idDepartmentStore = departmentStore()
 
 const getUserInfo = async () => {
 	const payload = await getPayload()
+
+	console.log("p", payload)
 
 	userIdStore.setUserId(payload.data.userId)
 	idCompanyStore.setIdCompany(payload.data.idCompany)
@@ -33,9 +35,12 @@ const getUserInfo = async () => {
 			name: payload.data.department,
 			ramal: payload.data.ramal,
 			id: payload.data.idDepartment,
+			responsible: payload.data.name,
+			email: payload.data.email,
+			idCompany: payload.data.idCompany,
 		}
 
-		idDepartmentStore.setIdDepartment(config)
+		idDepartmentStore.setDepartment(config)
 	}
 }
 

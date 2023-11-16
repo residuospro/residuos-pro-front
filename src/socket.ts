@@ -3,8 +3,6 @@ import { io } from "socket.io-client"
 import { isAuthenticated } from "./utils/permissions"
 import { setIdCompany } from "@/store/setIdCompany"
 
-const idCompany = setIdCompany().getIdCompany
-
 const accessToken = isAuthenticated()
 
 export const socket = io("http://localhost:3333", {
@@ -27,6 +25,8 @@ socket.on("connect", () => {
 })
 
 socket.on("department", (data) => {
+	const idCompany = setIdCompany().getIdCompany
+
 	console.log("Evento 'department' recebido:", data)
 
 	if (data.idCompany == idCompany) {
