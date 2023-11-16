@@ -10,9 +10,9 @@
 				">
 				<v-autocomplete
 					v-model="usersSelected"
+					:active="true"
 					:style="handleAutoCompleteStyle(usersSelected)"
 					clearable
-					:active="true"
 					:on-click:clear="userFilterCleaning"
 					:onUpdate:modelValue="selectUser"
 					:items="users"

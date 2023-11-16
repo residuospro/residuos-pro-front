@@ -1,10 +1,12 @@
 <template>
 	<Collections
 		:itemsPerPage="itemsPerPage"
+		:departments="departmentsName"
 		:headers="headers"
 		:actions="actions"
 		:collections="collections"
 		:collectionFilter="collectionFilter"
+		:status="status"
 		:handleCollectionsFilter="handleCollectionsFilter"
 		:showDeleteModal="openDeleteModal"
 		:openCollectionsModal="openCollectionModal"
@@ -16,6 +18,7 @@ import Collections from "@/components/organisms/Collections.vue"
 import { AuthorizationUser } from "@/utils/enum"
 import { ICollectionFilter } from "@/utils/interfaces"
 import { hasPermission } from "@/utils/permissions"
+import { state } from "@/socket"
 import { onMounted } from "vue"
 import { ref } from "vue"
 
@@ -45,6 +48,13 @@ let showCollectionModal = ref(false)
 let page = ref(1)
 let itemsPerPage = ref(10)
 let typeAction = ref("Cadastrar")
+let departmentsName = ref<string[]>([])
+let status = ref([
+	"Aguardando aprovação",
+	"Aguardando coleta",
+	"Finalizado",
+	"Recusado",
+])
 
 const callCollectionsByPage = async (page: number, itemsPerPage: number) => {
 	showLoading.value = true

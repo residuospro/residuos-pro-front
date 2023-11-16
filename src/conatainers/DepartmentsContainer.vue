@@ -215,8 +215,6 @@ const updateDepartments = async (departament: IDepartment) => {
 const createDepartments = async (department: IDepartment) => {
 	const res: any = await createDepartment(department, idCompany.value)
 
-	console.log("refd", res)
-
 	if (res?.status == 201) {
 		departments.value = [
 			...departments.value,
@@ -265,6 +263,7 @@ const getDepartmentsByPage = async (
 		itemsPerPage,
 		idCompany.value
 	)
+	console.log("r", res)
 
 	if (res?.status == 200) {
 		departments.value = []
@@ -275,7 +274,7 @@ const getDepartmentsByPage = async (
 	} else if (res?.status == 404) {
 		departments.value = []
 	} else {
-		handleApiResponse(res?.response.data.message)
+		handleApiResponse(res?.response?.data?.message)
 
 		showNotificationModal.value = true
 	}
@@ -285,7 +284,7 @@ const getAllDepartment = async () => {
 	const res: any = await takeAllDepartments(idCompany.value)
 
 	if (res?.status == 200)
-		departmentsName.value = res.data.map((n: any) => n.name)
+		departmentsName.value = res?.data.map((n: any) => n.name)
 }
 
 const departmentFilterCleaning = () => {
@@ -307,7 +306,7 @@ const selectDepartment = async (department: string) => {
 		if (res?.status == 200) {
 			departments.value = []
 
-			departments.value = parseDepartment([res.data])
+			departments.value = parseDepartment([res?.data])
 
 			totalPages.value = []
 		} else {

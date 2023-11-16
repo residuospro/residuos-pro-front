@@ -20,22 +20,56 @@
 					</template>
 
 					<v-list>
-						<v-list-item class="h-full overflow-auto mb-5">
-							<v-checkbox
-								v-for="(items, index) in collectionFilter"
-								:key="index"
-								v-model="filterSelected"
-								:label="items.label"
-								:value="items.value">
-							</v-checkbox>
+						<v-list-item>
+							<div class="mb-5 px-1 py-2 space-y-4">
+								<Input
+									input="inputFilter"
+									placeholder="Nº Pedido"
+									@keyup="filterSelected.orderNumber = $event.target.value" />
+
+								<v-autocomplete
+									clearable
+									density="compact"
+									class="!shadow-none !mb-5"
+									:on-click:clear="() => (departmentSelected = null)"
+									:style="handleAutoCompleteStyle(departmentSelected)"
+									v-model="filterSelected.sediment"
+									:items="departments"
+									chips
+									label="Resíduo"></v-autocomplete>
+
+								<v-autocomplete
+									clearable
+									density="compact"
+									v-if="hasPermission([AuthorizationUser.ADMIN])"
+									class="!shadow-none !mb-5"
+									:on-click:clear="() => (departmentSelected = null)"
+									:style="handleAutoCompleteStyle(departmentSelected)"
+									v-model="filterSelected.department"
+									:items="departments"
+									chips
+									label="Departamento"></v-autocomplete>
+
+								<v-autocomplete
+									clearable
+									density="compact"
+									class="!shadow-none"
+									:on-click:clear="() => (statusSelected = null)"
+									:style="handleAutoCompleteStyle(statusSelected)"
+									v-model="filterSelected.status"
+									:items="status"
+									chips
+									label="Status"></v-autocomplete>
+							</div>
 
 							<div
-								class="mb-5 text-v_dark_gray bg-slate-50 py-2 rounded-md text-center">
-								<p class="mb-2 opacity-75">Selecione uma data</p>
+								class="mb-5 text-v_dark_gray bg-gray-100 py-2 text-left rounded-md mx-1">
+								<p class="mb-2 opacity-75 ml-4">Selecione uma data</p>
+
 								<input
-									v-model="date"
+									v-model="filterSelected.date"
 									type="date"
-									class="w-[95%] bg-white shadow-none px-4 font-[100] rounded-md outline-[#e1e4ed] input" />
+									class="w-[95%] bg-white shadow-none px-4 font-[100] rounded-md outline-[#e1e4ed] input mx-1" />
 							</div>
 
 							<Button
@@ -137,20 +171,41 @@ import { useHead } from "@vueuse/head"
 import Wrapper from "../atoms/Wrapper.vue"
 import Button from "../atoms/Button.vue"
 import userProps from "@/context/useProps"
-import { Actions } from "@/utils/enum"
+import { Actions, AuthorizationUser } from "@/utils/enum"
 import { PropType, ref } from "vue"
 import { watch } from "vue"
-import { ICollectionFilter } from "@/utils/interfaces"
+import { ICollectionFilter, IFilterSelected } from "@/utils/interfaces"
+import { hasPermission } from "@/utils/permissions"
+import Input from "@/components/atoms/Input.vue"
+import { reactive } from "vue"
 
-let filterSelected = ref<string[]>([])
-let closeMenu = ref(false)
-let date = ref("")
-
-watch(date, () => {
-	console.log("d", date.value)
+let filterSelected = reactive<IFilterSelected>({
+	orderNumber: "",
+	sediment: null,
+	department: null,
+	status: null,
+	date: "",
 })
 
-const { setTableBackground } = userProps()
+let departmentSelected = ref()
+let statusSelected = ref(null)
+let closeMenu = ref(false)
+
+watch(closeMenu, () => {
+	console.log("d", closeMenu.value)
+
+	if (!closeMenu.value) {
+		filterSelected = {
+			orderNumber: "",
+			sediment: null,
+			department: null,
+			status: null,
+			date: "",
+		}
+	}
+})
+
+const { setTableBackground, handleAutoCompleteStyle } = userProps()
 
 const props = defineProps({
 	itemsPerPage: { type: Number, required: true },
@@ -185,14 +240,18 @@ const props = defineProps({
 		type: Function as unknown as () => () => void,
 		required: true,
 	},
+
+	departments: { type: Array as PropType<string[]>, required: true },
+
+	status: { type: Array as PropType<string[]>, required: true },
 })
 
-watch(filterSelected, () => {
-	props.handleCollectionsFilter(filterSelected.value)
-})
+const clearFilter = () => {
+	departmentSelected.value = null
+}
 
 const cleanFilter = () => {
-	filterSelected.value = []
+	console.log("oi")
 }
 
 useHead({

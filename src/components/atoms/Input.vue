@@ -28,6 +28,7 @@ const inputClass = computed(() => {
 				intent: {
 					loginInput: `w-[24rem] h-[3.75rem] px-14 inputLogin`,
 					input: `w-[18rem] h-[3rem] px-4 inputLogin`,
+					inputFilter: "w-full h-[3rem] shadow-none px-4 !font-extralight",
 				},
 			},
 		}

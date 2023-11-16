@@ -77,3 +77,19 @@ export interface ICollectionFilter {
 	label: string
 	value: string
 }
+
+export interface IFilterSelected {
+	orderNumber: string
+	sediment: null | string
+	department: null | string
+	status: null | string
+	date: string
+}
+
+export type IFilter = {
+	orderNumber: ""
+	sediment: null
+	department: null
+	status: null
+	date: ""
+}
