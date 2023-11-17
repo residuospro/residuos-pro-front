@@ -1,9 +1,13 @@
-import { reactive, watch } from "vue"
+import { reactive } from "vue"
 import { io } from "socket.io-client"
 import { isAuthenticated } from "./utils/permissions"
 import { setIdCompany } from "@/store/setIdCompany"
+import { departmentStore } from "./store/departmentStore"
+import useProps from "@/context/useProps"
 
 const accessToken = isAuthenticated()
+
+const { parseDepartment, setTotalPages } = useProps()
 
 export const socket = io("http://localhost:3333", {
 	withCredentials: true,
@@ -25,12 +29,19 @@ socket.on("connect", () => {
 })
 
 socket.on("department", (data) => {
+	const department_store = departmentStore()
+
 	const idCompany = setIdCompany().getIdCompany
+	const isModified = department_store.getModifiedDepartment
 
-	console.log("Evento 'department' recebido:", data)
-
-	if (data.idCompany == idCompany) {
+	if (data.idCompany == idCompany && !isModified) {
 		console.log("iguais")
+
+		department_store.setDepartments(parseDepartment(data.department))
+		department_store.setTotalPages(setTotalPages(data.totalPages))
+	} else {
+		department_store.setModifiedDepartment(false)
+		console.log("aqui")
 	}
 })
 

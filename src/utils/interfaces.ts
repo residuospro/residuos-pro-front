@@ -53,6 +53,7 @@ export interface IDepartmentStore {
 	department: IUserDepartmentInfo
 	totalPages: Array<number>
 	idDepartment: string
+	modifiedDepartment: boolean
 }
 
 export interface ISediments {

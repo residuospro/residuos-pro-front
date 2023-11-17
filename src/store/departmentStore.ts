@@ -21,6 +21,8 @@ export const departmentStore = defineStore("departmentStore", {
 		totalPages: [],
 
 		idDepartment: "",
+
+		modifiedDepartment: false,
 	}),
 	getters: {
 		getIdDepartment(state) {
@@ -33,6 +35,10 @@ export const departmentStore = defineStore("departmentStore", {
 
 		getTotalPages(state) {
 			return state.totalPages
+		},
+
+		getModifiedDepartment(state) {
+			return state.modifiedDepartment
 		},
 	},
 	actions: {
@@ -52,40 +58,8 @@ export const departmentStore = defineStore("departmentStore", {
 			this.departments = details
 		},
 
-		async getDepartmentByPage(
-			currentPage: number,
-			itemsPerPage: number,
-			idCompany: string
-		) {
-			let department: IUserDepartmentInfo[] = []
-			let pages: number[] = []
-
-			const res: any = await takeDepartmentsByPage(
-				currentPage,
-				itemsPerPage,
-				idCompany
-			)
-
-			if (res?.status == 200) {
-				this.departments = []
-				this.totalPages = []
-
-				department = parseDepartment(res?.data.departments)
-
-				this.departments = department
-
-				pages = setTotalPages(res?.data.totalPages)
-
-				this.totalPages = pages
-			} else if (res?.status == 404) {
-				this.departments = []
-				this.totalPages = []
-
-				department = []
-				pages = []
-			}
-
-			return { department, pages }
+		setModifiedDepartment(isModified: boolean) {
+			this.modifiedDepartment = isModified
 		},
 	},
 })
