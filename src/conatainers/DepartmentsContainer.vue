@@ -74,7 +74,7 @@ import { getPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
 import { socket } from "@/socket"
 
-const { parseDepartment, setTotalPages } = useProps()
+const { parseDepartment, setTotalPages, parseUpdateDepartment } = useProps()
 
 const idCompanyStore = setIdCompany()
 
@@ -97,7 +97,6 @@ let departmentsName = ref<string[]>([])
 let totalPages = ref<number[]>([])
 let departmentSelected = ref(false)
 let idCompany = ref("")
-let isModified = ref(false)
 
 const headers = ["Departamento", "Responsável", "Ramal", "Email"]
 
@@ -133,7 +132,7 @@ const setItemsPerPage = (value: number) => {
 }
 
 const paginatedItems = computed(() => {
-	const department = departments.value
+	const department = department_store.getDepartment
 
 	const currentPage = page.value
 
@@ -228,16 +227,27 @@ const updateDepartments = async (departament: IDepartment) => {
 	)
 
 	if (res?.status == 201) {
-		parseUpdateDepartment([res?.data.department])
-	}
+		departments.value = parseUpdateDepartment(
+			[res?.data.department],
+			departments.value
+		)
 
-	handleApiResponse(res?.data.message)
+		department_store.setModifiedDepartment(true)
+
+		handleApiResponse(res?.data.message)
+	} else {
+		handleApiResponse(res?.response.data.message)
+	}
 
 	changeVariableState()
 }
 
 const createDepartments = async (department: IDepartment) => {
-	const res: any = await createDepartment(department, idCompany.value)
+	const res: any = await createDepartment(
+		department,
+		idCompany.value,
+		departments.value.length
+	)
 
 	if (res?.status == 201) {
 		departments.value = [
@@ -251,10 +261,10 @@ const createDepartments = async (department: IDepartment) => {
 		department_store.setTotalPages(totalPages.value)
 		department_store.setModifiedDepartment(true)
 
-		isModified.value = true
+		handleApiResponse(res?.data.message)
+	} else {
+		handleApiResponse(res?.response.data.message)
 	}
-
-	handleApiResponse(res?.data.message)
 
 	changeVariableState()
 }
@@ -262,15 +272,21 @@ const createDepartments = async (department: IDepartment) => {
 const deleteDepartment = async () => {
 	showLoading.value = true
 
-	const res: any = await deleteDepartments(idDepartment.value)
+	const res: any = await deleteDepartments(idDepartment.value, idCompany.value)
 
 	if (res?.status == 201) {
-		await getDepartmentsByPage(page.value, itemsPerPage.value)
+		departments.value = departments.value.filter(
+			(d) => d.id != res?.data.department._id
+		)
 
-		await getAllDepartment()
+		department_store.setDepartments(departments.value)
+
+		department_store.setModifiedDepartment(true)
+
+		handleApiResponse(res?.data.message)
+	} else {
+		handleApiResponse(res?.response.data.message)
 	}
-
-	handleApiResponse(res?.data.message)
 
 	changeVariableState()
 }
@@ -357,16 +373,6 @@ const filterDepartment = async (department: string) => {
 	departments.value = departments.value.filter((d) => d.name == department)
 
 	if (departments.value.length == 0) selectDepartment(department)
-}
-
-const parseUpdateDepartment = (data: any[]) => {
-	const updateDepartment = departments.value.find((d) => d.id == data[0]._id)
-
-	if (updateDepartment) {
-		const index = departments.value.indexOf(updateDepartment)
-
-		departments.value[index] = parseDepartment(data)[0]
-	}
 }
 
 const getIdCompany = async () => {

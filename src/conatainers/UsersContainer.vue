@@ -149,8 +149,6 @@ const inputWrappingStyle = () => {
 		style[0].minHeight = "8rem"
 	}
 
-	console.log("s", style[0])
-
 	return style[0]
 }
 
@@ -323,8 +321,6 @@ const createUsers = async (user: IUsers) => {
 	user.idCompany = idCompany.value
 
 	const res: any = await createUser(user, permission.value)
-
-	console.log("u", res)
 
 	if (res?.status == 201) {
 		users.value = [...users.value, ...parseUser([res?.data.savedUser])]

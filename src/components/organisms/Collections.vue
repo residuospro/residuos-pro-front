@@ -192,8 +192,6 @@ let statusSelected = ref(null)
 let closeMenu = ref(false)
 
 watch(closeMenu, () => {
-	console.log("d", closeMenu.value)
-
 	if (!closeMenu.value) {
 		filterSelected = {
 			orderNumber: "",

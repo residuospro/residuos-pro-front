@@ -4,10 +4,11 @@ import { isAuthenticated } from "./utils/permissions"
 import { setIdCompany } from "@/store/setIdCompany"
 import { departmentStore } from "./store/departmentStore"
 import useProps from "@/context/useProps"
+import { Event } from "./utils/enum"
 
 const accessToken = isAuthenticated()
 
-const { parseDepartment, setTotalPages } = useProps()
+const { parseDepartment, setTotalPages, parseUpdateDepartment } = useProps()
 
 export const socket = io("http://localhost:3333", {
 	withCredentials: true,
@@ -28,20 +29,63 @@ socket.on("connect", () => {
 	state.connected = true
 })
 
-socket.on("department", (data) => {
-	const department_store = departmentStore()
-
+socket.on(Event.DEPARTMENT_CREATED, (data) => {
 	const idCompany = setIdCompany().getIdCompany
-	const isModified = department_store.getModifiedDepartment
 
-	if (data.idCompany == idCompany && !isModified) {
-		console.log("iguais")
+	if (data.idCompany == idCompany && data.department) {
+		const department_store = departmentStore()
 
-		department_store.setDepartments(parseDepartment(data.department))
-		department_store.setTotalPages(setTotalPages(data.totalPages))
-	} else {
-		department_store.setModifiedDepartment(false)
-		console.log("aqui")
+		const isModified = department_store.getModifiedDepartment
+		const departments = department_store.getDepartment
+
+		if (!isModified && departments.length > 0) {
+			department_store.setDepartments([
+				...departments,
+				...parseDepartment([data.department]),
+			])
+
+			department_store.setTotalPages(setTotalPages(data.totalPages))
+		} else {
+			department_store.setModifiedDepartment(false)
+		}
+	}
+})
+
+socket.on(Event.UPDATED_DEPARTMENT, (data) => {
+	const idCompany = setIdCompany().getIdCompany
+
+	if (data.idCompany == idCompany && data.department) {
+		const department_store = departmentStore()
+
+		const isModified = department_store.getModifiedDepartment
+		const departments = department_store.getDepartment
+
+		if (!isModified && departments.length > 0) {
+			department_store.setDepartments(
+				parseUpdateDepartment([data.department], departments)
+			)
+		} else {
+			department_store.setModifiedDepartment(false)
+		}
+	}
+})
+
+socket.on(Event.DELETED_DEPARTMENT, (data) => {
+	const idCompany = setIdCompany().getIdCompany
+
+	if (data.idCompany == idCompany && data.department) {
+		const department_store = departmentStore()
+
+		const isModified = department_store.getModifiedDepartment
+		const departments = department_store.getDepartment
+
+		if (!isModified && departments.length > 0) {
+			department_store.setDepartments(
+				departments.filter((d) => d.id != data.department._id)
+			)
+		} else {
+			department_store.setModifiedDepartment(false)
+		}
 	}
 })
 

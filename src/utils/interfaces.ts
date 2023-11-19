@@ -12,6 +12,10 @@ export interface IUseProps {
 	parseDepartment: (data: any[]) => Array<IDepartment>
 	handleAutoCompleteStyle: (value: string | undefined | null) => string
 	setTotalPages: (page: number) => number[]
+	parseUpdateDepartment: (
+		data: any[],
+		departments: IDepartment[]
+	) => IDepartment[]
 }
 
 export interface IMessage {

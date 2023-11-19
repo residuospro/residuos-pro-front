@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, computed, ref, PropType } from "vue"
+import { computed, ref, PropType } from "vue"
 import Container from "../atoms/Container.vue"
 import Button from "../atoms/Button.vue"
 
@@ -56,8 +56,6 @@ let props = defineProps({
 	items: { type: Array as PropType<number[]>, required: true },
 	currentPage: { type: Number, required: true },
 })
-
-console.log("page", props.currentPage)
 
 let page = ref(props.currentPage)
 let perPage = ref(4)

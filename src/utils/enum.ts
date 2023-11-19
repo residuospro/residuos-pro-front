@@ -70,3 +70,9 @@ export enum Messages {
 	TITLE_EXISTING_USER = "Username inválido",
 	SUBTITLE_EXISTING_USER = "O nome de usuário fornecido já existe em nosso banco",
 }
+
+export enum Event {
+	DEPARTMENT_CREATED = "department_created",
+	UPDATED_DEPARTMENT = "updated_department",
+	DELETED_DEPARTMENT = "deleted_department",
+}

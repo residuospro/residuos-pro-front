@@ -10,8 +10,6 @@ const useProps = (): IUseProps => {
 	}
 
 	const parseDepartment = (data: any[]): Array<IDepartment> => {
-		console.log("parse", data)
-
 		const parsedData = data.map((d) => {
 			return {
 				name: d.name,
@@ -44,11 +42,27 @@ const useProps = (): IUseProps => {
 		}
 	}
 
+	const parseUpdateDepartment = (
+		data: any[],
+		departments: IDepartment[]
+	): IDepartment[] => {
+		const updateDepartment = departments.find((d) => d.id == data[0]._id)
+
+		if (updateDepartment) {
+			const index = departments.indexOf(updateDepartment)
+
+			departments[index] = parseDepartment(data)[0]
+		}
+
+		return departments
+	}
+
 	return {
 		setTableBackground,
 		parseDepartment,
 		handleAutoCompleteStyle,
 		setTotalPages,
+		parseUpdateDepartment,
 	}
 }
 

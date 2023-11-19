@@ -25,8 +25,6 @@ const idDepartmentStore = departmentStore()
 const getUserInfo = async () => {
 	const payload = await getPayload()
 
-	console.log("p", payload)
-
 	userIdStore.setUserId(payload.data.userId)
 	idCompanyStore.setIdCompany(payload.data.idCompany)
 

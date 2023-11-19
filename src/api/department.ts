@@ -4,7 +4,8 @@ import { IDepartment } from "@/utils/interfaces"
 
 export const createDepartment = async (
 	department: IDepartment,
-	idCompany: string
+	idCompany: string,
+	totalItems: number
 ) => {
 	try {
 		const data = {
@@ -13,6 +14,7 @@ export const createDepartment = async (
 			email: department.email,
 			ramal: department.ramal,
 			idCompany,
+			totalItems,
 		}
 
 		const res = await useClient().post(Routes.CREATE_DEPARTMENT, data)
@@ -37,12 +39,8 @@ export const takeDepartmentsByPage = async (
 
 		const res = await useClient().post(Routes.GET_DEPARTMENT_BY_PAGE, data)
 
-		console.log("rezando", res)
-
 		return res
 	} catch (error) {
-		console.log("error")
-
 		return error
 	}
 }
@@ -78,9 +76,13 @@ export const takeDepartmentsByName = async (
 	}
 }
 
-export const deleteDepartments = async (id: string) => {
+export const deleteDepartments = async (id: string, idCompany: string) => {
 	try {
-		const res = await useClient().delete(`${Routes.DELETE_DEPARTMENT}${id}`)
+		const data = {
+			idCompany,
+		}
+
+		const res = await useClient().post(`${Routes.DELETE_DEPARTMENT}${id}`, data)
 
 		return res
 	} catch (error) {
