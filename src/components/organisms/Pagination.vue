@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, PropType } from "vue"
+import { computed, ref, PropType, watchEffect } from "vue"
 import Container from "../atoms/Container.vue"
 import Button from "../atoms/Button.vue"
 
@@ -57,10 +57,14 @@ let props = defineProps({
 	currentPage: { type: Number, required: true },
 })
 
-let page = ref(props.currentPage)
+let page = ref(1)
 let perPage = ref(4)
 let start = ref(1)
 const emit = defineEmits(["paginate"])
+
+watchEffect(() => {
+	page.value = props.currentPage
+})
 
 const count = (value: number) => {
 	page.value = value

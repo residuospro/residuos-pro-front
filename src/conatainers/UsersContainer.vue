@@ -76,7 +76,7 @@ import {
 import { onMounted, reactive, ref } from "vue"
 import { Actions, AuthorizationUser } from "@/utils/enum"
 import { takeAllDepartments } from "@/api/department"
-import { setIdCompany } from "@/store/setIdCompany"
+import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import {
 	createUser,
@@ -91,7 +91,7 @@ import useProps from "../context/useProps"
 
 const { parseDepartment } = useProps()
 
-const idCompanyStore = setIdCompany()
+const idCompanyStore = companyStore()
 
 const getDepartmentStore = departmentStore()
 
@@ -474,8 +474,6 @@ const setTotalPages = (pages: number) => {
 	for (let i = 0; i <= pages - 1; i++) {
 		totalPages.value.push(i)
 	}
-
-	console.log("tp", totalPages.value)
 }
 
 const getUserDepartment = () => {

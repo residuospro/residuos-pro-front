@@ -3,10 +3,6 @@ export interface Credential {
 	password: string
 }
 
-interface IBackground {
-	background: string | undefined
-}
-
 export interface IUseProps {
 	setTableBackground: (index: number) => any
 	parseDepartment: (data: any[]) => Array<IDepartment>
@@ -16,6 +12,7 @@ export interface IUseProps {
 		data: any[],
 		departments: IDepartment[]
 	) => IDepartment[]
+	setStore: () => ISetStore
 }
 
 export interface IMessage {
@@ -52,12 +49,18 @@ export interface IUserDepartmentInfo {
 	email: string
 }
 
-export interface IDepartmentStore {
+export interface IDepartmentState {
 	departments: Array<IUserDepartmentInfo>
 	department: IUserDepartmentInfo
 	totalPages: Array<number>
 	idDepartment: string
-	modifiedDepartment: boolean
+}
+
+export interface DepartmentActions {
+	setDepartment(details: IUserDepartmentInfo): void
+	setIdDepartment(id: string): void
+	setTotalPages(details: number[]): void
+	setDepartments(details: IUserDepartmentInfo[]): void
 }
 
 export interface ISediments {
@@ -108,4 +111,20 @@ export type IFilter = {
 	department: null
 	status: null
 	date: ""
+}
+
+export interface IPropsDepartmentStore {
+	getIdDepartment?: string
+	getDepartment: IDepartment[]
+	getTotalPages: number[]
+	setDepartment(details: IUserDepartmentInfo): void
+	setIdDepartment(id: string): void
+	setTotalPages(details: number[]): void
+	setDepartments(details: IUserDepartmentInfo[]): void
+}
+
+export interface ISetStore {
+	idCompany: string
+	departments: IDepartment[]
+	department_store: IPropsDepartmentStore
 }

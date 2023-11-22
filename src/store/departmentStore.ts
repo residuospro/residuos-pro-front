@@ -1,12 +1,8 @@
-import { takeDepartmentsByPage } from "@/api/department"
-import { IDepartmentStore, IUserDepartmentInfo } from "@/utils/interfaces"
+import { IDepartmentState, IUserDepartmentInfo } from "@/utils/interfaces"
 import { defineStore } from "pinia"
-import useProps from "../context/useProps"
-
-const { parseDepartment, setTotalPages } = useProps()
 
 export const departmentStore = defineStore("departmentStore", {
-	state: (): IDepartmentStore => ({
+	state: (): IDepartmentState => ({
 		departments: [],
 
 		department: {
@@ -21,9 +17,8 @@ export const departmentStore = defineStore("departmentStore", {
 		totalPages: [],
 
 		idDepartment: "",
-
-		modifiedDepartment: false,
 	}),
+
 	getters: {
 		getIdDepartment(state) {
 			return state.department.id
@@ -35,10 +30,6 @@ export const departmentStore = defineStore("departmentStore", {
 
 		getTotalPages(state) {
 			return state.totalPages
-		},
-
-		getModifiedDepartment(state) {
-			return state.modifiedDepartment
 		},
 	},
 	actions: {
@@ -56,10 +47,6 @@ export const departmentStore = defineStore("departmentStore", {
 
 		setDepartments(details: IUserDepartmentInfo[]) {
 			this.departments = details
-		},
-
-		setModifiedDepartment(isModified: boolean) {
-			this.modifiedDepartment = isModified
 		},
 	},
 })

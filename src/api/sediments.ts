@@ -16,7 +16,7 @@ export const getSedimentsByPageApi = async (
 	page: number,
 	itemsPerPage: number,
 	idCompany: string,
-	idDepartment: string
+	idDepartment?: string
 ) => {
 	try {
 		const data = {
@@ -36,7 +36,7 @@ export const getSedimentsByPageApi = async (
 
 export const getNameOfSedimentsApi = async (
 	idCompany: string,
-	idDepartment: string
+	idDepartment?: string
 ) => {
 	try {
 		const data = {
@@ -55,7 +55,7 @@ export const getNameOfSedimentsApi = async (
 export const getSedimentByNameApi = async (
 	name: string,
 	idCompany: string,
-	idDepartment: string
+	idDepartment?: string
 ) => {
 	try {
 		const data = {

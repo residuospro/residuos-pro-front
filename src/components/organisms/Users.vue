@@ -132,7 +132,6 @@ import { IUsers } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
 import { AuthorizationUser } from "@/utils/enum"
-import Container from "@/components/atoms/Container.vue"
 import Wrapper from "../atoms/Wrapper.vue"
 import useProps from "../../context/useProps"
 

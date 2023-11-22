@@ -18,7 +18,6 @@ import Collections from "@/components/organisms/Collections.vue"
 import { AuthorizationUser } from "@/utils/enum"
 import { ICollectionFilter } from "@/utils/interfaces"
 import { hasPermission } from "@/utils/permissions"
-import { state } from "@/socket"
 import { onMounted } from "vue"
 import { ref } from "vue"
 
@@ -90,7 +89,7 @@ const handleCollectionsFilter = (filter: string[]) => {
 }
 
 const getCollectionsByPage = async (page: number, value: number) => {
-	console.log("collections")
+	console.log("collections", page, value)
 }
 
 const setCollectionsFilter = () => {

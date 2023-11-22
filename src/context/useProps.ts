@@ -1,4 +1,6 @@
-import { IDepartment, IUseProps } from "@/utils/interfaces"
+import { IDepartment, ISetStore, IUseProps } from "@/utils/interfaces"
+import { companyStore } from "@/store/companyStore"
+import { departmentStore } from "@/store/departmentStore"
 
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
@@ -57,12 +59,22 @@ const useProps = (): IUseProps => {
 		return departments
 	}
 
+	const setStore = (): ISetStore => {
+		const idCompany = companyStore().getIdCompany
+		const department_store = departmentStore()
+
+		const departments = department_store.getDepartment
+
+		return { idCompany, departments, department_store }
+	}
+
 	return {
 		setTableBackground,
 		parseDepartment,
 		handleAutoCompleteStyle,
 		setTotalPages,
 		parseUpdateDepartment,
+		setStore,
 	}
 }
 

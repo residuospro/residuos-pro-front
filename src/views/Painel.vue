@@ -13,13 +13,13 @@ import MenuSideBarContainer from "@/conatainers/MenuSideBarContainer.vue"
 import router from "@/router"
 import { onMounted } from "vue"
 import { setUserId } from "../store/setUserId"
-import { setIdCompany } from "@/store/setIdCompany"
+import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 
 import { getPayload } from "../api/signin"
 
 const userIdStore = setUserId()
-const idCompanyStore = setIdCompany()
+const idCompanyStore = companyStore()
 const idDepartmentStore = departmentStore()
 
 const getUserInfo = async () => {

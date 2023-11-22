@@ -25,7 +25,7 @@
 
 	<Departments
 		:actions="actions"
-		:content="paginatedItems"
+		:content="departments"
 		:departments="departmentsName"
 		:headers="headers"
 		:itemsPerPage="Number(itemsPerPage)"
@@ -63,20 +63,19 @@ import {
 	takeAllDepartments,
 	deleteDepartments,
 	updateDepartment,
-	takeDepartmentsByName,
 } from "@/api/department"
 import Notification from "@/components/molecules/Notification.vue"
 import { Actions } from "@/utils/enum"
 import { onMounted } from "vue"
-import { setIdCompany } from "@/store/setIdCompany"
+import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import { getPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
-import { socket } from "@/socket"
+import { watch } from "vue"
 
-const { parseDepartment, setTotalPages, parseUpdateDepartment } = useProps()
+const { parseDepartment, setTotalPages } = useProps()
 
-const idCompanyStore = setIdCompany()
+const idCompanyStore = companyStore()
 
 const department_store = departmentStore()
 
@@ -93,8 +92,9 @@ let page = ref(1)
 let itemsPerPage = ref(10)
 let departments = ref<IDepartment[]>([])
 let permission = ref<string[]>([])
-let departmentsName = ref<string[]>([])
 let totalPages = ref<number[]>([])
+let departmentsName = ref<string[]>([])
+let resetComputed = ref(0)
 let departmentSelected = ref(false)
 let idCompany = ref("")
 
@@ -102,14 +102,16 @@ const headers = ["Departamento", "Responsável", "Ramal", "Email"]
 
 const actions = ["Atualizar", "Deletar"]
 
-const callGetDepartmentsByPage = async (page: number, itemsPerPage: number) => {
+const callGetDepartmentsByPage = async (
+	currentPage: number,
+	itemsPerPage: number
+) => {
 	showLoading.value = true
 
 	if (department_store.getDepartment.length == 0) {
-		await getDepartmentsByPage(page, itemsPerPage)
+		await getDepartmentsByPage(currentPage, itemsPerPage)
 	} else {
-		departments.value = department_store.getDepartment
-		totalPages.value = department_store.getTotalPages
+		resetComputed.value = new Date().getMilliseconds()
 	}
 
 	showLoading.value = false
@@ -124,15 +126,17 @@ const setPagination = (currentPage: number) => {
 const setItemsPerPage = (value: number) => {
 	if (itemsPerPage.value != value) {
 		itemsPerPage.value = value
-
-		totalPages.value = setTotalPages(
-			Math.ceil(departments.value.length / value)
-		)
 	}
 }
 
 const paginatedItems = computed(() => {
 	const department = department_store.getDepartment
+
+	resetComputed.value
+
+	const totalPages = setTotalPages(
+		Math.ceil(department.length / itemsPerPage.value)
+	)
 
 	const currentPage = page.value
 
@@ -145,7 +149,23 @@ const paginatedItems = computed(() => {
 	const startIndex = (currentPage - 1) * items
 	const endIndex = startIndex + items
 
-	return department.slice(startIndex, endIndex)
+	return { department: department.slice(startIndex, endIndex), totalPages }
+})
+
+watch(paginatedItems, () => {
+	totalPages.value = paginatedItems.value.totalPages
+
+	departments.value = paginatedItems.value.department
+
+	department_store.setTotalPages(paginatedItems.value.totalPages)
+
+	if (paginatedItems.value.department.length == 0) {
+		page.value -= 1
+	}
+
+	if (paginatedItems.value.totalPages.length == 1) {
+		page.value = 1
+	}
 })
 
 const openDeleteModal = (id: string) => {
@@ -227,13 +247,6 @@ const updateDepartments = async (departament: IDepartment) => {
 	)
 
 	if (res?.status == 201) {
-		departments.value = parseUpdateDepartment(
-			[res?.data.department],
-			departments.value
-		)
-
-		department_store.setModifiedDepartment(true)
-
 		handleApiResponse(res?.data.message)
 	} else {
 		handleApiResponse(res?.response.data.message)
@@ -250,17 +263,6 @@ const createDepartments = async (department: IDepartment) => {
 	)
 
 	if (res?.status == 201) {
-		departments.value = [
-			...departments.value,
-			...parseDepartment([res?.data.department]),
-		]
-
-		totalPages.value = setTotalPages(res?.data.totalPages)
-
-		department_store.setDepartments(departments.value)
-		department_store.setTotalPages(totalPages.value)
-		department_store.setModifiedDepartment(true)
-
 		handleApiResponse(res?.data.message)
 	} else {
 		handleApiResponse(res?.response.data.message)
@@ -275,14 +277,6 @@ const deleteDepartment = async () => {
 	const res: any = await deleteDepartments(idDepartment.value, idCompany.value)
 
 	if (res?.status == 201) {
-		departments.value = departments.value.filter(
-			(d) => d.id != res?.data.department._id
-		)
-
-		department_store.setDepartments(departments.value)
-
-		department_store.setModifiedDepartment(true)
-
 		handleApiResponse(res?.data.message)
 	} else {
 		handleApiResponse(res?.response.data.message)
@@ -311,23 +305,18 @@ const getDepartmentsByPage = async (
 	)
 
 	if (res?.status == 200) {
-		departments.value = []
+		department_store.setDepartments(parseDepartment(res?.data.departments))
 
-		departments.value = parseDepartment(res?.data.departments)
-
-		totalPages.value = setTotalPages(res?.data.totalPages)
+		department_store.setTotalPages(setTotalPages(res?.data.totalPages))
 	} else if (res?.status == 404) {
-		departments.value = []
+		department_store.setDepartments([])
 
-		totalPages.value = []
+		department_store.setTotalPages([])
 	} else {
 		handleApiResponse(res?.response?.data?.message)
 
 		showNotificationModal.value = true
 	}
-
-	department_store.setDepartments(departments.value)
-	department_store.setTotalPages(totalPages.value)
 }
 
 const getAllDepartment = async () => {
@@ -347,35 +336,19 @@ const departmentFilterCleaning = () => {
 	}
 }
 
-const selectDepartment = async (department: string) => {
-	if (department) {
-		showLoading.value = true
-
-		const res: any = await takeDepartmentsByName(department, idCompany.value)
-
-		if (res?.status == 200) {
-			departments.value = []
-
-			departments.value = parseDepartment([res?.data])
-
-			totalPages.value = []
-		} else {
-			handleApiResponse(res?.data.message)
-		}
-
-		showLoading.value = false
-	}
-}
-
 const filterDepartment = async (department: string) => {
 	departmentSelected.value = true
 
-	departments.value = departments.value.filter((d) => d.name == department)
+	departments.value = department_store.getDepartment.filter(
+		(d) => d.name == department
+	)
 
-	if (departments.value.length == 0) selectDepartment(department)
+	totalPages.value = setTotalPages(
+		Math.ceil(departments.value.length / itemsPerPage.value)
+	)
 }
 
-const getIdCompany = async () => {
+const getInfos = async () => {
 	idCompany.value = idCompanyStore.getIdCompany
 
 	callGetDepartmentsByPage(page.value, itemsPerPage.value)
@@ -386,6 +359,6 @@ const getIdCompany = async () => {
 onMounted(() => {
 	permission.value = getPermission()
 
-	getIdCompany()
+	getInfos()
 })
 </script>

@@ -103,7 +103,7 @@
 import { useHead } from "@vueuse/head"
 import Wrapper from "../atoms/Wrapper.vue"
 import Button from "../atoms/Button.vue"
-import { PropType, ref, computed } from "vue"
+import { PropType, ref } from "vue"
 import { Actions } from "@/utils/enum"
 import userProps from "@/context/useProps"
 import { ISediments } from "@/utils/interfaces"

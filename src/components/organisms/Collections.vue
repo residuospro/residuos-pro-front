@@ -205,7 +205,7 @@ watch(closeMenu, () => {
 
 const { setTableBackground, handleAutoCompleteStyle } = userProps()
 
-const props = defineProps({
+defineProps({
 	itemsPerPage: { type: Number, required: true },
 
 	collectionFilter: {
@@ -243,10 +243,6 @@ const props = defineProps({
 
 	status: { type: Array as PropType<string[]>, required: true },
 })
-
-const clearFilter = () => {
-	departmentSelected.value = null
-}
 
 const cleanFilter = () => {
 	console.log("oi")

@@ -10,9 +10,6 @@ import {
 	useAuthClient,
 	useClient,
 } from "./clients/AxiosClient"
-import { socket } from "@/socket"
-
-socket.connect()
 
 const token = isAuthenticated()
 

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 
-export const setIdCompany = defineStore("setIdCompany", {
+export const companyStore = defineStore("setIdCompany", {
 	state: () => ({
 		idCompany: "",
 	}),

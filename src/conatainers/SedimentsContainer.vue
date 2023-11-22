@@ -55,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-useless-escape */
 import Sediments from "@/components/organisms/Sediments.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Notification from "@/components/molecules/Notification.vue"
@@ -66,7 +67,7 @@ import { ref } from "vue"
 import { IMessage, ISediments, ISedimentsApi } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 import { onMounted } from "vue"
-import { setIdCompany } from "@/store/setIdCompany"
+import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import {
 	createSedmentsApi,
@@ -77,7 +78,7 @@ import {
 	updateSedimentsApi,
 } from "@/api/sediments"
 
-const idCompanyStore = setIdCompany()
+const idCompanyStore = companyStore()
 
 const getDepartmentStore = departmentStore()
 
@@ -121,7 +122,7 @@ let itemsPerPage = ref(10)
 let totalPages = ref<number[]>([])
 let sedimentId = ref()
 let idCompany = ref("")
-let idDepartment = ref("")
+let idDepartment = ref<string | undefined>("")
 
 const callGetSedimentsByPage = async (page: number, itemsPerPage: number) => {
 	showLoading.value = true
@@ -374,7 +375,7 @@ const parseData = (data: any[]): Array<ISediments> => {
 
 const getId = () => {
 	idCompany.value = idCompanyStore.getIdCompany
-	idDepartment.value = getDepartmentStore.getIdDepartment!
+	idDepartment.value = getDepartmentStore.getIdDepartment
 }
 
 onMounted(async () => {
