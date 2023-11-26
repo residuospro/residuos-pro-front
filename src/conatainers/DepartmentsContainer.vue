@@ -60,7 +60,6 @@ import { IDepartment, IMessage } from "@/utils/interfaces"
 import {
 	createDepartment,
 	takeDepartmentsByPage,
-	takeAllDepartments,
 	deleteDepartments,
 	updateDepartment,
 } from "@/api/department"
@@ -157,6 +156,8 @@ watch(paginatedItems, () => {
 
 	departments.value = paginatedItems.value.department
 
+	getNameOfDepartments()
+
 	department_store.setTotalPages(paginatedItems.value.totalPages)
 
 	if (paginatedItems.value.department.length == 0) {
@@ -185,7 +186,7 @@ const closeDepartmentModal = (event: Event) => {
 }
 
 const closeModal = () => {
-	getAllDepartment()
+	getNameOfDepartments()
 
 	showNotificationModal.value = false
 }
@@ -319,11 +320,8 @@ const getDepartmentsByPage = async (
 	}
 }
 
-const getAllDepartment = async () => {
-	const res: any = await takeAllDepartments(idCompany.value)
-
-	if (res?.status == 200)
-		departmentsName.value = res?.data.map((n: any) => n.name)
+const getNameOfDepartments = async () => {
+	departmentsName.value = department_store.getDepartment.map((n: any) => n.name)
 }
 
 const departmentFilterCleaning = () => {
@@ -352,8 +350,6 @@ const getInfos = async () => {
 	idCompany.value = idCompanyStore.getIdCompany
 
 	callGetDepartmentsByPage(page.value, itemsPerPage.value)
-
-	await getAllDepartment()
 }
 
 onMounted(() => {

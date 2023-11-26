@@ -6,12 +6,15 @@ export interface Credential {
 export interface IUseProps {
 	setTableBackground: (index: number) => any
 	parseDepartment: (data: any[]) => Array<IDepartment>
+	parseSediments: (data: ISedimentsApi[]) => Array<ISediments>
 	handleAutoCompleteStyle: (value: string | undefined | null) => string
 	setTotalPages: (page: number) => number[]
 	parseUpdateDepartment: (
 		data: any[],
 		departments: IDepartment[]
 	) => IDepartment[]
+
+	parseUpdateSediment: (data: any, sediments: ISediments[]) => ISediments[]
 	setStore: () => ISetStore
 }
 
@@ -56,6 +59,11 @@ export interface IDepartmentState {
 	idDepartment: string
 }
 
+export interface ISedimentStore {
+	sediments: Array<ISediments>
+	totalPages: Array<number>
+}
+
 export interface DepartmentActions {
 	setDepartment(details: IUserDepartmentInfo): void
 	setIdDepartment(id: string): void
@@ -72,6 +80,7 @@ export interface ISediments {
 	idDepartment: string | undefined
 	idCompany: string | undefined
 	id: string | undefined
+	totalItems?: string
 }
 
 export interface ISedimentsApi extends ISediments {
@@ -123,8 +132,30 @@ export interface IPropsDepartmentStore {
 	setDepartments(details: IUserDepartmentInfo[]): void
 }
 
+export interface IPropsSedimentStore {
+	getSediments: ISediments[]
+	setSediments(sediments: ISediments[]): void
+	setTotalPages(details: number[]): void
+}
+
 export interface ISetStore {
-	idCompany: string
+	idCompany_store: string
 	departments: IDepartment[]
 	department_store: IPropsDepartmentStore
+	sediments: ISediments[]
+	sediment_store: IPropsSedimentStore
+}
+
+interface userInfo {
+	idCompany: string
+	idDepartment: string
+	totalPages: number
+}
+
+export interface ISedimentEvent extends userInfo {
+	sediment: ISedimentsApi
+}
+
+export interface IDepartmentEvent extends userInfo {
+	department: ISedimentsApi
 }

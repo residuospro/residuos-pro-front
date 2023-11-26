@@ -59,23 +59,6 @@ export const takeAllDepartments = async (idCompany: string) => {
 	}
 }
 
-export const takeDepartmentsByName = async (
-	name: string,
-	idCompany: string
-) => {
-	try {
-		const data = {
-			name,
-			idCompany,
-		}
-		const res = await useClient().post(Routes.GET_DEPARTMENT_BY_NAME, data)
-
-		return res
-	} catch (error) {
-		return error
-	}
-}
-
 export const deleteDepartments = async (id: string, idCompany: string) => {
 	try {
 		const data = {

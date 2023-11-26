@@ -73,7 +73,12 @@ export enum Messages {
 
 export enum Event {
 	CHANNEL = "residuos-pro",
+
 	DEPARTMENT_CREATED = "department_created",
 	UPDATED_DEPARTMENT = "updated_department",
 	DELETED_DEPARTMENT = "deleted_department",
+
+	SEDIMENT_CREATED = "sediment_created",
+	UPDATED_SEDIMENT = "updated_sediment",
+	DELETED_SEDIMENT = "deleted_sediment",
 }

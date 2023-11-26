@@ -1,6 +1,13 @@
-import { IDepartment, ISetStore, IUseProps } from "@/utils/interfaces"
+import {
+	IDepartment,
+	ISediments,
+	ISedimentsApi,
+	ISetStore,
+	IUseProps,
+} from "@/utils/interfaces"
 import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
+import { sedimentStore } from "@/store/sedimentStore"
 
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
@@ -9,6 +16,42 @@ const useProps = (): IUseProps => {
 		}
 
 		return { background: "transparent" }
+	}
+
+	const setTotalPages = (pages: number): number[] => {
+		const totalPages = []
+
+		for (let i = 0; i <= pages - 1; i++) {
+			totalPages.push(i)
+		}
+
+		return totalPages
+	}
+
+	const setStore = (): ISetStore => {
+		const idCompany_store = companyStore().getIdCompany
+
+		const sediment_store = sedimentStore()
+		const department_store = departmentStore()
+
+		const departments = department_store.getDepartment
+		const sediments = sediment_store.getSediments
+
+		return {
+			idCompany_store,
+			departments,
+			department_store,
+			sediments,
+			sediment_store,
+		}
+	}
+
+	const handleAutoCompleteStyle = (value: string | undefined | null): any => {
+		if (value) {
+			return { background: "#fff", height: "3.5rem" }
+		} else {
+			return { background: "#f3f4f6", height: "3rem" }
+		}
 	}
 
 	const parseDepartment = (data: any[]): Array<IDepartment> => {
@@ -26,22 +69,21 @@ const useProps = (): IUseProps => {
 		return parsedData
 	}
 
-	const setTotalPages = (pages: number): number[] => {
-		const totalPages = []
+	const parseSediments = (data: any[]): Array<ISediments> => {
+		const parsedData = data.map((d: ISedimentsApi) => {
+			return {
+				name: d.name,
+				classification: d.classification,
+				risk: d.risk,
+				state: d.state,
+				packaging: d.packaging,
+				id: d._id,
+				idCompany: d.idCompany,
+				idDepartment: d.idDepartment,
+			}
+		})
 
-		for (let i = 0; i <= pages - 1; i++) {
-			totalPages.push(i)
-		}
-
-		return totalPages
-	}
-
-	const handleAutoCompleteStyle = (value: string | undefined | null): any => {
-		if (value) {
-			return { background: "#fff", height: "3.5rem" }
-		} else {
-			return { background: "#f3f4f6", height: "3rem" }
-		}
+		return parsedData
 	}
 
 	const parseUpdateDepartment = (
@@ -59,13 +101,19 @@ const useProps = (): IUseProps => {
 		return departments
 	}
 
-	const setStore = (): ISetStore => {
-		const idCompany = companyStore().getIdCompany
-		const department_store = departmentStore()
+	const parseUpdateSediment = (
+		data: any[],
+		sediments: ISediments[]
+	): ISediments[] => {
+		const updateSediments = sediments.find((s) => s.id == data[0]._id)
 
-		const departments = department_store.getDepartment
+		if (updateSediments) {
+			const index = sediments.indexOf(updateSediments)
 
-		return { idCompany, departments, department_store }
+			sediments[index] = parseSediments(data)[0]
+		}
+
+		return sediments
 	}
 
 	return {
@@ -75,6 +123,8 @@ const useProps = (): IUseProps => {
 		setTotalPages,
 		parseUpdateDepartment,
 		setStore,
+		parseSediments,
+		parseUpdateSediment,
 	}
 }
 

@@ -34,44 +34,6 @@ export const getSedimentsByPageApi = async (
 	}
 }
 
-export const getNameOfSedimentsApi = async (
-	idCompany: string,
-	idDepartment?: string
-) => {
-	try {
-		const data = {
-			idCompany,
-			idDepartment,
-		}
-
-		const res = await useClient().post(Routes.GET_NAME_OF_SEDIMENTS, data)
-
-		return res
-	} catch (error) {
-		return error
-	}
-}
-
-export const getSedimentByNameApi = async (
-	name: string,
-	idCompany: string,
-	idDepartment?: string
-) => {
-	try {
-		const data = {
-			name,
-			idCompany,
-			idDepartment,
-		}
-
-		const res = await useClient().post(Routes.GET_SEDIMENTS_BY_NAME, data)
-
-		return res
-	} catch (error) {
-		return error
-	}
-}
-
 export const updateSedimentsApi = async (sediment: ISediments, id: string) => {
 	try {
 		const data: Partial<ISediments> = {}
@@ -93,9 +55,18 @@ export const updateSedimentsApi = async (sediment: ISediments, id: string) => {
 	}
 }
 
-export const deleteSedimentApi = async (id: string) => {
+export const deleteSedimentApi = async (
+	id: string,
+	idCompany: string,
+	idDepartment?: string
+) => {
 	try {
-		const res = await useClient().delete(`${Routes.DELETE_SEDIMENT}${id}`)
+		const data = {
+			idCompany,
+			idDepartment,
+		}
+
+		const res = await useClient().post(`${Routes.DELETE_SEDIMENT}${id}`, data)
 
 		return res
 	} catch (error) {

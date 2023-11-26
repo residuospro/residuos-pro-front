@@ -5,7 +5,6 @@ export const setUserId = defineStore("setUserId", {
 		userId: "",
 	}),
 	getters: {
-		// automatically infers the return type as a number
 		getUserId(state) {
 			return state.userId
 		},

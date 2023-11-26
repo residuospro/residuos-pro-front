@@ -10,7 +10,7 @@
 					:onUpdate:modelValue="selectSediments"
 					:active="true"
 					v-model="sedimentSelected"
-					:items="sediments"
+					:items="sedimentsName"
 					chips
 					label="Buscar Resíduos"></v-autocomplete>
 			</div>
@@ -40,7 +40,7 @@
 
 				<tbody style="height: auto">
 					<tr
-						v-for="(items, index) in content.slice(0, itemsPerPage)"
+						v-for="(items, index) in content"
 						:key="items.id"
 						class="font-medium">
 						<td :style="setTableBackground(index)">
@@ -111,11 +111,9 @@ import { ISediments } from "@/utils/interfaces"
 const { handleAutoCompleteStyle, setTableBackground } = userProps()
 
 const props = defineProps({
-	itemsPerPage: { type: Number, required: true },
-
 	headers: { type: Array as PropType<string[]>, required: true },
 
-	sediments: { type: Array as PropType<string[]>, required: true },
+	sedimentsName: { type: Array as PropType<string[]>, required: true },
 
 	actions: { type: Array as PropType<string[]>, required: true },
 
