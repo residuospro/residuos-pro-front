@@ -5,7 +5,7 @@ import { sedimentEvent } from "./sedimentEvents"
 
 const accessToken = isAuthenticated()
 
-export const socket = io("https://residuos-pro-backend.onrender.com/", {
+export const socket = io(process.env.VUE_APP_BACK, {
 	withCredentials: true,
 	extraHeaders: {
 		Authorization: `Bearer ${accessToken}`,
