@@ -240,7 +240,7 @@ const validateDataToCreateSediments = (sediment: ISediments) => {
 		}
 	}
 
-	showButton.value = validate.length == 5 ? true : false
+	showButton.value = validate.length == 4 ? true : false
 }
 
 const validateDataToUpdateSediments = (sediment: ISediments) => {
@@ -275,7 +275,7 @@ const createSediments = async (sediment: ISediments) => {
 
 	const res: any = await createSedmentsApi(sediment)
 
-	if (res?.status == 201) {
+	if (res?.status == 201 || res?.status == 409) {
 		handleApiResponse(res?.data.message)
 	} else {
 		handleApiResponse(res?.response.data.message)
@@ -290,7 +290,7 @@ const updateSediments = async (sediment: ISediments) => {
 
 	const res: any = await updateSedimentsApi(sediment, sedimentId.value)
 
-	if (res?.status == 201) {
+	if (res?.status == 201 || res?.status == 409) {
 		handleApiResponse(res?.data.message)
 	} else {
 		handleApiResponse(res?.response.data.message)

@@ -10,8 +10,11 @@ import { createVuetify } from "vuetify"
 import * as components from "vuetify/components"
 import * as directives from "vuetify/directives"
 import { pusher } from "./pusher"
+import { socket } from "./socket"
 
-pusher.connect()
+//pusher.connect()
+
+socket.connect()
 
 setupClient(process.env.VUE_APP_BACK, process.env.VUE_APP_AUTH)
 

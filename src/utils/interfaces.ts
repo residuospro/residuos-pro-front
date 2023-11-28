@@ -76,7 +76,6 @@ export interface ISediments {
 	classification: string | undefined
 	risk: string | undefined
 	state: string | undefined
-	packaging: string
 	idDepartment: string | undefined
 	idCompany: string | undefined
 	id: string | undefined
@@ -153,9 +152,9 @@ interface userInfo {
 }
 
 export interface ISedimentEvent extends userInfo {
-	sediment: ISedimentsApi
+	item: ISedimentsApi
 }
 
 export interface IDepartmentEvent extends userInfo {
-	department: ISedimentsApi
+	item: ISedimentsApi
 }

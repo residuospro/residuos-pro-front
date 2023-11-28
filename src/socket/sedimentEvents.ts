@@ -1,4 +1,4 @@
-import { Channel } from "pusher-js"
+import { Socket } from "socket.io-client"
 import useProps from "@/context/useProps"
 import { Event } from "../utils/enum"
 import { ISedimentEvent } from "@/utils/interfaces"
@@ -6,8 +6,8 @@ import { ISedimentEvent } from "@/utils/interfaces"
 const { setTotalPages, setStore, parseSediments, parseUpdateSediment } =
 	useProps()
 
-export const sedimentEvent = (channel: Channel) => {
-	channel.bind(Event.SEDIMENT_CREATED, (data: ISedimentEvent) => {
+export const sedimentEvent = (socket: Socket) => {
+	socket.on(Event.SEDIMENT_CREATED, (data: ISedimentEvent) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 
@@ -26,10 +26,12 @@ export const sedimentEvent = (channel: Channel) => {
 			])
 
 			sediment_store.setTotalPages(setTotalPages(data.totalPages))
+
+			console.log("criado carai")
 		}
 	})
 
-	channel.bind(Event.UPDATED_SEDIMENT, (data: ISedimentEvent) => {
+	socket.on(Event.UPDATED_SEDIMENT, (data: ISedimentEvent) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 
@@ -46,7 +48,7 @@ export const sedimentEvent = (channel: Channel) => {
 		}
 	})
 
-	channel.bind(Event.DELETED_SEDIMENT, (data: ISedimentEvent) => {
+	socket.on(Event.DELETED_SEDIMENT, (data: ISedimentEvent) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 

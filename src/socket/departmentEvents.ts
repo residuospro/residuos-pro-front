@@ -1,4 +1,4 @@
-import { Channel } from "pusher-js"
+import { Socket } from "socket.io-client"
 import useProps from "@/context/useProps"
 import { Event } from "../utils/enum"
 import { IDepartmentEvent } from "@/utils/interfaces"
@@ -6,8 +6,8 @@ import { IDepartmentEvent } from "@/utils/interfaces"
 const { parseDepartment, setTotalPages, parseUpdateDepartment, setStore } =
 	useProps()
 
-export const departmentEvents = (channel: Channel) => {
-	channel.bind(Event.DEPARTMENT_CREATED, (data: IDepartmentEvent) => {
+export const departmentEvents = (socket: Socket) => {
+	socket.on(Event.DEPARTMENT_CREATED, (data: IDepartmentEvent) => {
 		const { idCompany_store, departments, department_store } = setStore()
 
 		if (data.idCompany == idCompany_store && data.item && departments.length) {
@@ -20,7 +20,7 @@ export const departmentEvents = (channel: Channel) => {
 		}
 	})
 
-	channel.bind(Event.UPDATED_DEPARTMENT, (data: IDepartmentEvent) => {
+	socket.on(Event.UPDATED_DEPARTMENT, (data: IDepartmentEvent) => {
 		const { idCompany_store, departments, department_store } = setStore()
 
 		if (data.idCompany == idCompany_store && data.item && departments.length) {
@@ -30,7 +30,7 @@ export const departmentEvents = (channel: Channel) => {
 		}
 	})
 
-	channel.bind(Event.DELETED_DEPARTMENT, (data: IDepartmentEvent) => {
+	socket.on(Event.DELETED_DEPARTMENT, (data: IDepartmentEvent) => {
 		const { idCompany_store, departments, department_store } = setStore()
 
 		if (data.idCompany == idCompany_store && data.item && departments.length) {

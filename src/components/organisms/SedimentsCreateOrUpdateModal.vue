@@ -37,13 +37,6 @@
 							placeholder="Nome:"
 							:class="sediment.name !== '' ? 'bg-white w-full' : 'w-full'"
 							@input="(value: string) => sediment.name = value" />
-
-						<Input
-							input="input"
-							type="text"
-							placeholder="Acondicionamento:"
-							:class="sediment.packaging != '' ? 'bg-white w-full' : 'w-full'"
-							@input="(value: string) => sediment.packaging = value" />
 					</div>
 
 					<div class="flex justify-end w-full space-x-5 mt-5">
@@ -82,7 +75,6 @@ let sediment: ISediments = reactive({
 	classification: undefined,
 	risk: undefined,
 	state: undefined,
-	packaging: "",
 	idCompany: "",
 	idDepartment: "",
 	id: "",

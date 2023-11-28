@@ -247,7 +247,7 @@ const updateDepartments = async (departament: IDepartment) => {
 		idCompany.value
 	)
 
-	if (res?.status == 201) {
+	if (res?.status == 201 || res?.status == 409) {
 		handleApiResponse(res?.data.message)
 	} else {
 		handleApiResponse(res?.response.data.message)
@@ -263,7 +263,7 @@ const createDepartments = async (department: IDepartment) => {
 		departments.value.length
 	)
 
-	if (res?.status == 201) {
+	if (res?.status == 201 || res?.status == 409) {
 		handleApiResponse(res?.data.message)
 	} else {
 		handleApiResponse(res?.response.data.message)

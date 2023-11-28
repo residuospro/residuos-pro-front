@@ -76,7 +76,6 @@ const useProps = (): IUseProps => {
 				classification: d.classification,
 				risk: d.risk,
 				state: d.state,
-				packaging: d.packaging,
 				id: d._id,
 				idCompany: d.idCompany,
 				idDepartment: d.idDepartment,
