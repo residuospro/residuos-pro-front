@@ -4,10 +4,13 @@ import {
 	ISedimentsApi,
 	ISetStore,
 	IUseProps,
+	IUserApi,
+	IUsers,
 } from "@/utils/interfaces"
 import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import { sedimentStore } from "@/store/sedimentStore"
+import { userStore } from "@/store/userStore"
 
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
@@ -33,16 +36,20 @@ const useProps = (): IUseProps => {
 
 		const sediment_store = sedimentStore()
 		const department_store = departmentStore()
+		const user_store = userStore()
 
 		const departments = department_store.getDepartment
 		const sediments = sediment_store.getSediments
+		const users = user_store.getUsers
 
 		return {
 			idCompany_store,
-			departments,
 			department_store,
-			sediments,
 			sediment_store,
+			user_store,
+			users,
+			departments,
+			sediments,
 		}
 	}
 
@@ -85,6 +92,23 @@ const useProps = (): IUseProps => {
 		return parsedData
 	}
 
+	const parseUser = (data: any[]): Array<IUsers> => {
+		const parsedData = data.map((d) => {
+			return {
+				name: d.name,
+				username: d.username,
+				ramal: d.ramal,
+				email: d.email,
+				id: d._id,
+				department: d.department,
+				idDepartment: d.idDepartment,
+				idCompany: d.idCompany,
+			}
+		})
+
+		return parsedData
+	}
+
 	const parseUpdateDepartment = (
 		data: any[],
 		departments: IDepartment[]
@@ -115,6 +139,18 @@ const useProps = (): IUseProps => {
 		return sediments
 	}
 
+	const parseUpdateUser = (data: IUserApi[], users: IUsers[]): IUsers[] => {
+		const user = users.find((d) => d.id == data[0]._id)
+
+		if (user) {
+			const index = users.indexOf(user)
+
+			users[index] = parseUser(data)[0]
+		}
+
+		return users
+	}
+
 	return {
 		setTableBackground,
 		parseDepartment,
@@ -124,6 +160,8 @@ const useProps = (): IUseProps => {
 		setStore,
 		parseSediments,
 		parseUpdateSediment,
+		parseUser,
+		parseUpdateUser,
 	}
 }
 

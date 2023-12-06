@@ -52,7 +52,7 @@ const wrapperClass = computed(() => {
 					py-5`,
 
 				notification: `
-					bg-v_white_two 
+					bg-white
 					flex 
 					flex-col 
 					justify-center

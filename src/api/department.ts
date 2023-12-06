@@ -1,11 +1,12 @@
 import { useClient } from "@/clients/AxiosClient"
-import { Routes } from "@/utils/enum"
+import { Routes, Service } from "@/utils/enum"
 import { IDepartment } from "@/utils/interfaces"
 
 export const createDepartment = async (
 	department: IDepartment,
 	idCompany: string,
-	totalItems: number
+	totalItems: number,
+	role: string[]
 ) => {
 	try {
 		const data = {
@@ -15,6 +16,8 @@ export const createDepartment = async (
 			ramal: department.ramal,
 			idCompany,
 			totalItems,
+			role,
+			service: Service.RESIDUOSPRO,
 		}
 
 		const res = await useClient().post(Routes.CREATE_DEPARTMENT, data)

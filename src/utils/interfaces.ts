@@ -13,7 +13,8 @@ export interface IUseProps {
 		data: any[],
 		departments: IDepartment[]
 	) => IDepartment[]
-
+	parseUser: (data: any[]) => Array<IUsers>
+	parseUpdateUser: (data: IUserApi[], users: IUsers[]) => IUsers[]
 	parseUpdateSediment: (data: any, sediments: ISediments[]) => ISediments[]
 	setStore: () => ISetStore
 }
@@ -31,6 +32,9 @@ export interface IDepartment {
 	idCompany?: string
 	id?: string
 }
+interface IDepartmentApi extends IDepartment {
+	_id: string | undefined
+}
 
 export interface IUsers {
 	name: string
@@ -41,6 +45,10 @@ export interface IUsers {
 	id: string | undefined
 	idDepartment: string | undefined
 	idCompany: string | undefined
+}
+
+export interface IUserApi extends IUsers {
+	_id: string | undefined
 }
 
 export interface IUserDepartmentInfo {
@@ -57,6 +65,12 @@ export interface IDepartmentState {
 	department: IUserDepartmentInfo
 	totalPages: Array<number>
 	idDepartment: string
+}
+
+export interface IUsersState {
+	users: IUsers[]
+	totalPages: Array<number>
+	userId: string
 }
 
 export interface ISedimentStore {
@@ -137,12 +151,21 @@ export interface IPropsSedimentStore {
 	setTotalPages(details: number[]): void
 }
 
+interface IPropsUserStore {
+	getUserId: string
+	getUsers: IUsers[]
+	setUsers(users: IUsers[]): void
+	setTotalPages(details: number[]): void
+}
+
 export interface ISetStore {
 	idCompany_store: string
 	departments: IDepartment[]
 	department_store: IPropsDepartmentStore
 	sediments: ISediments[]
 	sediment_store: IPropsSedimentStore
+	users: IUsers[]
+	user_store: IPropsUserStore
 }
 
 interface userInfo {
@@ -156,5 +179,9 @@ export interface ISedimentEvent extends userInfo {
 }
 
 export interface IDepartmentEvent extends userInfo {
-	item: ISedimentsApi
+	item: IDepartmentApi
+}
+
+export interface IUserEvent extends userInfo {
+	item: IUserApi
 }

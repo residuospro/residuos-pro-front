@@ -39,6 +39,11 @@ export enum Actions {
 	UPDATE = "Atualizar",
 }
 
+export enum Service {
+	SAVEMONEY = "SaveMoney",
+	RESIDUOSPRO = "Residuos-Pro",
+}
+
 export enum Messages {
 	TITLE_REGISTER = "Cadastrado",
 	SUBTITLE_REGISTER = "Cadastro realizado com sucesso",
@@ -81,4 +86,8 @@ export enum Event {
 	SEDIMENT_CREATED = "sediment_created",
 	UPDATED_SEDIMENT = "updated_sediment",
 	DELETED_SEDIMENT = "deleted_sediment",
+
+	USER_CREATED = "user_created",
+	UPDATED_USER = "updated_user",
+	DELETED_USER = "deleted_user",
 }

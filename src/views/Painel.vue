@@ -12,13 +12,13 @@ import Container from "@/components/atoms/Container.vue"
 import MenuSideBarContainer from "@/conatainers/MenuSideBarContainer.vue"
 import router from "@/router"
 import { onMounted } from "vue"
-import { setUserId } from "../store/setUserId"
+import { userStore } from "../store/userStore"
 import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 
 import { getPayload } from "../api/signin"
 
-const userIdStore = setUserId()
+const userIdStore = userStore()
 const idCompanyStore = companyStore()
 const idDepartmentStore = departmentStore()
 

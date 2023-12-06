@@ -60,7 +60,7 @@
 
 				<tbody style="height: auto">
 					<tr
-						v-for="(items, index) in content.slice(0, itemsPerPage)"
+						v-for="(items, index) in content"
 						:key="items.id"
 						class="font-medium">
 						<td :style="setTableBackground(index)">

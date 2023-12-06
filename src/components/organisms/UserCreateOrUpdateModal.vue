@@ -21,15 +21,15 @@
 
 						<Input
 							input="input"
-							placeholder="Email:"
-							:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
-							@input="(value: string) => user.email = value" />
-
-						<Input
-							input="input"
 							placeholder="Nome:"
 							:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
 							@input="(value: string) => user.name = value" />
+
+						<Input
+							input="input"
+							placeholder="Email:"
+							:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
+							@input="(value: string) => user.email = value" />
 					</div>
 
 					<div class="flex justify-end w-full space-x-5 mt-4">

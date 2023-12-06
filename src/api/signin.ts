@@ -11,9 +11,9 @@ export const signin = async (user: any) => {
 	try {
 		const encode = btoa(`${user.username}:${user.password}`)
 
-		setBasicAuthorization(useAuthClient(), encode)
+		setBasicAuthorization(useClient(), encode)
 
-		const res = await useAuthClient().post(Routes.LOGIN)
+		const res = await useClient().post(Routes.LOGIN)
 
 		if (res?.status == 403) {
 			return res
@@ -23,7 +23,6 @@ export const signin = async (user: any) => {
 		const refresh_token = res.data.refreshToken
 
 		setBearerAuthorization(useClient(), token)
-		setBearerAuthorization(useAuthClient(), token)
 
 		const payload: any = await getPayload()
 
@@ -45,7 +44,7 @@ export const signin = async (user: any) => {
 
 export const getPayload = async () => {
 	try {
-		const res = await useAuthClient().get(Routes.PAYLOAD)
+		const res = await useClient().get(Routes.PAYLOAD)
 
 		return res
 	} catch (error: any) {

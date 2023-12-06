@@ -1,6 +1,6 @@
 import { getNewToken } from "@/api/refreshToken"
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios"
-import { setUserId } from "@/store/setUserId"
+import { userStore } from "@/store/userStore"
 import { removeItems } from "@/utils/permissions"
 
 export const handleRequest = async (
@@ -13,7 +13,7 @@ export const handleResponse = async (
 	response: AxiosResponse
 ): Promise<AxiosResponse<any, any>> => {
 	if (response.status === 401) {
-		const userId = setUserId().getUserId
+		const userId = userStore().getUserId
 		const token = await getNewToken(userId)
 
 		if (token) {

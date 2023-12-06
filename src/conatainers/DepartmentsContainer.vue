@@ -260,7 +260,8 @@ const createDepartments = async (department: IDepartment) => {
 	const res: any = await createDepartment(
 		department,
 		idCompany.value,
-		departments.value.length
+		departments.value.length,
+		permission.value
 	)
 
 	if (res?.status == 201 || res?.status == 409) {
