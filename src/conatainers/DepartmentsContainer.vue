@@ -107,7 +107,7 @@ const callGetDepartmentsByPage = async (
 ) => {
 	showLoading.value = true
 
-	if (department_store.getDepartment.length == 0) {
+	if (department_store.getDepartments.length == 0) {
 		await getDepartmentsByPage(currentPage, itemsPerPage)
 	} else {
 		resetComputed.value = new Date().getMilliseconds()
@@ -129,7 +129,7 @@ const setItemsPerPage = (value: number) => {
 }
 
 const paginatedItems = computed(() => {
-	const department = department_store.getDepartment
+	const department = department_store.getDepartments
 
 	resetComputed.value
 
@@ -271,6 +271,10 @@ const createDepartments = async (department: IDepartment) => {
 	}
 
 	changeVariableState()
+
+	if (department_store.getDepartments.length == 0) {
+		callGetDepartmentsByPage(page.value, itemsPerPage.value)
+	}
 }
 
 const deleteDepartment = async () => {
@@ -322,7 +326,9 @@ const getDepartmentsByPage = async (
 }
 
 const getNameOfDepartments = async () => {
-	departmentsName.value = department_store.getDepartment.map((n: any) => n.name)
+	departmentsName.value = department_store.getDepartments.map(
+		(n: any) => n.name
+	)
 }
 
 const departmentFilterCleaning = () => {
@@ -338,7 +344,7 @@ const departmentFilterCleaning = () => {
 const filterDepartment = async (department: string) => {
 	departmentSelected.value = true
 
-	departments.value = department_store.getDepartment.filter(
+	departments.value = department_store.getDepartments.filter(
 		(d) => d.name == department
 	)
 

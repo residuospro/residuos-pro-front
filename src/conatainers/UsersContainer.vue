@@ -71,16 +71,9 @@ import {
 	IUsers,
 } from "@/utils/interfaces"
 import { computed, onMounted, reactive, ref, watch } from "vue"
-import { Actions, AuthorizationUser } from "@/utils/enum"
+import { Actions, AuthorizationUser, Service } from "@/utils/enum"
 import { takeAllDepartments } from "@/api/department"
-import {
-	createUser,
-	takeAllUsers,
-	takeAllUsernames,
-	updateUser,
-	deleteUser,
-	takeUserByUsername,
-} from "@/api/user"
+import { createUser, takeAllUsers, updateUser, deleteUser } from "@/api/user"
 import { getPermission, hasPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
 
@@ -107,12 +100,10 @@ let users = ref<IUsers[]>([])
 let usernames = ref<string[]>([])
 let nameDepartments = ref<string[]>([])
 let allDepartments = ref<string[]>([])
-let idDepartment = ref<any[]>([])
+let idDepartment = ref<string | undefined>("")
 let userSelected = ref(false)
 let idCompany = ref("")
 let userId = ref()
-let departments = ref<IDepartment[]>([])
-let userDepartment = ref<string | undefined>("")
 let permission = ref<string[]>([])
 let departmentInfo = reactive<IDepartment>({
 	name: "",
@@ -123,21 +114,6 @@ let departmentInfo = reactive<IDepartment>({
 	idCompany: "",
 })
 let resetComputed = ref(0)
-
-const callGetUsersByPage = async (
-	currentPage: number,
-	itemsPerPage: number
-) => {
-	showLoading.value = true
-
-	if (user_store.getUsers.length == 0) {
-		await getAllUsersByPage(currentPage, itemsPerPage)
-	} else {
-		resetComputed.value = new Date().getMilliseconds()
-	}
-
-	showLoading.value = false
-}
 
 const inputWrappingStyle = () => {
 	let style: IInputWrappingStyle[] = [
@@ -168,6 +144,34 @@ const inputContainerStyle = (): IInputContainerStyle => {
 		return { minHeight: "15rem" }
 	}
 }
+
+const changeVariableState = () => {
+	showNotificationModal.value = true
+	showUserModal.value = false
+	showButton.value = false
+	showLoading.value = false
+}
+
+const userFilterCleaning = async () => {
+	if (userSelected.value) {
+		users.value = []
+
+		callGetUsersByPage(page.value, itemsPerPage.value)
+
+		userSelected.value = false
+	}
+}
+
+const handleApiResponse = (message: IMessage) => {
+	title.value = message.title
+	subTitle.value = message.subTitle
+}
+
+watch(showUserModal, () => {
+	allDepartments.value = department_store.getDepartments.map((d) => d.name)
+})
+
+// Paging session
 
 const setPagination = (currentPage: number) => {
 	if (page.value != currentPage) {
@@ -207,7 +211,8 @@ watch(paginatedItems, () => {
 
 	users.value = paginatedItems.value.users
 
-	//getNameOfDepartments()
+	getAllUsernames()
+	getNameOfDepartments()
 
 	department_store.setTotalPages(paginatedItems.value.totalPages)
 
@@ -220,6 +225,8 @@ watch(paginatedItems, () => {
 	}
 })
 
+// Session handle modal
+
 const openUserModal = (action: string, id?: string) => {
 	showUserModal.value = true
 	typeAction.value = action
@@ -231,78 +238,11 @@ const openDeleteModal = (id: string | undefined) => {
 	showDeleteModal.value = true
 }
 
-const changeVariableState = () => {
-	showNotificationModal.value = true
-
-	showUserModal.value = false
-	showButton.value = false
-	showLoading.value = false
-}
-
 const closeModal = () => {
-	getAllDepartment()
-	getAllUsernames()
-
 	showNotificationModal.value = false
 }
 
-const userFilterCleaning = async () => {
-	if (userSelected.value) {
-		getAllUsersByPage(page.value, itemsPerPage.value)
-		userSelected.value = false
-	}
-}
-
-const selectUser = async (username: string) => {
-	if (username) {
-		showLoading.value = true
-
-		const res: any = await takeUserByUsername(
-			username,
-			idCompany.value,
-			permission.value
-		)
-
-		if (res?.status == 200) {
-			users.value = parseUser(res?.data)
-		}
-
-		showLoading.value = false
-
-		userSelected.value = true
-	}
-}
-
-const selectUserByDepartment = async (department: string) => {
-	if (department) {
-		showLoading.value = true
-
-		const id = idDepartment.value.find((d) => d.name == department)
-
-		const res: any = await takeAllUsers(
-			page.value,
-			itemsPerPage.value,
-			idCompany.value,
-			permission.value,
-			id.id
-		)
-
-		if (res?.status == 200) {
-			users.value = parseUser(res?.data.users)
-
-			setTotalPages(res?.data.totalPages)
-		}
-
-		showLoading.value = false
-
-		userSelected.value = true
-	}
-}
-
-const handleApiResponse = (message: IMessage) => {
-	title.value = message.title
-	subTitle.value = message.subTitle
-}
+// Crud Session
 
 const validateDataToCreateUser = (user: IUsers) => {
 	let validate = []
@@ -374,6 +314,10 @@ const createUsers = async (user: IUsers) => {
 	}
 
 	changeVariableState()
+
+	if (user_store.getUsers.length == 0) {
+		callGetUsersByPage(page.value, itemsPerPage.value)
+	}
 }
 
 const updateUsers = async (user: IUsers) => {
@@ -382,6 +326,7 @@ const updateUsers = async (user: IUsers) => {
 		user.idDepartment = departmentInfo.id
 		user.ramal = departmentInfo.ramal
 		user.idCompany = idCompany.value
+		user.service = Service.RESIDUOSPRO
 	}
 
 	const res: any = await updateUser(user, userId.value)
@@ -411,8 +356,34 @@ const deleteUsers = async () => {
 	changeVariableState()
 }
 
+// Selection session
+
+const selectUser = async (user: string) => {
+	if (user) {
+		const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user)
+
+		if (regex) {
+			users.value = user_store.getUsers.filter((u) => u.email == user)
+		} else {
+			users.value = user_store.getUsers.filter((u) => u.username == user)
+		}
+
+		userSelected.value = true
+	}
+}
+
+const selectUserByDepartment = async (department: string) => {
+	if (department) {
+		users.value = user_store.getUsers.filter((u) => u.department == department)
+
+		userSelected.value = true
+	}
+}
+
 const selectTheDepartmentToCreateTheManager = async (department: string) => {
-	const departmentMatch = departments.value.find((d) => d.name === department)
+	const departmentMatch = department_store.getDepartments.find(
+		(d) => d.name === department
+	)
 
 	Object.assign(departmentInfo, departmentMatch)
 }
@@ -423,41 +394,45 @@ const selectTheDepartmentToCreateTheCollaborator = () => {
 	Object.assign(departmentInfo, department)
 }
 
+// Get session
+
+const callGetUsersByPage = async (
+	currentPage: number,
+	itemsPerPage: number
+) => {
+	showLoading.value = true
+
+	if (user_store.getUsers.length == 0) {
+		await getAllUsersByPage(currentPage, itemsPerPage)
+	} else {
+		resetComputed.value = new Date().getMilliseconds()
+	}
+
+	showLoading.value = false
+}
+
 const getAllDepartment = async () => {
-	const res: any = await takeAllDepartments(idCompany.value)
+	if (department_store.getDepartments.length == 0) {
+		const res: any = await takeAllDepartments(idCompany.value)
 
-	if (res?.status == 200) {
-		allDepartments.value = res?.data.map((d: any) => d.name)
-
-		departments.value = parseDepartment(res?.data)
-
-		idDepartment.value = res?.data.map((d: any) => {
-			return {
-				name: d.name,
-				id: d._id,
-			}
-		})
+		if (res?.status == 200) {
+			department_store.setDepartments(parseDepartment(res?.data))
+		}
 	}
 }
 
-const getAllUsernames = async () => {
-	const res: any = await takeAllUsernames(
-		idCompany.value,
-		permission.value,
-		userDepartment.value
+const getAllUsernames = () => {
+	usernames.value = user_store.getUsers.map((n: any) =>
+		n.username == undefined ? n.email : n.username
 	)
+}
 
-	if (res?.status == 200) {
-		usernames.value = res?.data.map((n: any) =>
-			n.username == undefined ? n.email : n.username
-		)
-
-		res?.data.forEach((user: any) => {
-			if (!nameDepartments.value.includes(user.department)) {
-				nameDepartments.value.push(user.department)
-			}
-		})
-	}
+const getNameOfDepartments = () => {
+	user_store.getUsers.forEach((user: any) => {
+		if (!nameDepartments.value.includes(user.department)) {
+			nameDepartments.value.push(user.department)
+		}
+	})
 }
 
 const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
@@ -466,7 +441,7 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 		itemsPerPage,
 		idCompany.value,
 		permission.value,
-		userDepartment.value
+		idDepartment.value
 	)
 
 	if (res?.status == 200) {
@@ -484,28 +459,23 @@ const getAllUsersByPage = async (page: number, itemsPerPage: number) => {
 	}
 }
 
-const getUserDepartment = () => {
-	userDepartment.value = department_store.getIdDepartment
-	selectTheDepartmentToCreateTheCollaborator()
-}
-
 const loadsAllUsersAndTheirInfo = async () => {
-	idCompany.value = idCompany_store
-
 	await callGetUsersByPage(page.value, itemsPerPage.value)
 
 	if (hasPermission([AuthorizationUser.ADMIN])) {
 		await getAllDepartment()
 	}
-
-	await getAllUsernames()
 }
 
 onMounted(() => {
 	permission.value = getPermission()
 
+	idCompany.value = idCompany_store
+
 	if (hasPermission([AuthorizationUser.MANAGER])) {
-		getUserDepartment()
+		idDepartment.value = department_store.getIdDepartment
+
+		selectTheDepartmentToCreateTheCollaborator()
 	}
 
 	loadsAllUsersAndTheirInfo()

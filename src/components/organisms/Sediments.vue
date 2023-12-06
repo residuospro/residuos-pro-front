@@ -60,10 +60,6 @@
 						</td>
 
 						<td :style="setTableBackground(index)">
-							{{ items.packaging }}
-						</td>
-
-						<td :style="setTableBackground(index)">
 							<v-menu transition="slide-y-transition">
 								<template v-slot:activator="{ props }">
 									<button v-bind="props">

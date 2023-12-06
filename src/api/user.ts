@@ -123,6 +123,8 @@ export const updateUser = async (user: IUsers, id: string) => {
 			}
 		}
 
+		console.log("d", user)
+
 		const res = await useClient().put(`${Routes.UPDATE_USER}${id}`, data)
 
 		return res

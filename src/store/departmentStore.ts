@@ -15,8 +15,6 @@ export const departmentStore = defineStore("departmentStore", {
 		},
 
 		totalPages: [],
-
-		idDepartment: "",
 	}),
 
 	getters: {
@@ -24,8 +22,12 @@ export const departmentStore = defineStore("departmentStore", {
 			return state.department.id
 		},
 
-		getDepartment(state) {
+		getDepartments(state) {
 			return state.departments
+		},
+
+		getDepartment(state) {
+			return state.department
 		},
 
 		getTotalPages(state) {
@@ -35,10 +37,6 @@ export const departmentStore = defineStore("departmentStore", {
 	actions: {
 		setDepartment(details: IUserDepartmentInfo) {
 			this.department = { ...details }
-		},
-
-		setIdDepartment(id: string) {
-			this.idDepartment = id
 		},
 
 		setTotalPages(details: number[]) {

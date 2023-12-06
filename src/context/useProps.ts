@@ -5,12 +5,14 @@ import {
 	ISetStore,
 	IUseProps,
 	IUserApi,
+	IUserEvent,
 	IUsers,
 } from "@/utils/interfaces"
 import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import { sedimentStore } from "@/store/sedimentStore"
 import { userStore } from "@/store/userStore"
+import { Service } from "@/utils/enum"
 
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
@@ -38,7 +40,7 @@ const useProps = (): IUseProps => {
 		const department_store = departmentStore()
 		const user_store = userStore()
 
-		const departments = department_store.getDepartment
+		const departments = department_store.getDepartments
 		const sediments = sediment_store.getSediments
 		const users = user_store.getUsers
 
@@ -103,6 +105,7 @@ const useProps = (): IUseProps => {
 				department: d.department,
 				idDepartment: d.idDepartment,
 				idCompany: d.idCompany,
+				service: Service.RESIDUOSPRO,
 			}
 		})
 
@@ -151,6 +154,23 @@ const useProps = (): IUseProps => {
 		return users
 	}
 
+	const parseUpdateUserAfterDepartment = (
+		data: IUsers[],
+		users: IUsers[]
+	): IUsers[] => {
+		const user = users.filter((d) => d.idDepartment == data[0].idDepartment)
+
+		if (user) {
+			user.forEach((u: IUsers, i) => {
+				const index = users.indexOf(u)
+
+				users[index] = parseUser(data)[i]
+			})
+		}
+
+		return users
+	}
+
 	return {
 		setTableBackground,
 		parseDepartment,
@@ -162,6 +182,7 @@ const useProps = (): IUseProps => {
 		parseUpdateSediment,
 		parseUser,
 		parseUpdateUser,
+		parseUpdateUserAfterDepartment,
 	}
 }
 

@@ -75,13 +75,7 @@ const { setTotalPages, parseSediments, setStore } = useProps()
 
 const { sediment_store, department_store, idCompany_store } = setStore()
 
-const headers = [
-	"Nome",
-	"Classificação",
-	"Risco Associado",
-	"Estado",
-	"Acondicionamento",
-]
+const headers = ["Nome", "Classificação", "Risco Associado", "Estado"]
 
 const states = ["Líquido", "Sólido", "Gasoso"]
 
@@ -282,6 +276,10 @@ const createSediments = async (sediment: ISediments) => {
 	}
 
 	changeVariableState()
+
+	if (sediment_store.getSediments.length == 0) {
+		callGetSedimentsByPage(page.value, itemsPerPage.value)
+	}
 }
 
 const updateSediments = async (sediment: ISediments) => {

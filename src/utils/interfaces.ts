@@ -16,6 +16,7 @@ export interface IUseProps {
 	parseUser: (data: any[]) => Array<IUsers>
 	parseUpdateUser: (data: IUserApi[], users: IUsers[]) => IUsers[]
 	parseUpdateSediment: (data: any, sediments: ISediments[]) => ISediments[]
+	parseUpdateUserAfterDepartment: (data: IUsers[], users: IUsers[]) => IUsers[]
 	setStore: () => ISetStore
 }
 
@@ -45,6 +46,7 @@ export interface IUsers {
 	id: string | undefined
 	idDepartment: string | undefined
 	idCompany: string | undefined
+	service: string | undefined
 }
 
 export interface IUserApi extends IUsers {
@@ -64,7 +66,6 @@ export interface IDepartmentState {
 	departments: Array<IUserDepartmentInfo>
 	department: IUserDepartmentInfo
 	totalPages: Array<number>
-	idDepartment: string
 }
 
 export interface IUsersState {
@@ -137,10 +138,10 @@ export type IFilter = {
 
 export interface IPropsDepartmentStore {
 	getIdDepartment?: string
-	getDepartment: IDepartment[]
+	getDepartments: IDepartment[]
+	getDepartment: IDepartment
 	getTotalPages: number[]
 	setDepartment(details: IUserDepartmentInfo): void
-	setIdDepartment(id: string): void
 	setTotalPages(details: number[]): void
 	setDepartments(details: IUserDepartmentInfo[]): void
 }
