@@ -11,23 +11,19 @@ export const sedimentEvent = (socket: Socket) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 
-		const idDepartment = department_store.getIdDepartment
+		const { idCompany, idDepartment, sediment, totalPages } = data.data
+
+		const idDepartment_store = department_store.getIdDepartment
 
 		if (
-			data.idCompany == idCompany_store &&
-			data.item &&
+			idCompany == idCompany_store &&
+			sediment &&
 			sediments.length &&
-			idDepartment &&
-			data.idDepartment
+			idDepartment == idDepartment_store
 		) {
-			sediment_store.setSediments([
-				...sediments,
-				...parseSediments([data.item]),
-			])
+			sediment_store.setSediments([...sediments, ...parseSediments([sediment])])
 
-			sediment_store.setTotalPages(setTotalPages(data.totalPages))
-
-			console.log("criado carai")
+			sediment_store.setTotalPages(setTotalPages(totalPages))
 		}
 	})
 
@@ -35,16 +31,17 @@ export const sedimentEvent = (socket: Socket) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 
-		const idDepartment = department_store.getIdDepartment
+		const { idCompany, idDepartment, sediment } = data.data
+
+		const idDepartment_store = department_store.getIdDepartment
 
 		if (
-			data.idCompany == idCompany_store &&
-			data.item &&
+			idCompany == idCompany_store &&
+			sediment &&
 			sediments.length &&
-			idDepartment &&
-			data.idDepartment
+			idDepartment == idDepartment_store
 		) {
-			sediment_store.setSediments(parseUpdateSediment([data.item], sediments))
+			sediment_store.setSediments(parseUpdateSediment([sediment], sediments))
 		}
 	})
 
@@ -52,18 +49,17 @@ export const sedimentEvent = (socket: Socket) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 
-		const idDepartment = department_store.getIdDepartment
+		const { idCompany, idDepartment, sediment } = data.data
+
+		const idDepartment_store = department_store.getIdDepartment
 
 		if (
-			data.idCompany == idCompany_store &&
-			data.item &&
+			idCompany == idCompany_store &&
+			sediment &&
 			sediments.length &&
-			idDepartment &&
-			data.idDepartment
+			idDepartment == idDepartment_store
 		) {
-			sediment_store.setSediments(
-				sediments.filter((s) => s.id != data.item._id)
-			)
+			sediment_store.setSediments(sediments.filter((s) => s.id != sediment._id))
 		}
 	})
 }

@@ -91,4 +91,5 @@ export enum Event {
 	UPDATED_USER = "updated_user",
 	DELETED_USER = "deleted_user",
 	UPDATED_USER_AFTER_DEPARTMENT = "updated_user_after_department",
+	DELETED_USER_AFTER_DEPARTMENT = "deleted_user_after_department",
 }

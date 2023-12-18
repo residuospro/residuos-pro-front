@@ -97,7 +97,7 @@ let resetComputed = ref(0)
 let departmentSelected = ref(false)
 let idCompany = ref("")
 
-const headers = ["Departamento", "Responsável", "Ramal", "Email"]
+const headers = ["Departamento", "Ramal"]
 
 const actions = ["Atualizar", "Deletar"]
 
@@ -199,15 +199,13 @@ const handleApiResponse = (message: IMessage) => {
 const validateDataToCreateDepartment = (department: IDepartment) => {
 	let validate = []
 
-	const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
-
 	for (const key in department) {
-		if (department[key as keyof IDepartment] != "" && regex) {
+		if (department[key as keyof IDepartment] != "") {
 			validate.push(key)
 		}
 	}
 
-	if (validate.length == 4) showButton.value = true
+	if (validate.length == 2) showButton.value = true
 	else showButton.value = false
 }
 
@@ -219,10 +217,6 @@ const validateDataToUpdateDepartment = (department: IDepartment) => {
 		if (department[key as keyof IDepartment] != "") {
 			validate.push(key)
 		}
-	}
-
-	if (department.email != "") {
-		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(department.email)
 	}
 
 	if (validate.length > 0 && regex) showButton.value = true

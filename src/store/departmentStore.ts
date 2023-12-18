@@ -7,9 +7,7 @@ export const departmentStore = defineStore("departmentStore", {
 
 		department: {
 			name: "",
-			responsible: "",
 			ramal: "",
-			email: "",
 			id: "",
 			idCompany: "",
 		},

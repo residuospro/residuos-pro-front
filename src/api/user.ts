@@ -2,18 +2,20 @@ import { useClient } from "@/clients/AxiosClient"
 import { AuthorizationUser, Routes } from "@/utils/enum"
 import { IUsers } from "@/utils/interfaces"
 
-export const createUser = async (user: IUsers, permission: string[]) => {
+export const createUser = async (
+	user: Partial<IUsers>,
+	permission: string[]
+) => {
 	try {
 		const data = {
 			name: user.name,
-			username: user.username,
 			email: user.email,
 			department: user.department,
 			idDepartment: user.idDepartment,
 			ramal: user.ramal,
 			role: permission,
 			idCompany: user.idCompany,
-			service: "Residuos-Pro",
+			service: user.service,
 		}
 
 		const res = await useClient().post(Routes.SAVE_USER, data)
@@ -110,7 +112,7 @@ export const takeUserByUsername = async (
 	}
 }
 
-export const updateUser = async (user: IUsers, id: string) => {
+export const updateUser = async (user: Partial<IUsers>, id?: string) => {
 	try {
 		const data: Partial<IUsers> = {}
 
@@ -133,7 +135,7 @@ export const updateUser = async (user: IUsers, id: string) => {
 	}
 }
 
-export const deleteUser = async (userId: string, idCompany: string) => {
+export const deleteUser = async (idCompany: string, userId?: string) => {
 	try {
 		const data = { idCompany }
 

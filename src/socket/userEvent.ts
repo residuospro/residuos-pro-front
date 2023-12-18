@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client"
 import { Event } from "../utils/enum"
 import useProps from "@/context/useProps"
-import { IUserEvent } from "@/utils/interfaces"
+import { IUserDepartmentEvent, IUserEvent } from "@/utils/interfaces"
 
 const {
 	parseUser,
@@ -15,39 +15,60 @@ export const userEvent = (socket: Socket) => {
 	socket.on(Event.USER_CREATED, (data: IUserEvent) => {
 		const { idCompany_store, users, user_store } = setStore()
 
-		console.log("user", data)
+		const { idCompany, user, totalPages } = data.data
 
-		if (data.idCompany == idCompany_store && data.item && users.length) {
-			user_store.setUsers([...users, ...parseUser([data.item])])
+		if (idCompany == idCompany_store && user && users.length) {
+			user_store.setUsers([...users, ...parseUser([user])])
 
-			user_store.setTotalPages(setTotalPages(data.totalPages))
+			user_store.setTotalPages(setTotalPages(totalPages))
 		}
 	})
 
 	socket.on(Event.UPDATED_USER, (data: IUserEvent) => {
 		const { idCompany_store, users, user_store } = setStore()
-		console.log("up", data)
 
-		if (data.idCompany == idCompany_store && data.item && users.length) {
-			user_store.setUsers(parseUpdateUser([data.item], users))
+		const { idCompany, user } = data.data
 
-			console.log("oi", parseUpdateUser([data.item], users))
+		if (idCompany == idCompany_store && user && users.length) {
+			user_store.setUsers(parseUpdateUser([user], users))
 		}
 	})
 
-	socket.on(Event.UPDATED_USER_AFTER_DEPARTMENT, (data: any) => {
-		const { idCompany_store, users, user_store } = setStore()
+	socket.on(
+		Event.UPDATED_USER_AFTER_DEPARTMENT,
+		(data: IUserDepartmentEvent) => {
+			const { idCompany_store, users, user_store } = setStore()
 
-		if (data.idCompany == idCompany_store && data.item && users.length) {
-			user_store.setUsers(parseUpdateUserAfterDepartment(data.item, users))
+			const { idCompany, user } = data.data
+
+			if (idCompany == idCompany_store && user && users.length) {
+				user_store.setUsers(parseUpdateUserAfterDepartment(user, users))
+			}
 		}
-	})
+	)
 
 	socket.on(Event.DELETED_USER, (data: IUserEvent) => {
 		const { idCompany_store, users, user_store } = setStore()
 
-		if (data.idCompany == idCompany_store && data.item && users.length) {
-			user_store.setUsers(users.filter((d) => d.id != data.item._id))
+		const { idCompany, user } = data.data
+
+		if (idCompany == idCompany_store && user && users.length) {
+			user_store.setUsers(users.filter((d) => d.id != user._id))
 		}
 	})
+
+	socket.on(
+		Event.DELETED_USER_AFTER_DEPARTMENT,
+		(data: IUserDepartmentEvent) => {
+			const { idCompany_store, users, user_store } = setStore()
+
+			const { idCompany, user } = data.data
+
+			if (idCompany == idCompany_store && user.length && users.length) {
+				user_store.setUsers(
+					users.filter((d) => d.idDepartment != user[0].idDepartment)
+				)
+			}
+		}
+	)
 }

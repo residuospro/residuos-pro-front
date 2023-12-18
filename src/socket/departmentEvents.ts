@@ -8,24 +8,28 @@ const { parseDepartment, setTotalPages, parseUpdateDepartment, setStore } =
 
 export const departmentEvents = (socket: Socket) => {
 	socket.on(Event.DEPARTMENT_CREATED, (data: IDepartmentEvent) => {
+		const { idCompany, department, totalPages } = data.data
+
 		const { idCompany_store, departments, department_store } = setStore()
 
-		if (data.idCompany == idCompany_store && data.item && departments.length) {
+		if (idCompany == idCompany_store && department && departments.length) {
 			department_store.setDepartments([
 				...departments,
-				...parseDepartment([data.item]),
+				...parseDepartment([department]),
 			])
 
-			department_store.setTotalPages(setTotalPages(data.totalPages))
+			department_store.setTotalPages(setTotalPages(totalPages))
 		}
 	})
 
 	socket.on(Event.UPDATED_DEPARTMENT, (data: IDepartmentEvent) => {
 		const { idCompany_store, departments, department_store } = setStore()
 
-		if (data.idCompany == idCompany_store && data.item && departments.length) {
+		const { idCompany, department } = data.data
+
+		if (idCompany == idCompany_store && department && departments.length) {
 			department_store.setDepartments(
-				parseUpdateDepartment([data.item], departments)
+				parseUpdateDepartment([department], departments)
 			)
 		}
 	})
@@ -33,9 +37,11 @@ export const departmentEvents = (socket: Socket) => {
 	socket.on(Event.DELETED_DEPARTMENT, (data: IDepartmentEvent) => {
 		const { idCompany_store, departments, department_store } = setStore()
 
-		if (data.idCompany == idCompany_store && data.item && departments.length) {
+		const { idCompany, department } = data.data
+
+		if (idCompany == idCompany_store && department && departments.length) {
 			department_store.setDepartments(
-				departments.filter((d) => d.id != data.item._id)
+				departments.filter((d) => d.id != department._id)
 			)
 		}
 	})

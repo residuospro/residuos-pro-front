@@ -70,7 +70,11 @@
 						<td
 							v-if="items.username == undefined"
 							:style="setTableBackground(index)">
-							---
+							<v-tooltip activator="parent" location="center">
+								Aguardando cadastro
+							</v-tooltip>
+
+							<VueSpinnerBar color="#36802d" height="2" width="80" />
 						</td>
 
 						<td v-else :style="setTableBackground(index)">
@@ -134,6 +138,7 @@ import { hasPermission } from "@/utils/permissions"
 import { AuthorizationUser } from "@/utils/enum"
 import Wrapper from "../atoms/Wrapper.vue"
 import useProps from "../../context/useProps"
+import { VueSpinnerBar } from "vue3-spinners"
 
 const { setTableBackground, handleAutoCompleteStyle } = useProps()
 
@@ -167,6 +172,7 @@ let props = defineProps({
 		type: Function as PropType<(id: string | undefined) => void>,
 		required: true,
 	},
+
 	openUserModal: {
 		type: Function as PropType<(action: string, id?: string) => void>,
 		required: true,

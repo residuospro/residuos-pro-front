@@ -27,9 +27,7 @@ export interface IMessage {
 
 export interface IDepartment {
 	name: string
-	responsible: string
 	ramal: string
-	email: string
 	idCompany?: string
 	id?: string
 }
@@ -38,15 +36,21 @@ interface IDepartmentApi extends IDepartment {
 }
 
 export interface IUsers {
-	name: string
-	username: string
-	email: string
+	name?: string
+	username?: string
+	email?: string
 	department: string | undefined
-	ramal: string
+	ramal?: string
 	id: string | undefined
 	idDepartment: string | undefined
 	idCompany: string | undefined
 	service: string | undefined
+}
+
+export interface IUserForm {
+	name?: string
+	email?: string
+	department?: string
 }
 
 export interface IUserApi extends IUsers {
@@ -58,8 +62,6 @@ export interface IUserDepartmentInfo {
 	ramal: string
 	idCompany?: string
 	id?: string
-	responsible: string
-	email: string
 }
 
 export interface IDepartmentState {
@@ -175,14 +177,40 @@ interface userInfo {
 	totalPages: number
 }
 
-export interface ISedimentEvent extends userInfo {
-	item: ISedimentsApi
+export interface ISedimentEvent {
+	data: {
+		idCompany: string
+		idDepartment: string
+		totalPages: number
+		sediment: ISedimentsApi
+	}
 }
 
-export interface IDepartmentEvent extends userInfo {
-	item: IDepartmentApi
+export interface IDepartmentEvent {
+	data: {
+		department: IDepartmentApi
+		idCompany: string
+		totalPages: number
+	}
 }
 
-export interface IUserEvent extends userInfo {
-	item: IUserApi
+export interface IUserEvent {
+	data: {
+		user: IUserApi
+		idCompany: string
+		totalPages: number
+	}
+}
+
+export interface IUserDepartmentEvent {
+	data: {
+		user: IUserApi[]
+		idCompany: string
+		totalPages: number
+	}
+}
+
+export interface IDepartmentUser {
+	item: Array<IUsers>
+	idCompany: string
 }

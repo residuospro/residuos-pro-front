@@ -42,20 +42,12 @@
 						v-for="(items, index) in content"
 						:key="items.id"
 						class="font-medium">
-						<td :style="setTableBackground(index)">
+						<td :style="setTableBackground(index)" class="w-[50%]">
 							{{ items.name }}
 						</td>
 
-						<td :style="setTableBackground(index)">
-							{{ items.responsible }}
-						</td>
-
-						<td :style="setTableBackground(index)">
+						<td :style="setTableBackground(index)" class="w-[80%]">
 							{{ items.ramal }}
-						</td>
-
-						<td :style="setTableBackground(index)">
-							{{ items.email }}
 						</td>
 
 						<td :style="setTableBackground(index)">

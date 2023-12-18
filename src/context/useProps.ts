@@ -67,9 +67,7 @@ const useProps = (): IUseProps => {
 		const parsedData = data.map((d) => {
 			return {
 				name: d.name,
-				responsible: d.responsible,
 				ramal: d.ramal,
-				email: d.email,
 				id: d._id,
 				idCompany: d.idCompany,
 			}

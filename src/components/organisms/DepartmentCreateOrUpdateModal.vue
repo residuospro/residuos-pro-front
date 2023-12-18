@@ -1,14 +1,14 @@
 <template>
 	<Container type="backgroundContainer">
 		<Wrapper type="modal">
-			<Wrapper type="actionsModal" class="!min-h-[17rem]">
+			<Wrapper type="actionsModal" class="!min-h-[13rem]">
 				<form
 					@submit.prevent="createOrUpdateDepartment(department, typeAction)">
 					<Typograph type="H2" class="text-v_medium_gray">
 						{{ typeAction }} departamento
 					</Typograph>
 
-					<div class="flex flex-wrap w-full justify-between h-36 mt-2">
+					<div class="flex flex-wrap w-full justify-between h-20 mt-2">
 						<Input
 							input="input"
 							placeholder="Departamento:"
@@ -21,18 +21,6 @@
 							placeholder="Ramal:"
 							:class="department.ramal !== '' ? 'bg-white' : ''"
 							@input="(value: number) => department.ramal = String(value)" />
-
-						<Input
-							input="input"
-							placeholder="Responsável:"
-							:class="department.responsible !== '' ? 'bg-white' : ''"
-							@input="(value: string) => department.responsible = value" />
-
-						<Input
-							input="input"
-							placeholder="Email:"
-							:class="department.email !== '' ? 'bg-white' : ''"
-							@input="(value: string) => department.email = value" />
 					</div>
 
 					<div class="flex justify-end w-full space-x-5 mt-2">

@@ -35,7 +35,7 @@
 		:departments="nameDepartments"
 		:itemsPerPage="Number(itemsPerPage)"
 		:show-delete-modal="openDeleteModal"
-		:open-user-modal="openUserModal"
+		:openUserModal="openUserModal"
 		:selectUserByDepartment="selectUserByDepartment"
 		:selectUser="selectUser"
 		:userFilterCleaning="userFilterCleaning" />
@@ -68,6 +68,7 @@ import {
 	IInputContainerStyle,
 	IInputWrappingStyle,
 	IMessage,
+	IUserForm,
 	IUsers,
 } from "@/utils/interfaces"
 import { computed, onMounted, reactive, ref, watch } from "vue"
@@ -103,8 +104,9 @@ let allDepartments = ref<string[]>([])
 let idDepartment = ref<string | undefined>("")
 let userSelected = ref(false)
 let idCompany = ref("")
-let userId = ref()
+let userId = ref<string | undefined>("")
 let permission = ref<string[]>([])
+let resetComputed = ref(0)
 let departmentInfo = reactive<IDepartment>({
 	name: "",
 	responsible: "",
@@ -113,7 +115,6 @@ let departmentInfo = reactive<IDepartment>({
 	email: "",
 	idCompany: "",
 })
-let resetComputed = ref(0)
 
 const inputWrappingStyle = () => {
 	let style: IInputWrappingStyle[] = [
@@ -244,13 +245,18 @@ const closeModal = () => {
 
 // Crud Session
 
-const validateDataToCreateUser = (user: IUsers) => {
+const validateDataToCreateUser = (userForm: IUserForm) => {
 	let validate = []
 
-	const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email)
+	const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(userForm.email!)
 
-	for (const key in user) {
-		if (user[key as keyof IUsers] != "" && user[key as keyof IUsers] && regex) {
+	for (const key in userForm) {
+		if (
+			userForm[key as keyof IUserForm] != "" &&
+			userForm[key as keyof IUserForm] != undefined &&
+			userForm[key as keyof IUserForm] &&
+			regex
+		) {
 			validate.push(key)
 		}
 	}
@@ -267,18 +273,20 @@ const validateDataToCreateUser = (user: IUsers) => {
 	}
 }
 
-const validateDataToUpdateUser = (user: IUsers) => {
+const validateDataToUpdateUser = (user: IUserForm) => {
 	let validate = []
 	let regex = true
 
+	console.log("d", departmentInfo)
+
 	for (const key in user) {
-		if (user[key as keyof IUsers] != "" && user[key as keyof IUsers]) {
+		if (user[key as keyof IUserForm] != "" && user[key as keyof IUserForm]) {
 			validate.push(key)
 		}
 	}
 
 	if (user.email != "") {
-		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email)
+		regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email!)
 	}
 
 	if (validate.length > 0 && regex) showButton.value = true
@@ -286,7 +294,7 @@ const validateDataToUpdateUser = (user: IUsers) => {
 	else showButton.value = false
 }
 
-const createOrUpdateUser = (user: IUsers, action: string) => {
+const createOrUpdateUser = (user: IUserForm, action: string) => {
 	showLoading.value = true
 
 	if (action == Actions.SAVE) {
@@ -296,14 +304,8 @@ const createOrUpdateUser = (user: IUsers, action: string) => {
 	}
 }
 
-const createUsers = async (user: IUsers) => {
-	if (departmentInfo.name != "") {
-		user.department = departmentInfo.name
-		user.idDepartment = departmentInfo.id
-		user.ramal = departmentInfo.ramal
-	}
-
-	user.idCompany = idCompany.value
+const createUsers = async (userForm: IUserForm) => {
+	const user = setUser(userForm)
 
 	const res: any = await createUser(user, permission.value)
 
@@ -320,14 +322,8 @@ const createUsers = async (user: IUsers) => {
 	}
 }
 
-const updateUsers = async (user: IUsers) => {
-	if (departmentInfo.name != "") {
-		user.department = departmentInfo.name
-		user.idDepartment = departmentInfo.id
-		user.ramal = departmentInfo.ramal
-		user.idCompany = idCompany.value
-		user.service = Service.RESIDUOSPRO
-	}
+const updateUsers = async (userForm: IUserForm) => {
+	const user = setUser(userForm)
 
 	const res: any = await updateUser(user, userId.value)
 
@@ -345,7 +341,7 @@ const deleteUsers = async () => {
 
 	showDeleteModal.value = false
 
-	const res: any = await deleteUser(userId.value, idCompany.value)
+	const res: any = await deleteUser(idCompany.value, userId.value)
 
 	if (res?.status == 200) {
 		handleApiResponse(res?.data.message)
@@ -354,6 +350,20 @@ const deleteUsers = async () => {
 	}
 
 	changeVariableState()
+}
+
+const setUser = (userForm: IUserForm): Partial<IUsers> => {
+	const user: Partial<IUsers> = {
+		name: userForm.name == "" ? undefined : userForm.name,
+		email: userForm.email == "" ? undefined : userForm.email,
+		department: userForm.department,
+		idDepartment: departmentInfo.id == "" ? undefined : departmentInfo.id,
+		ramal: departmentInfo.ramal == "" ? undefined : departmentInfo.ramal,
+		idCompany: idCompany.value,
+		service: Service.RESIDUOSPRO,
+	}
+
+	return user
 }
 
 // Selection session

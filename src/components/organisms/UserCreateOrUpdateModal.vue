@@ -61,24 +61,20 @@ import { PropType, reactive, watch, ref } from "vue"
 import {
 	IInputContainerStyle,
 	IInputWrappingStyle,
+	IUserForm,
 	IUsers,
 } from "@/utils/interfaces"
-import { Actions, AuthorizationUser } from "@/utils/enum"
+import { Actions, AuthorizationUser, Service } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
 import userProps from "@/context/useProps"
 import { onMounted } from "vue"
 
 const { handleAutoCompleteStyle } = userProps()
 
-const user: IUsers = reactive({
+const user: IUserForm = reactive({
 	name: "",
-	username: "",
 	email: "",
 	department: undefined,
-	ramal: "",
-	id: "",
-	idDepartment: "",
-	idCompany: "",
 })
 
 const props = defineProps({
@@ -103,17 +99,17 @@ const props = defineProps({
 	},
 
 	createOrUpdateUser: {
-		type: Function as PropType<(user: IUsers, action: string) => void>,
+		type: Function as PropType<(user: IUserForm, action: string) => void>,
 		required: true,
 	},
 
 	validateDataToCreateUser: {
-		type: Function as PropType<(user: IUsers) => void>,
+		type: Function as PropType<(user: IUserForm) => void>,
 		required: true,
 	},
 
 	validateDataToUpdateUser: {
-		type: Function as PropType<(user: IUsers) => void>,
+		type: Function as PropType<(user: IUserForm) => void>,
 		required: true,
 	},
 
