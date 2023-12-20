@@ -44,5 +44,18 @@ export const departmentStore = defineStore("departmentStore", {
 		setDepartments(details: IUserDepartmentInfo[]) {
 			this.departments = details
 		},
+
+		resetDepartmentState() {
+			this.department = {
+				name: "",
+				ramal: "",
+				id: "",
+				idCompany: "",
+			}
+
+			this.departments = []
+
+			this.totalPages = []
+		},
 	},
 })

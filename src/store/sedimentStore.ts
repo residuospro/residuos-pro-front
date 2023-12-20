@@ -1,11 +1,16 @@
 import { ISediments, ISedimentStore } from "@/utils/interfaces"
 import { defineStore } from "pinia"
+import { getSedimentsByPageApi } from "@/api/sediments"
+import { companyStore } from "@/store/companyStore"
+import { departmentStore } from "@/store/departmentStore"
 
 export const sedimentStore = defineStore("sedimentStore", {
 	state: (): ISedimentStore => ({
 		sediments: [],
 
 		totalPages: [],
+
+		sedimentsName: [],
 	}),
 
 	getters: {
@@ -21,6 +26,34 @@ export const sedimentStore = defineStore("sedimentStore", {
 
 		setTotalPages(details: number[]) {
 			this.totalPages = details
+		},
+
+		resetSedimentsState() {
+			this.sediments = []
+			this.totalPages = []
+		},
+
+		async getSedimentsName() {
+			const idCompany = companyStore().getIdCompany
+			const idDepartment = departmentStore().getIdDepartment
+
+			console.log("res", idCompany)
+
+			const page = 1
+			const itemsPerPage = 10
+
+			const res: any = await getSedimentsByPageApi(
+				page,
+				itemsPerPage,
+				idCompany,
+				idDepartment
+			)
+
+			const sediments = res?.data.sediments as []
+
+			const sedimentsName = sediments.map((s: any) => s.name) as string[]
+
+			return sedimentsName
 		},
 	},
 })

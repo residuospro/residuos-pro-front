@@ -58,7 +58,7 @@
 /* eslint-disable no-useless-escape */
 import Users from "@/components/organisms/Users.vue"
 import Loading from "@/components/molecules/Loading.vue"
-import Notification from "@/components/molecules/Notification.vue"
+import Notification from "@/components/molecules/NotificationModal.vue"
 import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
@@ -109,10 +109,8 @@ let permission = ref<string[]>([])
 let resetComputed = ref(0)
 let departmentInfo = reactive<IDepartment>({
 	name: "",
-	responsible: "",
 	ramal: "",
 	id: "",
-	email: "",
 	idCompany: "",
 })
 

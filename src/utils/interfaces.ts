@@ -78,6 +78,7 @@ export interface IUsersState {
 
 export interface ISedimentStore {
 	sediments: Array<ISediments>
+	sedimentsName: Array<string>
 	totalPages: Array<number>
 }
 
@@ -146,12 +147,15 @@ export interface IPropsDepartmentStore {
 	setDepartment(details: IUserDepartmentInfo): void
 	setTotalPages(details: number[]): void
 	setDepartments(details: IUserDepartmentInfo[]): void
+	resetDepartmentState(): void
 }
 
 export interface IPropsSedimentStore {
 	getSediments: ISediments[]
 	setSediments(sediments: ISediments[]): void
 	setTotalPages(details: number[]): void
+	resetSedimentsState(): void
+	getSedimentsName(): Promise<string[]>
 }
 
 interface IPropsUserStore {
@@ -159,6 +163,7 @@ interface IPropsUserStore {
 	getUsers: IUsers[]
 	setUsers(users: IUsers[]): void
 	setTotalPages(details: number[]): void
+	resetUserState(): void
 }
 
 export interface ISetStore {

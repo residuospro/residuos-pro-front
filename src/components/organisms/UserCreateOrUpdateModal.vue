@@ -62,12 +62,11 @@ import {
 	IInputContainerStyle,
 	IInputWrappingStyle,
 	IUserForm,
-	IUsers,
 } from "@/utils/interfaces"
-import { Actions, AuthorizationUser, Service } from "@/utils/enum"
+import { Actions, AuthorizationUser } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
-import userProps from "@/context/useProps"
 import { onMounted } from "vue"
+import userProps from "@/context/useProps"
 
 const { handleAutoCompleteStyle } = userProps()
 

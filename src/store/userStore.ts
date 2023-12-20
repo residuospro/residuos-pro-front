@@ -34,5 +34,11 @@ export const userStore = defineStore("userStore", {
 		setTotalPages(details: number[]) {
 			this.totalPages = details
 		},
+
+		resetUserState() {
+			this.userId = ""
+			this.users = []
+			this.totalPages = []
+		},
 	},
 })

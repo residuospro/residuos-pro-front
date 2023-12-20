@@ -84,10 +84,11 @@
 			</div>
 
 			<Button
+				v-if="!hasPermission([AuthorizationUser.ADMIN])"
 				buttonType="submit"
 				@click="openCollectionsModal(Actions.SAVE)"
 				class="bg-white">
-				<p class="text-v_dark_gray">Cadastrar</p>
+				<p class="text-v_dark_gray">Criar</p>
 			</Button>
 		</div>
 

@@ -1,38 +1,45 @@
 <template>
-	<Container type="backgroundContainer">
-		<Wrapper type="modal">
-			<Wrapper type="notification">
-				<TypographVue type="H1" class="text-v_blue">{{ title }}</TypographVue>
+	<notifications position="bottom right" duration="-3000">
+		<template #body="props">
+			<div
+				class="flex flex-col justify-center bg-white rounded-lg mx-3 my-3 px-2 py-2 shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)]">
+				<Vue3Lottie :animationData="order" :height="150" :width="150" />
 
-				<TypographVue type="H3" class="text-v_medium_gray">
-					{{ subTitle }}
-				</TypographVue>
+				<div class="text-center text-v_medium_gray mb-2">
+					<p class="font-bold">
+						{{ props.item.title }}
+					</p>
+
+					<div v-html="props.item.text" />
+				</div>
 
 				<Button
-					button-type="submit"
-					class="bg-v_green text-white mt-5"
-					@click="$emit('closeModal', false)">
-					Fechar
+					buttonType="confirmButton"
+					class="bg-v_green"
+					@click="closeNotification(props)">
+					<p class="text-white">Fechar</p>
 				</Button>
-			</Wrapper>
-		</Wrapper>
-	</Container>
+			</div>
+		</template>
+	</notifications>
 </template>
 
-<script setup lang="ts">
-import Container from "../atoms/Container.vue"
-import Wrapper from "../atoms/Wrapper.vue"
-import Button from "../atoms/Button.vue"
-import TypographVue from "../atoms/Typograph.vue"
+<script lang="ts" setup>
+import order from "@/assets/order.json"
+import Button from "@/components/atoms/Button.vue"
+import { Vue3Lottie } from "vue3-lottie"
+import { audioStore } from "@/store/audioStore"
+import router from "@/router"
 
-defineProps({
-	title: {
-		type: String,
-		required: true,
-	},
-	subTitle: {
-		type: String,
-		required: true,
-	},
-})
+const audio = audioStore()
+
+const closeNotification = (props: any) => {
+	const pathname = window.location.pathname
+
+	if (pathname != "/Painel/Coletas") router.push("/Painel/Coletas")
+
+	audio.pauseAudio()
+
+	props.close()
+}
 </script>

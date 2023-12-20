@@ -10,6 +10,12 @@ import {
 	useAuthClient,
 	useClient,
 } from "./clients/AxiosClient"
+import sound from "@/assets/sounds/r.mp3"
+import { audioStore } from "@/store/audioStore"
+
+const audio = audioStore()
+
+audio.initializeAudio(sound)
 
 const token = isAuthenticated()
 

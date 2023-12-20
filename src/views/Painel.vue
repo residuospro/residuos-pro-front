@@ -5,17 +5,19 @@
 			<router-view :key="$router.currentRoute.value.path"></router-view>
 		</div>
 	</Container>
+
+	<Notification />
 </template>
 
 <script setup lang="ts">
 import Container from "@/components/atoms/Container.vue"
+import Notification from "@/components/molecules/Notification.vue"
 import MenuSideBarContainer from "@/conatainers/MenuSideBarContainer.vue"
 import router from "@/router"
 import { onMounted } from "vue"
 import { userStore } from "../store/userStore"
 import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
-
 import { getPayload } from "../api/signin"
 
 const userIdStore = userStore()
@@ -42,8 +44,8 @@ const getUserInfo = async () => {
 	}
 }
 
-onMounted(() => {
-	getUserInfo()
+onMounted(async () => {
+	await getUserInfo()
 
 	router.push({
 		name: "Coletas",

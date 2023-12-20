@@ -12,6 +12,11 @@ import { watchEffect, ref } from "vue"
 import { removeItems } from "@/utils/permissions"
 import { AuthorizationUser } from "@/utils/enum"
 import router from "@/router"
+import useProps from "@/context/useProps"
+
+const { setStore } = useProps()
+
+const { department_store, user_store, sediment_store } = setStore()
 
 const menuIcons = [
 	{
@@ -74,6 +79,9 @@ const setIdBtn = (id: string) => {
 
 const logout = () => {
 	router.push({ path: "/" })
+	department_store.resetDepartmentState()
+	user_store.resetUserState()
+	sediment_store.resetSedimentsState()
 	removeItems()
 }
 

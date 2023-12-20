@@ -2,6 +2,8 @@ import { Socket } from "socket.io-client"
 import useProps from "@/context/useProps"
 import { Event } from "../utils/enum"
 import { ISedimentEvent } from "@/utils/interfaces"
+import { notify } from "@kyvg/vue3-notification"
+import { audioStore } from "@/store/audioStore"
 
 const { setTotalPages, setStore, parseSediments, parseUpdateSediment } =
 	useProps()
@@ -24,6 +26,17 @@ export const sedimentEvent = (socket: Socket) => {
 			sediment_store.setSediments([...sediments, ...parseSediments([sediment])])
 
 			sediment_store.setTotalPages(setTotalPages(totalPages))
+
+			notify({
+				title: "Pedido de coleta",
+				text: "Você recebeu um novo pedido",
+				closeOnClick: true,
+				ignoreDuplicates: true,
+			})
+
+			const audio = audioStore()
+
+			audio.playAudio()
 		}
 	})
 

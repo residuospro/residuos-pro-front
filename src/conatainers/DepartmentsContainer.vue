@@ -63,7 +63,7 @@ import {
 	deleteDepartments,
 	updateDepartment,
 } from "@/api/department"
-import Notification from "@/components/molecules/Notification.vue"
+import Notification from "@/components/molecules/NotificationModal.vue"
 import { Actions } from "@/utils/enum"
 import { onMounted } from "vue"
 import { companyStore } from "@/store/companyStore"

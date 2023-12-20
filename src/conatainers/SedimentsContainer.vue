@@ -54,13 +54,13 @@
 /* eslint-disable no-useless-escape */
 import Sediments from "@/components/organisms/Sediments.vue"
 import Loading from "@/components/molecules/Loading.vue"
-import Notification from "@/components/molecules/Notification.vue"
+import Notification from "@/components/molecules/NotificationModal.vue"
 import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import DeleteModal from "@/components/molecules/DeleteModal.vue"
 import SedimentsCreateOrUpdateModal from "@/components/organisms/SedimentsCreateOrUpdateModal.vue"
 import { computed, ref, watch } from "vue"
-import { IMessage, ISediments, ISedimentsApi } from "@/utils/interfaces"
+import { IMessage, ISediments } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 import { onMounted } from "vue"
 import {

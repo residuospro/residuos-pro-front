@@ -10,6 +10,8 @@ import { createVuetify } from "vuetify"
 import * as components from "vuetify/components"
 import * as directives from "vuetify/directives"
 import { socket } from "./socket"
+import Notifications from "@kyvg/vue3-notification"
+import Vue3Lottie from "vue3-lottie"
 
 socket.connect()
 
@@ -26,4 +28,11 @@ const pinia = createPinia()
 
 const app = createApp(App)
 
-app.use(router).use(pinia).use(head).use(vuetify).mount("#app")
+app
+	.use(router)
+	.use(pinia)
+	.use(head)
+	.use(vuetify)
+	.use(Notifications)
+	.use(Vue3Lottie)
+	.mount("#app")
