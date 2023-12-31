@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client"
-import { Event } from "../utils/enum"
+import { SocketEvent } from "../utils/enum"
 import useProps from "@/context/useProps"
 import { IUserDepartmentEvent, IUserEvent } from "@/utils/interfaces"
 
@@ -12,7 +12,7 @@ const {
 } = useProps()
 
 export const userEvent = (socket: Socket) => {
-	socket.on(Event.USER_CREATED, (data: IUserEvent) => {
+	socket.on(SocketEvent.USER_CREATED, (data: IUserEvent) => {
 		const { idCompany_store, users, user_store } = setStore()
 
 		const { idCompany, user, totalPages } = data.data
@@ -24,7 +24,7 @@ export const userEvent = (socket: Socket) => {
 		}
 	})
 
-	socket.on(Event.UPDATED_USER, (data: IUserEvent) => {
+	socket.on(SocketEvent.UPDATED_USER, (data: IUserEvent) => {
 		const { idCompany_store, users, user_store } = setStore()
 
 		const { idCompany, user } = data.data
@@ -35,7 +35,7 @@ export const userEvent = (socket: Socket) => {
 	})
 
 	socket.on(
-		Event.UPDATED_USER_AFTER_DEPARTMENT,
+		SocketEvent.UPDATED_USER_AFTER_DEPARTMENT,
 		(data: IUserDepartmentEvent) => {
 			const { idCompany_store, users, user_store } = setStore()
 
@@ -47,7 +47,7 @@ export const userEvent = (socket: Socket) => {
 		}
 	)
 
-	socket.on(Event.DELETED_USER, (data: IUserEvent) => {
+	socket.on(SocketEvent.DELETED_USER, (data: IUserEvent) => {
 		const { idCompany_store, users, user_store } = setStore()
 
 		const { idCompany, user } = data.data
@@ -58,7 +58,7 @@ export const userEvent = (socket: Socket) => {
 	})
 
 	socket.on(
-		Event.DELETED_USER_AFTER_DEPARTMENT,
+		SocketEvent.DELETED_USER_AFTER_DEPARTMENT,
 		(data: IUserDepartmentEvent) => {
 			const { idCompany_store, users, user_store } = setStore()
 

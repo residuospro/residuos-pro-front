@@ -33,11 +33,9 @@ export const sedimentStore = defineStore("sedimentStore", {
 			this.totalPages = []
 		},
 
-		async getSedimentsName() {
+		async getSedimentsData() {
 			const idCompany = companyStore().getIdCompany
 			const idDepartment = departmentStore().getIdDepartment
-
-			console.log("res", idCompany)
 
 			const page = 1
 			const itemsPerPage = 10
@@ -51,9 +49,11 @@ export const sedimentStore = defineStore("sedimentStore", {
 
 			const sediments = res?.data.sediments as []
 
-			const sedimentsName = sediments.map((s: any) => s.name) as string[]
+			const sediments_name = sediments.map((s: any) => s.name) as string[]
 
-			return sedimentsName
+			const sediment_data = sediments
+
+			return { sediments_name, sediment_data }
 		},
 	},
 })

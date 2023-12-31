@@ -20,8 +20,6 @@ export const createDepartment = async (
 
 		const res = await useClient().post(Routes.CREATE_DEPARTMENT, data)
 
-		console.log("res", res)
-
 		return res
 	} catch (error) {
 		return error

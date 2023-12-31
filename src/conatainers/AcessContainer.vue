@@ -3,6 +3,7 @@
 
 	<Acess
 		:eye-icon="eyeIcon"
+		:loggedIn="loggedIn"
 		:showPassord="showPassord"
 		:validation-error="validationError"
 		:show-button="showButton"
@@ -25,6 +26,7 @@ let validationError = ref(false)
 let showButton = ref(false)
 let showLoading = ref(false)
 let errorMessage = ref("")
+let loggedIn = ref(false)
 let user = reactive({
 	username: "",
 	password: "",

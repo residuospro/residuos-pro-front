@@ -18,6 +18,12 @@ export interface IUseProps {
 	parseUpdateSediment: (data: any, sediments: ISediments[]) => ISediments[]
 	parseUpdateUserAfterDepartment: (data: IUsers[], users: IUsers[]) => IUsers[]
 	setStore: () => ISetStore
+	parseCollections: (data: any[]) => Array<Partial<ICollectionData>>
+	getBackgroundColorByStatus: (status: string) => string
+	getColorByStatus: (status: string) => string
+	setStatusStyle: (status: string) => any
+	validatedStatus: (status: string) => boolean
+	setColorSpinnerBar: (status: string) => string | undefined
 }
 
 export interface IMessage {
@@ -31,6 +37,7 @@ export interface IDepartment {
 	idCompany?: string
 	id?: string
 }
+
 interface IDepartmentApi extends IDepartment {
 	_id: string | undefined
 }
@@ -70,10 +77,19 @@ export interface IDepartmentState {
 	totalPages: Array<number>
 }
 
+export interface IUserInfo {
+	userId: string
+	name: string
+	email: string
+	ramal: string
+	department: string
+}
+
 export interface IUsersState {
 	users: IUsers[]
 	totalPages: Array<number>
 	userId: string
+	user: IUserInfo
 }
 
 export interface ISedimentStore {
@@ -94,9 +110,9 @@ export interface ISediments {
 	classification: string | undefined
 	risk: string | undefined
 	state: string | undefined
-	idDepartment: string | undefined
-	idCompany: string | undefined
-	id: string | undefined
+	idDepartment?: string | undefined
+	idCompany?: string | undefined
+	id?: string | undefined
 	totalItems?: string
 }
 
@@ -139,6 +155,16 @@ export type IFilter = {
 	date: ""
 }
 
+export interface ISedimentsData {
+	name: string
+	id: string
+}
+
+interface ISelectSediment {
+	sediments_name: string[]
+	sediment_data: ISedimentsApi[]
+}
+
 export interface IPropsDepartmentStore {
 	getIdDepartment?: string
 	getDepartments: IDepartment[]
@@ -155,12 +181,13 @@ export interface IPropsSedimentStore {
 	setSediments(sediments: ISediments[]): void
 	setTotalPages(details: number[]): void
 	resetSedimentsState(): void
-	getSedimentsName(): Promise<string[]>
+	getSedimentsData(): Promise<ISelectSediment>
 }
 
 interface IPropsUserStore {
 	getUserId: string
 	getUsers: IUsers[]
+	getUser: IUserInfo
 	setUsers(users: IUsers[]): void
 	setTotalPages(details: number[]): void
 	resetUserState(): void
@@ -199,6 +226,12 @@ export interface IDepartmentEvent {
 	}
 }
 
+export interface ICollectionEvent {
+	data: {
+		idCompany: string
+	}
+}
+
 export interface IUserEvent {
 	data: {
 		user: IUserApi
@@ -218,4 +251,79 @@ export interface IUserDepartmentEvent {
 export interface IDepartmentUser {
 	item: Array<IUsers>
 	idCompany: string
+}
+
+export interface ICollectionForm {
+	sediments?: string
+	measure?: string
+	packaging: string
+	amount: number
+	observation: string
+}
+
+export interface ICollection {
+	orderNumber: string
+	sediments: string
+	packaging: string
+	amount: number
+	department: string
+	status: string
+	id: string
+	measure: string
+}
+
+export interface ICollectionDetails extends ICollection {
+	name: string
+	email: string
+	ramal: string
+	classification: string
+	risk: string
+	state: string
+	observation?: string
+}
+
+export interface ICollectionData {
+	userId: string
+	idCompany: string
+	idDepartment?: string
+	sedimentsId?: string
+	observation?: string
+	packaging: string
+	amount: number
+	measure: string
+	status?: string
+	name: string
+	department: string
+	email: string
+	ramal: string
+	sedimentName: string
+	classification?: string
+	risk?: string
+	state?: string
+	totalItems: number
+	id?: string
+	orderNumber?: string
+}
+
+export interface ICollectionApi extends ICollectionData {
+	_id: string
+}
+
+export interface ICollectionStatus {
+	"Aguardando aprovação": string
+	"Aguardando coleta": string
+	Finalizado: string
+	Recusado: string
+}
+
+export interface IStatusStyle {
+	background: string
+	marginTop: string
+	marginBottom: string
+	borderRadius: string
+	color: string
+	textAlign: string
+	fontWeight: string
+	borderColor: string
+	borderWidth: string
 }

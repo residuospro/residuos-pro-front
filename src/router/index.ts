@@ -10,6 +10,7 @@ import Sediments from "@/conatainers/SedimentsContainer.vue"
 import { AuthorizationUser } from "@/utils/enum"
 import { setBearerAuthorization, useClient } from "@/clients/AxiosClient"
 import { hasPermission, isAuthenticated } from "@/utils/permissions"
+import Details from "@/conatainers/DetailsContainer.vue"
 
 const routes: Array<RouteRecordRaw> = [
 	{
@@ -34,6 +35,9 @@ const routes: Array<RouteRecordRaw> = [
 				path: "Coletas",
 				name: "Coletas",
 				component: Collections,
+				beforeEnter: (to, from) => {
+					if (from.path == "/") return ""
+				},
 				meta: {
 					protected: true,
 					permissions: [
@@ -101,6 +105,22 @@ const routes: Array<RouteRecordRaw> = [
 					permissions: [AuthorizationUser.MANAGER],
 				},
 			},
+			{
+				path: "Detalhes/:id",
+				name: "Detalhes",
+				component: Details,
+				beforeEnter: (to, from) => {
+					if (from.path == "/") return ""
+				},
+				meta: {
+					protected: true,
+					permissions: [
+						AuthorizationUser.ADMIN,
+						AuthorizationUser.MANAGER,
+						AuthorizationUser.COLLABORATOR,
+					],
+				},
+			},
 		],
 	},
 ]
@@ -112,27 +132,19 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 	const token = isAuthenticated()
-
 	if (token.length > 0) {
 		setBearerAuthorization(useClient(), token)
-
 		if (to.path == "/") {
 			router.push("/Painel")
 		}
 	}
-
 	const permissions = to.meta.permissions as string[]
-
-	// if (permissions == undefined) {
-	// 	return next({ name: "Login" })
-	// }
 
 	if (to.meta.protected) {
 		if (!hasPermission(permissions)) {
 			return next({ name: "Login" })
 		}
 	}
-
 	return next()
 })
 

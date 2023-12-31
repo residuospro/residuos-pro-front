@@ -275,8 +275,6 @@ const validateDataToUpdateUser = (user: IUserForm) => {
 	let validate = []
 	let regex = true
 
-	console.log("d", departmentInfo)
-
 	for (const key in user) {
 		if (user[key as keyof IUserForm] != "" && user[key as keyof IUserForm]) {
 			validate.push(key)

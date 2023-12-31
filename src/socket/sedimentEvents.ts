@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client"
 import useProps from "@/context/useProps"
-import { Event } from "../utils/enum"
+import { SocketEvent } from "../utils/enum"
 import { ISedimentEvent } from "@/utils/interfaces"
 import { notify } from "@kyvg/vue3-notification"
 import { audioStore } from "@/store/audioStore"
@@ -9,7 +9,7 @@ const { setTotalPages, setStore, parseSediments, parseUpdateSediment } =
 	useProps()
 
 export const sedimentEvent = (socket: Socket) => {
-	socket.on(Event.SEDIMENT_CREATED, (data: ISedimentEvent) => {
+	socket.on(SocketEvent.SEDIMENT_CREATED, (data: ISedimentEvent) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 
@@ -40,7 +40,7 @@ export const sedimentEvent = (socket: Socket) => {
 		}
 	})
 
-	socket.on(Event.UPDATED_SEDIMENT, (data: ISedimentEvent) => {
+	socket.on(SocketEvent.UPDATED_SEDIMENT, (data: ISedimentEvent) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 
@@ -58,7 +58,7 @@ export const sedimentEvent = (socket: Socket) => {
 		}
 	})
 
-	socket.on(Event.DELETED_SEDIMENT, (data: ISedimentEvent) => {
+	socket.on(SocketEvent.DELETED_SEDIMENT, (data: ISedimentEvent) => {
 		const { idCompany_store, sediments, sediment_store, department_store } =
 			setStore()
 

@@ -42,6 +42,7 @@ module.exports = {
 					"Notification",
 					"Sediments",
 					"Wrapper",
+					"Details",
 				],
 			},
 		],

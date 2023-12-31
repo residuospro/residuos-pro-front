@@ -8,7 +8,11 @@
 					:close-on-content-click="false"
 					v-model="closeMenu">
 					<template v-slot:activator="{ props }">
-						<button v-bind="props" class="bg-white flex" @click="cleanFilter">
+						<button
+							v-bind="props"
+							class="bg-white flex"
+							@click="cleanFilter"
+							id="btn">
 							<p
 								class="text-v_dark_gray underline underline-offset-[14px] decoration-2">
 								Filtros
@@ -34,7 +38,7 @@
 									:on-click:clear="() => (departmentSelected = null)"
 									:style="handleAutoCompleteStyle(departmentSelected)"
 									v-model="filterSelected.sediment"
-									:items="departments"
+									:items="sedimentsName"
 									chips
 									label="Resíduo"></v-autocomplete>
 
@@ -92,7 +96,7 @@
 			</Button>
 		</div>
 
-		<Wrapper type="dataTable">
+		<Wrapper type="dataTable" id="table">
 			<table>
 				<thead>
 					<tr>
@@ -103,7 +107,7 @@
 							{{ items }}
 						</th>
 
-						<th type="H3" class="rounded-tr-md">Ajustar</th>
+						<th type="H3" class="rounded-tr-md">Detalhes</th>
 					</tr>
 				</thead>
 
@@ -113,19 +117,11 @@
 						:key="items.id"
 						class="font-medium">
 						<td :style="setTableBackground(index)">
-							{{ items.name }}
+							{{ items.orderNumber }}
 						</td>
 
 						<td :style="setTableBackground(index)">
-							{{ items.classification }}
-						</td>
-
-						<td :style="setTableBackground(index)">
-							{{ items.risk }}
-						</td>
-
-						<td :style="setTableBackground(index)">
-							{{ items.state }}
+							{{ items.sedimentName }}
 						</td>
 
 						<td :style="setTableBackground(index)">
@@ -133,33 +129,48 @@
 						</td>
 
 						<td :style="setTableBackground(index)">
-							<v-menu transition="slide-y-transition">
-								<template v-slot:activator="{ props }">
-									<button v-bind="props">
-										<v-icon icon="mdi-pencil-box-outline" class="" />
-									</button>
-								</template>
+							{{ items.amount }}{{ items.measure }}
+						</td>
 
-								<v-list>
-									<v-list-item>
-										<button
-											@click="openCollectionsModal(Actions.UPDATE, items.id)">
-											Detalhes
-										</button>
-									</v-list-item>
+						<td :style="setTableBackground(index)">
+							{{ items.department }}
+						</td>
 
-									<v-list-item>
-										<button @click="showDeleteModal(items.id)">Deletar</button>
-									</v-list-item>
-								</v-list>
-							</v-menu>
+						<td :style="setTableBackground(index)" class="w-[22%]">
+							<div
+								v-if="validatedStatus(items.status!)"
+								class="flex flex-col items-center">
+								<p
+									:style="{
+										color: getColorByStatus(String(items.status)),
+										fontWeight: 'bold',
+									}">
+									{{ items.status }}
+								</p>
+
+								<VueSpinnerBar
+									:color="setColorSpinnerBar(String(items.status))"
+									height="5"
+									width="80%"
+									class="mb-2" />
+							</div>
+
+							<div v-else :style="setStatusStyle(String(items.status))">
+								{{ items.status }}
+							</div>
+						</td>
+
+						<td :style="setTableBackground(index)">
+							<button @click="$router.push(`/Painel/Detalhes/${items.id}`)">
+								<v-icon icon="mdi-dots-horizontal" />
+							</button>
 						</td>
 					</tr>
 
 					<p
 						class="text-v_medium_gray absolute top-[12rem] w-full text-center"
 						v-if="collections.length == 0">
-						Não há registros, crie o seu primeiro resíduo!
+						Não há registros, crie o seu primeiro pedido!
 					</p>
 				</tbody>
 			</table>
@@ -175,8 +186,14 @@ import userProps from "@/context/useProps"
 import { Actions, AuthorizationUser } from "@/utils/enum"
 import { PropType, ref } from "vue"
 import { watch } from "vue"
-import { ICollectionFilter, IFilterSelected } from "@/utils/interfaces"
+import {
+	ICollection,
+	ICollectionData,
+	ICollectionFilter,
+	IFilterSelected,
+} from "@/utils/interfaces"
 import { hasPermission } from "@/utils/permissions"
+import { VueSpinnerBar } from "vue3-spinners"
 import Input from "@/components/atoms/Input.vue"
 import { reactive } from "vue"
 
@@ -223,7 +240,10 @@ defineProps({
 
 	actions: { type: Array as PropType<string[]>, required: true },
 
-	collections: { type: Array as PropType<any[]>, required: true },
+	collections: {
+		type: Array as PropType<Partial<ICollectionData>[]>,
+		required: true,
+	},
 
 	showDeleteModal: {
 		type: Function as PropType<(id?: string) => void>,
@@ -242,7 +262,29 @@ defineProps({
 
 	departments: { type: Array as PropType<string[]>, required: true },
 
+	sedimentsName: { type: Array as PropType<string[]>, required: true },
+
 	status: { type: Array as PropType<string[]>, required: true },
+
+	setStatusStyle: {
+		type: Function as PropType<(status: string) => any>,
+		required: true,
+	},
+
+	getColorByStatus: {
+		type: Function as PropType<(status: string) => any>,
+		required: true,
+	},
+
+	validatedStatus: {
+		type: Function as PropType<(status: string) => any>,
+		required: true,
+	},
+
+	setColorSpinnerBar: {
+		type: Function as PropType<(status: string) => any>,
+		required: true,
+	},
 })
 
 const cleanFilter = () => {

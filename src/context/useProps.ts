@@ -1,8 +1,13 @@
 import {
+	ICollection,
+	ICollectionApi,
+	ICollectionData,
+	ICollectionStatus,
 	IDepartment,
 	ISediments,
 	ISedimentsApi,
 	ISetStore,
+	IStatusStyle,
 	IUseProps,
 	IUserApi,
 	IUserEvent,
@@ -12,7 +17,7 @@ import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import { sedimentStore } from "@/store/sedimentStore"
 import { userStore } from "@/store/userStore"
-import { Service } from "@/utils/enum"
+import { Service, Status } from "@/utils/enum"
 
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
@@ -55,11 +60,74 @@ const useProps = (): IUseProps => {
 		}
 	}
 
+	const getBackgroundColorByStatus = (status: string) => {
+		const backgroundColorByStatus: ICollectionStatus = {
+			"Aguardando aprovação": "rgba(255, 168, 0, 0.2)",
+			"Aguardando coleta": "rgba(255, 215, 0, 0.2)",
+			Finalizado: "rgba(0, 128, 0, 0.2)",
+			Recusado: "rgba(255, 0, 0, 0.2)",
+		}
+
+		return backgroundColorByStatus[status as keyof ICollectionStatus]
+	}
+
+	const getColorByStatus = (status: string) => {
+		const colorByStatus: ICollectionStatus = {
+			"Aguardando aprovação": "#FFa100",
+			"Aguardando coleta": "#FFC300 ",
+			Finalizado: "#008000",
+			Recusado: "#FF0000",
+		}
+
+		return colorByStatus[status as keyof ICollectionStatus]
+	}
+
+	const setStatusStyle = (status: string): any => {
+		const style: IStatusStyle[] = [
+			{
+				background: "",
+				marginTop: "0.5em",
+				marginBottom: "0.5em",
+				borderRadius: "8px",
+				color: "",
+				textAlign: "center",
+				fontWeight: "bold",
+				borderColor: "",
+				borderWidth: "1px",
+			},
+		]
+
+		style[0].background = getBackgroundColorByStatus(status)
+		style[0].color = getColorByStatus(status)
+		style[0].borderColor = getColorByStatus(status)
+
+		return style[0]
+	}
+
+	const validatedStatus = (status: string) => {
+		if (
+			status == Status.WAITING_FOR_APPROVAL ||
+			status == Status.WAITING_FOR_COLLECTION
+		) {
+			return true
+		}
+
+		return false
+	}
+
+	const setColorSpinnerBar = (status: string): string | undefined => {
+		if (status == Status.WAITING_FOR_APPROVAL) {
+			return "#FFa100"
+		} else if (status == Status.WAITING_FOR_COLLECTION) {
+			return "#FFC300"
+		}
+	}
+
 	const handleAutoCompleteStyle = (value: string | undefined | null): any => {
 		if (value) {
-			return { background: "#fff", height: "3.5rem" }
+			return { background: "#fff", height: "3.5rem", fontWeight: "bold" }
 		} else {
-			return { background: "#f3f4f6", height: "3rem" }
+			return { background: "#f3f4f6", height: "3rem", fontWeight: "bold" }
 		}
 	}
 
@@ -70,6 +138,32 @@ const useProps = (): IUseProps => {
 				ramal: d.ramal,
 				id: d._id,
 				idCompany: d.idCompany,
+			}
+		})
+
+		return parsedData
+	}
+
+	const parseCollections = (data: any[]): Array<Partial<ICollectionData>> => {
+		console.log("data", data)
+
+		const parsedData = data.map((c: ICollectionApi) => {
+			return {
+				id: c._id,
+				observation: c.observation,
+				packaging: c.packaging,
+				amount: c.amount,
+				measure: c.measure,
+				status: c.status,
+				name: c.name,
+				department: c.department,
+				email: c.email,
+				ramal: c.ramal,
+				sedimentName: c.sedimentName,
+				classification: c.classification,
+				risk: c.risk,
+				state: c.state,
+				orderNumber: c._id.slice(-6),
 			}
 		})
 
@@ -181,6 +275,12 @@ const useProps = (): IUseProps => {
 		parseUser,
 		parseUpdateUser,
 		parseUpdateUserAfterDepartment,
+		parseCollections,
+		getBackgroundColorByStatus,
+		getColorByStatus,
+		setStatusStyle,
+		validatedStatus,
+		setColorSpinnerBar,
 	}
 }
 

@@ -20,6 +20,9 @@ export enum Routes {
 	GET_SEDIMENTS_BY_NAME = "/api/sediments/get-name",
 	UPDATE_SEDIMENTS = "/sediments/update/",
 	DELETE_SEDIMENT = "/sediment/",
+	SAVE_COLLECTION = "/api/collection/save",
+	GET_COLLECTION_BY_PAGE = "/api/collection/pagineted",
+	GET_COLLECTION_BY_ID = "/api/collection/",
 }
 
 export enum TypeErrors {
@@ -76,7 +79,7 @@ export enum Messages {
 	SUBTITLE_EXISTING_USER = "O nome de usuário fornecido já existe em nosso banco",
 }
 
-export enum Event {
+export enum SocketEvent {
 	CHANNEL = "residuos-pro",
 
 	DEPARTMENT_CREATED = "department_created",
@@ -92,4 +95,14 @@ export enum Event {
 	DELETED_USER = "deleted_user",
 	UPDATED_USER_AFTER_DEPARTMENT = "updated_user_after_department",
 	DELETED_USER_AFTER_DEPARTMENT = "deleted_user_after_department",
+
+	COLLECTION_CREATED = "collection_created",
+	COLLECTION = "collection",
+}
+
+export enum Status {
+	WAITING_FOR_APPROVAL = "Aguardando aprovação",
+	WAITING_FOR_COLLECTION = "Aguardando coleta",
+	FINISHED = "Finalizado",
+	REFUSED = "Recusado",
 }

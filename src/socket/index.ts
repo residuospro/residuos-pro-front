@@ -3,6 +3,7 @@ import { isAuthenticated } from "../utils/permissions"
 import { departmentEvents } from "./departmentEvents"
 import { sedimentEvent } from "./sedimentEvents"
 import { userEvent } from "./userEvent"
+import { collectionEvent } from "./collectionEvent"
 
 const accessToken = isAuthenticated()
 
@@ -18,6 +19,8 @@ departmentEvents(socket)
 sedimentEvent(socket)
 
 userEvent(socket)
+
+collectionEvent(socket)
 
 socket.on("connect", () => {
 	console.log("socket conectado")

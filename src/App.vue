@@ -1,6 +1,6 @@
 <template>
-	<router-view
-		:key="$router.currentRoute.value.path.split('/')[0]"></router-view>
+	<router-view :key="$router.currentRoute.value.path.split('/')[0]">
+	</router-view>
 </template>
 
 <script setup lang="ts">
@@ -10,12 +10,7 @@ import {
 	useAuthClient,
 	useClient,
 } from "./clients/AxiosClient"
-import sound from "@/assets/sounds/r.mp3"
-import { audioStore } from "@/store/audioStore"
-
-const audio = audioStore()
-
-audio.initializeAudio(sound)
+import { onMounted } from "vue"
 
 const token = isAuthenticated()
 

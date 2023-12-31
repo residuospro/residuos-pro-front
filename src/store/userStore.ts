@@ -1,9 +1,11 @@
-import { IUsers, IUsersState } from "@/utils/interfaces"
+import { IUserInfo, IUsers, IUsersState } from "@/utils/interfaces"
 import { defineStore } from "pinia"
 
 export const userStore = defineStore("userStore", {
 	state: (): IUsersState => ({
 		userId: "",
+
+		user: { userId: "", name: "", email: "", ramal: "", department: "" },
 
 		users: [],
 
@@ -21,6 +23,10 @@ export const userStore = defineStore("userStore", {
 		getUsers(state) {
 			return state.users
 		},
+
+		getUser(state) {
+			return state.user
+		},
 	},
 	actions: {
 		setUserId(details: string) {
@@ -29,6 +35,11 @@ export const userStore = defineStore("userStore", {
 
 		setUsers(users: IUsers[]) {
 			this.users = users
+		},
+
+		setUser(user: IUserInfo) {
+			this.user = user
+			console.log("us", user)
 		},
 
 		setTotalPages(details: number[]) {

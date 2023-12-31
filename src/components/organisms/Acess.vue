@@ -89,6 +89,8 @@ import { PropType } from "vue"
 defineProps({
 	eyeIcon: { type: Boolean, required: true },
 
+	loggedIn: { type: Boolean, required: true },
+
 	validationError: { type: Boolean, required: true },
 
 	showButton: { type: Boolean, required: true },

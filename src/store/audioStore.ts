@@ -14,6 +14,8 @@ export const audioStore = defineStore("audioStore", {
 			this.audio = new Audio(audioSrc)
 
 			this.audio.addEventListener("ended", this.playAudio)
+
+			console.log("som iniciado")
 		},
 
 		playAudio() {

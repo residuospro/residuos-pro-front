@@ -2,7 +2,7 @@
 	<Container type="backgroundContainer">
 		<Wrapper type="modal">
 			<Wrapper type="actionsModal">
-				<form @submit.prevent="">
+				<form @submit.prevent="createCollectionOrder(collection)">
 					<Typograph type="H2" class="text-v_medium_gray">
 						Criar pedido de coleta
 					</Typograph>
@@ -10,6 +10,7 @@
 					<div class="flex flex-wrap w-full justify-between mt-2 space-y-5">
 						<v-autocomplete
 							:style="handleAutoCompleteStyle(collection.sediments)"
+							:onUpdate:modelValue="selectSedimentId"
 							class="w-full"
 							clearable
 							:items="sedimentsName"
@@ -40,7 +41,12 @@
 							"
 							@input="(value: string) => collection.packaging = value" />
 
-						<textarea />
+						<TextArea
+							text="textArea"
+							@text="(value: string) => collection.observation = value"
+							:class="collection.observation !== '' ? 'bg-white' : ''"
+							placeholder="Observação:"
+							maxlength="200" />
 					</div>
 					<div class="flex justify-end w-full space-x-5 mt-5">
 						<Button
@@ -69,14 +75,18 @@ import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
 import { PropType, reactive } from "vue"
 import userProps from "@/context/useProps"
+import TextArea from "../atoms/TextArea.vue"
+import { watch } from "vue"
+import { ICollectionData, ICollectionForm } from "@/utils/interfaces"
 
 const { handleAutoCompleteStyle } = userProps()
 
-const collection = reactive({
+const collection: ICollectionForm = reactive({
 	sediments: undefined,
 	measure: undefined,
 	packaging: "",
 	amount: 0,
+	observation: "",
 })
 
 const props = defineProps({
@@ -99,5 +109,24 @@ const props = defineProps({
 		type: Array as PropType<string[]>,
 		required: true,
 	},
+
+	validateDataToCreateCollection: {
+		type: Function as PropType<(collection: ICollectionForm) => void>,
+		required: true,
+	},
+
+	createCollectionOrder: {
+		type: Function as PropType<(collection: Partial<ICollectionData>) => void>,
+		required: true,
+	},
+
+	selectSedimentId: {
+		type: Function as PropType<(sediment: any) => void>,
+		required: true,
+	},
+})
+
+watch(collection, () => {
+	props.validateDataToCreateCollection(collection)
 })
 </script>

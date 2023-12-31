@@ -69,12 +69,13 @@
 
 						<td
 							v-if="items.username == undefined"
-							:style="setTableBackground(index)">
+							:style="setTableBackground(index)"
+							class="flex flex-col justify-center items-center py-5">
 							<v-tooltip activator="parent" location="center">
 								Aguardando cadastro
 							</v-tooltip>
 
-							<VueSpinnerBar color="#36802d" height="2" width="80" />
+							<VueSpinnerBar color="#36802d" height="2" width="80" class="" />
 						</td>
 
 						<td v-else :style="setTableBackground(index)">
@@ -213,8 +214,8 @@ table {
 
 th,
 td {
-	text-align: left;
-	padding: 0 2rem;
+	text-align: center;
+	padding: 0 0.5em;
 }
 
 th {
