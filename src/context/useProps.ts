@@ -145,12 +145,11 @@ const useProps = (): IUseProps => {
 	}
 
 	const parseCollections = (data: any[]): Array<Partial<ICollectionData>> => {
-		console.log("data", data)
-
 		const parsedData = data.map((c: ICollectionApi) => {
 			return {
 				id: c._id,
 				observation: c.observation,
+				reason: c.reasonRefusal,
 				packaging: c.packaging,
 				amount: c.amount,
 				measure: c.measure,
@@ -163,11 +162,31 @@ const useProps = (): IUseProps => {
 				classification: c.classification,
 				risk: c.risk,
 				state: c.state,
+				userId: c.userId,
 				orderNumber: c._id.slice(-6),
+				date: parseDate(c.createdAt),
 			}
 		})
 
+		console.log("dta", parsedData)
+
 		return parsedData
+	}
+
+	const parseDate = (date: string) => {
+		const newDate = new Date(date)
+
+		const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+			day: "2-digit",
+			month: "2-digit",
+			year: "numeric",
+			hour: "2-digit",
+			minute: "2-digit",
+			second: "2-digit",
+			timeZone: "UTC",
+		})
+
+		return formattedDate.format(newDate)
 	}
 
 	const parseSediments = (data: any[]): Array<ISediments> => {

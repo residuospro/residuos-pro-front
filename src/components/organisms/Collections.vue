@@ -136,6 +136,10 @@
 							{{ items.department }}
 						</td>
 
+						<td :style="setTableBackground(index)">
+							{{ items.date?.split(",")[0] }}
+						</td>
+
 						<td :style="setTableBackground(index)" class="w-[22%]">
 							<div
 								v-if="validatedStatus(items.status!)"
@@ -187,7 +191,6 @@ import { Actions, AuthorizationUser } from "@/utils/enum"
 import { PropType, ref } from "vue"
 import { watch } from "vue"
 import {
-	ICollection,
 	ICollectionData,
 	ICollectionFilter,
 	IFilterSelected,

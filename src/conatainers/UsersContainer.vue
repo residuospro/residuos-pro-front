@@ -352,7 +352,7 @@ const setUser = (userForm: IUserForm): Partial<IUsers> => {
 	const user: Partial<IUsers> = {
 		name: userForm.name == "" ? undefined : userForm.name,
 		email: userForm.email == "" ? undefined : userForm.email,
-		department: userForm.department,
+		department: userForm.department ? userForm.department : departmentInfo.name,
 		idDepartment: departmentInfo.id == "" ? undefined : departmentInfo.id,
 		ramal: departmentInfo.ramal == "" ? undefined : departmentInfo.ramal,
 		idCompany: idCompany.value,

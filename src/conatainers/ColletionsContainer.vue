@@ -96,6 +96,7 @@ const headers = [
 	"Acondicionamento",
 	"Quantidade",
 	"Departamento",
+	"Data",
 	"Status",
 ]
 
@@ -157,15 +158,27 @@ socket.on(SocketEvent.COLLECTION_CREATED, (data: ICollectionEvent) => {
 	}
 })
 
+socket.on(SocketEvent.UPDATE_COLLECTION_STATUS, (data: ICollectionEvent) => {
+	const { idCompany } = data.data
+
+	if (idCompany == idCompany_store) {
+		getCollectionsByPage(page.value, itemsPerPage.value)
+	}
+})
+
 const setPagination = (currentPage: number) => {
 	if (page.value != currentPage) {
 		page.value = currentPage
+
+		getCollectionsByPage(currentPage, itemsPerPage.value)
 	}
 }
 
 const setItemsPerPage = (value: number) => {
 	if (itemsPerPage.value != value) {
 		itemsPerPage.value = value
+
+		getCollectionsByPage(page.value, value)
 	}
 }
 

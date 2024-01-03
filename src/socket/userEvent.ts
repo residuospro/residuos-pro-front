@@ -27,6 +27,8 @@ export const userEvent = (socket: Socket) => {
 	socket.on(SocketEvent.UPDATED_USER, (data: IUserEvent) => {
 		const { idCompany_store, users, user_store } = setStore()
 
+		console.log("ud", data)
+
 		const { idCompany, user } = data.data
 
 		if (idCompany == idCompany_store && user && users.length) {

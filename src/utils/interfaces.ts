@@ -229,6 +229,7 @@ export interface IDepartmentEvent {
 export interface ICollectionEvent {
 	data: {
 		idCompany: string
+		collection: ICollectionApi
 	}
 }
 
@@ -288,6 +289,7 @@ export interface ICollectionData {
 	idDepartment?: string
 	sedimentsId?: string
 	observation?: string
+	reason?: string
 	packaging: string
 	amount: number
 	measure: string
@@ -303,10 +305,13 @@ export interface ICollectionData {
 	totalItems: number
 	id?: string
 	orderNumber?: string
+	date?: string
 }
 
 export interface ICollectionApi extends ICollectionData {
 	_id: string
+	reasonRefusal?: string
+	createdAt: string
 }
 
 export interface ICollectionStatus {

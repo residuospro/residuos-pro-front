@@ -36,8 +36,6 @@ const handleText = (event: Event) => {
 	const target = event.target as HTMLInputElement
 	const value = target.value
 
-	console.log("vaa", value)
-
 	emit("text", value)
 }
 </script>

@@ -51,3 +51,27 @@ export const getCollectionByIdApi = async (
 		return error
 	}
 }
+
+export const updateCollectionStatusApi = async (
+	id: string,
+	status: string,
+	idCompany: string,
+	reason?: string
+) => {
+	try {
+		const data = {
+			status,
+			reason,
+			idCompany,
+		}
+
+		const res = await useClient().post(
+			`${Routes.UPDATE_COLLECTION_STATUS}${id}`,
+			data
+		)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}

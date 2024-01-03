@@ -23,6 +23,7 @@ export enum Routes {
 	SAVE_COLLECTION = "/api/collection/save",
 	GET_COLLECTION_BY_PAGE = "/api/collection/pagineted",
 	GET_COLLECTION_BY_ID = "/api/collection/",
+	UPDATE_COLLECTION_STATUS = "/api/update_collection_status/",
 }
 
 export enum TypeErrors {
@@ -98,6 +99,8 @@ export enum SocketEvent {
 
 	COLLECTION_CREATED = "collection_created",
 	COLLECTION = "collection",
+	UPDATE_COLLECTION_STATUS = "update_collection_status",
+	UPDATE_COLLECTION_DETAILS = "update_collection_details",
 }
 
 export enum Status {

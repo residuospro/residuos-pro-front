@@ -14,7 +14,7 @@
 				<p class="mt-3">Nome:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.name"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.name = value" />
@@ -24,7 +24,7 @@
 				<p>Email:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.email"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.email = value" />
@@ -34,7 +34,7 @@
 				<p>Departamento:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.department"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.department = value" />
@@ -44,7 +44,7 @@
 				<p>Ramal:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.ramal"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.ramal = value" />
@@ -54,7 +54,7 @@
 				<p>Nº Pedido:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.orderNumber"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.orderNumber = value" />
@@ -64,7 +64,7 @@
 				<p>Resíduo:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.sedimentName"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.sedimentName = value" />
@@ -74,7 +74,7 @@
 				<p>Classificação:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.classification"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.classification = value" />
@@ -84,7 +84,7 @@
 				<p>Risco Associado:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.risk"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.risk = value" />
@@ -94,7 +94,7 @@
 				<p>Estado:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.state"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.state = value" />
@@ -104,7 +104,7 @@
 				<p>Acondicionamento:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="collectionDetails.packaging"
 					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.packaging = value" />
@@ -114,7 +114,7 @@
 				<p>Quantidade:</p>
 				<Input
 					input="input"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
+					:disabled="disabledInput()"
 					:value="`${collectionDetails.amount}${collectionDetails.measure}`"
 					:class="setBackgroundInputDetails()"
 					@input="(value: number) => collection.amount = value" />
@@ -130,27 +130,41 @@
 					@input="(value: string) => collection.status = value" />
 			</div>
 
-			<div>
+			<div class="">
+				<p>Data/Hora:</p>
+				<Input
+					input="input"
+					:disabled="true"
+					:value="collectionDetails.date?.replace(',', ' -')"
+					:class="setBackgroundInputDetails()"
+					@input="(value: string) => collection.status = value" />
+			</div>
+
+			<div class="w-full">
 				<p>Observação:</p>
 
 				<TextArea
 					:value="collectionDetails.observation"
-					:disabled="hasPermission([AuthorizationUser.ADMIN])"
-					:class="setBackgroundTextArea()"
+					:disabled="disabledInput()"
+					:class="setBackgroundTextArea(collection.observation)"
 					text="textArea"
 					@text="(value: string) =>
 				collection.observation = value"
 					maxlength="200" />
 			</div>
 
+			<div class="w-[64%]" v-if="collectionDetails.reason">
+				<p>Recusado por:</p>
+
+				<div
+					class="text-[1rem] font-[700] rounded-md shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] bg-gray-100 w-full h-[6rem] px-4 py-4 border-red-500 border-solid border-2">
+					<p class="">{{ collectionDetails.reason }}</p>
+				</div>
+			</div>
+
 			<div
 				class="flex justify-end space-x-5 mt-5 w-full mb-5"
-				v-if="
-					hasPermission([
-						AuthorizationUser.COLLABORATOR,
-						AuthorizationUser.MANAGER,
-					]) && collectionDetails.status == Status.WAITING_FOR_APPROVAL
-				">
+				v-if="showButtonsForManager()">
 				<Button buttonType="closeButton" @click="() => console.log('oi')">
 					Cancelar
 				</Button>
@@ -162,17 +176,15 @@
 
 			<div
 				class="flex justify-end space-x-5 mt-5 w-full mb-5"
-				v-if="
-					(hasPermission([AuthorizationUser.ADMIN]) &&
-						collectionDetails.status == Status.WAITING_FOR_APPROVAL) ||
-					(hasPermission([AuthorizationUser.ADMIN]) &&
-						collectionDetails.status == Status.WAITING_FOR_COLLECTION)
-				">
-				<Button buttonType="closeButton" @click="() => console.log('oi')">
+				v-if="showButtonsForAdm()">
+				<Button buttonType="closeButton" @click="openModalRefuse">
 					Recusar
 				</Button>
 
-				<Button buttonType="confirmButton" class="bg-v_green">
+				<Button
+					buttonType="confirmButton"
+					class="bg-v_green"
+					@click="updateCollectionStatus">
 					<p class="text-white">
 						{{ setTextButton(collectionDetails.status) }}
 					</p>
@@ -186,8 +198,6 @@
 import { useHead } from "@vueuse/head"
 import Input from "@/components/atoms/Input.vue"
 import TextArea from "../atoms/TextArea.vue"
-import { AuthorizationUser, Status } from "@/utils/enum"
-import { hasPermission } from "@/utils/permissions"
 import Button from "../atoms/Button.vue"
 import { PropType } from "vue"
 import { ICollectionData } from "@/utils/interfaces"
@@ -196,42 +206,56 @@ import { reactive } from "vue"
 
 useHead({ title: "Resíduos Pro - Detalhes da coleta" })
 
-const setBackgroundInputDetails = () => {
-	if (!hasPermission([AuthorizationUser.ADMIN])) return "bg-white"
-
-	return ""
-}
-
 let collection = reactive<Partial<ICollectionData>>({})
 
-const props = defineProps({
+console.log(collection.reason)
+
+defineProps({
 	collectionDetails: {
 		type: Object as PropType<Partial<ICollectionData>>,
 		required: true,
 	},
+
+	openModalRefuse: {
+		type: Function as PropType<() => void>,
+		required: true,
+	},
+
+	disabledInput: {
+		type: Function as PropType<() => boolean>,
+		required: true,
+	},
+
+	setBackgroundTextArea: {
+		type: Function as PropType<(observation?: string) => string>,
+		required: true,
+	},
+
+	setBackgroundInputDetails: {
+		type: Function as PropType<() => string>,
+		required: true,
+	},
+
+	setTextButton: {
+		type: Function as PropType<(status?: string) => string>,
+		required: true,
+	},
+
+	showButtonsForAdm: {
+		type: Function as PropType<() => boolean>,
+		required: true,
+	},
+
+	showButtonsForManager: {
+		type: Function as PropType<() => boolean>,
+		required: true,
+	},
+
+	updateCollectionStatus: {
+		type: Function as PropType<() => void>,
+		required: true,
+	},
 })
-
-const setTextButton = (status?: string) => {
-	if (status == Status.WAITING_FOR_APPROVAL) {
-		return "Aceitar"
-	} else if (status == Status.WAITING_FOR_COLLECTION) {
-		return "Finalizar"
-	} else {
-		return ""
-	}
-}
-
-const setBackgroundTextArea = () => {
-	if (
-		(!hasPermission([AuthorizationUser.ADMIN]) && collection.observation) ||
-		(props.collectionDetails.observation &&
-			!hasPermission([AuthorizationUser.ADMIN]))
-	) {
-		return "bg-white !w-[40rem]"
-	}
-
-	return "!w-[40rem]"
-}
 
 watch(collection, () => {
 	console.log("c", collection)

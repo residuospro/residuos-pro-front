@@ -13,7 +13,6 @@ export const collectionEvent = (socket: Socket) => {
 		const { idCompany } = data.data
 		const { idCompany_store } = setStore()
 
-		console.log("d", idCompany, idCompany_store)
 		if (
 			idCompany == idCompany_store &&
 			hasPermission([AuthorizationUser.ADMIN])
@@ -24,7 +23,6 @@ export const collectionEvent = (socket: Socket) => {
 				closeOnClick: true,
 				ignoreDuplicates: true,
 			})
-			console.log("oi")
 
 			const audio = audioStore()
 
