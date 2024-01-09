@@ -24,6 +24,7 @@ export interface IUseProps {
 	setStatusStyle: (status: string) => any
 	validatedStatus: (status: string) => boolean
 	setColorSpinnerBar: (status: string) => string | undefined
+	handleUrl: (url: string) => string
 }
 
 export interface IMessage {
@@ -105,21 +106,6 @@ export interface DepartmentActions {
 	setDepartments(details: IUserDepartmentInfo[]): void
 }
 
-export interface ISediments {
-	name: string
-	classification: string | undefined
-	risk: string | undefined
-	state: string | undefined
-	idDepartment?: string | undefined
-	idCompany?: string | undefined
-	id?: string | undefined
-	totalItems?: string
-}
-
-export interface ISedimentsApi extends ISediments {
-	_id: string | undefined
-}
-
 export interface IInputContainerStyle {
 	minHeight: string
 }
@@ -141,18 +127,16 @@ export interface ICollectionFilter {
 
 export interface IFilterSelected {
 	orderNumber: string
-	sediment: null | string
+	sedimentName: null | string
 	department: null | string
 	status: null | string
 	date: string
 }
 
-export type IFilter = {
-	orderNumber: ""
-	sediment: null
-	department: null
-	status: null
-	date: ""
+export interface IFilterCollection extends IFilterSelected {
+	idCompany: string
+	page: string
+	itemsPerPage: string
 }
 
 export interface ISedimentsData {
@@ -283,6 +267,21 @@ export interface ICollectionDetails extends ICollection {
 	observation?: string
 }
 
+export interface ISediments {
+	name?: string
+	classification: string | undefined
+	risk: string | undefined
+	state: string | undefined
+	idDepartment?: string | undefined
+	idCompany?: string | undefined
+	id?: string | undefined
+	totalItems?: string
+}
+
+export interface ISedimentsApi extends ISediments {
+	_id: string | undefined
+}
+
 export interface ICollectionData {
 	userId: string
 	idCompany: string
@@ -298,7 +297,7 @@ export interface ICollectionData {
 	department: string
 	email: string
 	ramal: string
-	sedimentName: string
+	sedimentName?: string
 	classification?: string
 	risk?: string
 	state?: string
@@ -316,7 +315,7 @@ export interface ICollectionApi extends ICollectionData {
 
 export interface ICollectionStatus {
 	"Aguardando aprovação": string
-	"Aguardando coleta": string
+	"Em coleta": string
 	Finalizado: string
 	Recusado: string
 }
@@ -331,4 +330,10 @@ export interface IStatusStyle {
 	fontWeight: string
 	borderColor: string
 	borderWidth: string
+}
+
+export interface Fn {
+	getCollectionById: () => Promise<void>
+	notifyCollectionCancellation: () => void
+	notifyCollectionUpdate: () => void
 }

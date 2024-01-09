@@ -1,5 +1,9 @@
 <template>
-	<input :class="inputClass" @input="handleInput($event)" />
+	<input
+		:class="inputClass"
+		:disabled="isDisabled"
+		@input="handleInput($event)"
+		style="color: #9d9797 !important" />
 </template>
 
 <script setup lang="ts">
@@ -11,11 +15,13 @@ const emit = defineEmits(["input"])
 
 const props = defineProps({
 	input: { type: String, required: true },
+	isDisabled: { type: Boolean, required: false },
 })
 
 const inputClass = computed(() => {
 	return cva(
 		`text-[1rem]
+		!text-v_medium_gray
 		 font-[700]
 		 rounded-md
 		 shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)]
@@ -52,6 +58,10 @@ const handleInput = (event: Event) => {
 
 .input:-ms-input-placeholder {
 	color: #9d9797;
+}
+
+.input {
+	color: #9d9797 !important;
 }
 
 .input::-webkit-outer-spin-button,

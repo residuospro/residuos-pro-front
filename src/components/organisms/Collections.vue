@@ -1,6 +1,6 @@
 <template>
 	<div class="w-full ml-8 mt-2">
-		<div class="flex items-center w-full justify-between mb-8">
+		<div class="flex items-center justify-between w-full mb-8">
 			<div
 				class="flex justify-between items-center w-auto min-w-[23rem] space-x-5">
 				<v-menu
@@ -8,19 +8,29 @@
 					:close-on-content-click="false"
 					v-model="closeMenu">
 					<template v-slot:activator="{ props }">
-						<button
-							v-bind="props"
-							class="bg-white flex"
-							@click="cleanFilter"
-							id="btn">
-							<p
-								class="text-v_dark_gray underline underline-offset-[14px] decoration-2">
-								Filtros
-							</p>
-							<v-icon
-								icon="mdi-filter-outline "
-								class="text-v_dark_gray underline underline-offset-[10px]" />
-						</button>
+						<div class="flex space-x-8">
+							<button
+								v-bind="props"
+								class="bg-white flex"
+								@click="cleanFilter"
+								id="btn">
+								<p
+									class="text-v_dark_gray underline underline-offset-[14px] decoration-2">
+									Filtros
+								</p>
+								<v-icon
+									icon="mdi-filter-outline "
+									class="text-v_dark_gray underline underline-offset-[10px]" />
+							</button>
+
+							<Button
+								buttonType="filterButton"
+								@click="callCollectionsByPage"
+								v-if="showClearFilterButton"
+								class="bg-v_light_green text-white mb-2">
+								Limpar filtro
+							</Button>
+						</div>
 					</template>
 
 					<v-list>
@@ -29,15 +39,17 @@
 								<Input
 									input="inputFilter"
 									placeholder="Nº Pedido"
+									:isDisabled="disableInputOrderNumber"
 									@keyup="filterSelected.orderNumber = $event.target.value" />
 
 								<v-autocomplete
 									clearable
+									:disabled="disableInput"
 									density="compact"
 									class="!shadow-none !mb-5"
 									:on-click:clear="() => (departmentSelected = null)"
 									:style="handleAutoCompleteStyle(departmentSelected)"
-									v-model="filterSelected.sediment"
+									v-model="filterSelected.sedimentName"
 									:items="sedimentsName"
 									chips
 									label="Resíduo"></v-autocomplete>
@@ -45,6 +57,7 @@
 								<v-autocomplete
 									clearable
 									density="compact"
+									:disabled="disableInput"
 									v-if="hasPermission([AuthorizationUser.ADMIN])"
 									class="!shadow-none !mb-5"
 									:on-click:clear="() => (departmentSelected = null)"
@@ -57,8 +70,8 @@
 								<v-autocomplete
 									clearable
 									density="compact"
+									:disabled="disableInput"
 									class="!shadow-none"
-									:on-click:clear="() => (statusSelected = null)"
 									:style="handleAutoCompleteStyle(statusSelected)"
 									v-model="filterSelected.status"
 									:items="status"
@@ -72,12 +85,15 @@
 
 								<input
 									v-model="filterSelected.date"
+									:disabled="disableInput"
 									type="date"
 									class="w-[95%] bg-white shadow-none px-4 font-[100] rounded-md outline-[#e1e4ed] input mx-1" />
 							</div>
 
 							<Button
-								@click="closeMenu = false"
+								@click="
+									getCollectionByFilter(filterSelected), (closeMenu = false)
+								"
 								buttonType="filterButton"
 								class="bg-v_light_green text-white mb-2">
 								Filtrar
@@ -96,7 +112,7 @@
 			</Button>
 		</div>
 
-		<Wrapper type="dataTable" id="table">
+		<Wrapper type="dataTable">
 			<table>
 				<thead>
 					<tr>
@@ -174,7 +190,7 @@
 					<p
 						class="text-v_medium_gray absolute top-[12rem] w-full text-center"
 						v-if="collections.length == 0">
-						Não há registros, crie o seu primeiro pedido!
+						Ops! Não há registros por aqui.
 					</p>
 				</tbody>
 			</table>
@@ -198,29 +214,48 @@ import {
 import { hasPermission } from "@/utils/permissions"
 import { VueSpinnerBar } from "vue3-spinners"
 import Input from "@/components/atoms/Input.vue"
-import { reactive } from "vue"
 
-let filterSelected = reactive<IFilterSelected>({
+let filterSelected = ref<IFilterSelected>({
 	orderNumber: "",
-	sediment: null,
+	sedimentName: null,
 	department: null,
 	status: null,
 	date: "",
 })
-
+let disableInputOrderNumber = ref(false)
+let disableInput = ref(false)
 let departmentSelected = ref()
 let statusSelected = ref(null)
 let closeMenu = ref(false)
 
 watch(closeMenu, () => {
 	if (!closeMenu.value) {
-		filterSelected = {
+		filterSelected.value = {
 			orderNumber: "",
-			sediment: null,
+			sedimentName: null,
 			department: null,
 			status: null,
 			date: "",
 		}
+
+		disableInputOrderNumber.value = false
+		disableInput.value = false
+	}
+})
+
+watch(filterSelected.value, () => {
+	const { orderNumber, sedimentName, department, status, date } =
+		filterSelected.value
+
+	console.log("d", date)
+
+	if (orderNumber != "") {
+		disableInput.value = true
+	} else if (sedimentName || department || status || date != "") {
+		disableInputOrderNumber.value = true
+	} else {
+		disableInputOrderNumber.value = false
+		disableInput.value = false
 	}
 })
 
@@ -228,6 +263,8 @@ const { setTableBackground, handleAutoCompleteStyle } = userProps()
 
 defineProps({
 	itemsPerPage: { type: Number, required: true },
+
+	showClearFilterButton: { type: Boolean, required: true },
 
 	collectionFilter: {
 		type: Array as PropType<ICollectionFilter[]>,
@@ -238,6 +275,11 @@ defineProps({
 
 	handleCollectionsFilter: {
 		type: Function as PropType<(filter: string[]) => void>,
+		required: true,
+	},
+
+	getCollectionByFilter: {
+		type: Function as PropType<(collectionFilter: IFilterSelected) => void>,
 		required: true,
 	},
 
@@ -260,6 +302,11 @@ defineProps({
 
 	collectionsFilterCleaning: {
 		type: Function as unknown as () => () => void,
+		required: true,
+	},
+
+	callCollectionsByPage: {
+		type: Function as PropType<() => void>,
 		required: true,
 	},
 

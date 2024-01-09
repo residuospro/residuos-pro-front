@@ -7,10 +7,10 @@
 		@closeModal="closeModal"
 		v-if="showNotificationModal" />
 
-	<DeleteModal
+	<ActionModal
 		v-if="showDeleteModal"
 		:closeDeleteModal="() => (showDeleteModal = false)"
-		:deleteFunction="deleteUsers"
+		:confirm-action="deleteUsers"
 		title="Confirmar exclusão"
 		sub-title="Tem certeza que deseja excluir esse usuário?" />
 
@@ -61,7 +61,7 @@ import Loading from "@/components/molecules/Loading.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
-import DeleteModal from "@/components/molecules/DeleteModal.vue"
+import ActionModal from "@/components/molecules/ActionModal.vue"
 import UserModal from "@/components/organisms/UserCreateOrUpdateModal.vue"
 import {
 	IDepartment,

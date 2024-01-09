@@ -26,6 +26,8 @@ import { userStore } from "../store/userStore"
 import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import { getPayload } from "../api/signin"
+import { hasPermission } from "@/utils/permissions"
+import { AuthorizationUser } from "@/utils/enum"
 
 const user_Store = userStore()
 const idCompanyStore = companyStore()
@@ -35,11 +37,11 @@ let title = ref("Bem vindo")
 let subTitle = ref(
 	"A partir de agora você pode utilizar todas as funcionalidades"
 )
-let showNotificationModal = ref(true)
+
+let showNotificationModal = ref(false)
 
 const getUserInfo = async () => {
 	const payload = await getPayload()
-	console.log("p", payload)
 
 	user_Store.setUserId(payload.data.userId)
 
@@ -67,6 +69,9 @@ const getUserInfo = async () => {
 
 onMounted(async () => {
 	await getUserInfo()
+
+	if (hasPermission([AuthorizationUser.ADMIN]))
+		showNotificationModal.value = true
 
 	router.push({
 		name: "Coletas",

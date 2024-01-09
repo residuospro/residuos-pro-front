@@ -23,7 +23,10 @@ export enum Routes {
 	SAVE_COLLECTION = "/api/collection/save",
 	GET_COLLECTION_BY_PAGE = "/api/collection/pagineted",
 	GET_COLLECTION_BY_ID = "/api/collection/",
+	GET_COLLECTION_BY_FILTER = "/api/collection_filter",
 	UPDATE_COLLECTION_STATUS = "/api/update_collection_status/",
+	UPDATE_COLLECTION = "/api/update_collection/",
+	DELETE_COLLECTION = "/api/delete_collection/",
 }
 
 export enum TypeErrors {
@@ -100,12 +103,16 @@ export enum SocketEvent {
 	COLLECTION_CREATED = "collection_created",
 	COLLECTION = "collection",
 	UPDATE_COLLECTION_STATUS = "update_collection_status",
-	UPDATE_COLLECTION_DETAILS = "update_collection_details",
+
+	UPDATE_STATUS_IN_THE_DETAILS_SCREEN = "update_status_in_the_details_screen",
+	NOTIFY_CANCELLATION_ON_DETAILS_SCREEN = "notify cancellation on details screen",
+	DELETE_COLLECTION = "delete_collection",
+	UPDATE_COLLECTION = "update_collection",
 }
 
 export enum Status {
 	WAITING_FOR_APPROVAL = "Aguardando aprovação",
-	WAITING_FOR_COLLECTION = "Aguardando coleta",
+	IN_COLLECTION = "Em coleta",
 	FINISHED = "Finalizado",
 	REFUSED = "Recusado",
 }

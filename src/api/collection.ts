@@ -1,6 +1,11 @@
 import { Routes } from "@/utils/enum"
 import { useClient } from "@/clients/AxiosClient"
-import { ICollectionData } from "@/utils/interfaces"
+import {
+	ICollectionData,
+	ICollectionFilter,
+	IFilterCollection,
+	IFilterSelected,
+} from "@/utils/interfaces"
 
 export const createCollectionApi = async (collectionData: ICollectionData) => {
 	try {
@@ -52,6 +57,39 @@ export const getCollectionByIdApi = async (
 	}
 }
 
+export const getCollectionByFilterApi = async (
+	collectionFilter: IFilterSelected,
+	idCompany: string,
+	page: string,
+	itemsPerPage: string
+) => {
+	try {
+		const data: Partial<IFilterCollection> = {
+			idCompany,
+			page,
+			itemsPerPage,
+		}
+
+		for (const key in collectionFilter) {
+			if (
+				collectionFilter[key as keyof IFilterSelected] &&
+				collectionFilter[key as keyof IFilterSelected] != ""
+			) {
+				data[key as keyof IFilterCollection] =
+					collectionFilter[key as keyof IFilterSelected]!
+			}
+		}
+
+		console.log("d", data)
+
+		const res = await useClient().post(Routes.GET_COLLECTION_BY_FILTER, data)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
 export const updateCollectionStatusApi = async (
 	id: string,
 	status: string,
@@ -69,6 +107,41 @@ export const updateCollectionStatusApi = async (
 			`${Routes.UPDATE_COLLECTION_STATUS}${id}`,
 			data
 		)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
+export const updateCollectionApi = async (
+	collection: Partial<ICollectionData>,
+	idCompany: string
+) => {
+	try {
+		const data = {
+			collection,
+			idCompany,
+		}
+
+		const res = await useClient().post(
+			`${Routes.UPDATE_COLLECTION}${collection.id}`,
+			data
+		)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
+export const deleteCollectionApi = async (idCompany: string, id?: string) => {
+	try {
+		const data = {
+			idCompany,
+		}
+
+		const res = await useClient().post(`${Routes.DELETE_COLLECTION}${id}`, data)
 
 		return res
 	} catch (error) {

@@ -1,5 +1,4 @@
 import {
-	ICollection,
 	ICollectionApi,
 	ICollectionData,
 	ICollectionStatus,
@@ -10,7 +9,6 @@ import {
 	IStatusStyle,
 	IUseProps,
 	IUserApi,
-	IUserEvent,
 	IUsers,
 } from "@/utils/interfaces"
 import { companyStore } from "@/store/companyStore"
@@ -63,7 +61,7 @@ const useProps = (): IUseProps => {
 	const getBackgroundColorByStatus = (status: string) => {
 		const backgroundColorByStatus: ICollectionStatus = {
 			"Aguardando aprovação": "rgba(255, 168, 0, 0.2)",
-			"Aguardando coleta": "rgba(255, 215, 0, 0.2)",
+			"Em coleta": "rgba(255, 215, 0, 0.2)",
 			Finalizado: "rgba(0, 128, 0, 0.2)",
 			Recusado: "rgba(255, 0, 0, 0.2)",
 		}
@@ -74,7 +72,7 @@ const useProps = (): IUseProps => {
 	const getColorByStatus = (status: string) => {
 		const colorByStatus: ICollectionStatus = {
 			"Aguardando aprovação": "#FFa100",
-			"Aguardando coleta": "#FFC300 ",
+			"Em coleta": "#FFC300 ",
 			Finalizado: "#008000",
 			Recusado: "#FF0000",
 		}
@@ -107,7 +105,7 @@ const useProps = (): IUseProps => {
 	const validatedStatus = (status: string) => {
 		if (
 			status == Status.WAITING_FOR_APPROVAL ||
-			status == Status.WAITING_FOR_COLLECTION
+			status == Status.IN_COLLECTION
 		) {
 			return true
 		}
@@ -118,7 +116,7 @@ const useProps = (): IUseProps => {
 	const setColorSpinnerBar = (status: string): string | undefined => {
 		if (status == Status.WAITING_FOR_APPROVAL) {
 			return "#FFa100"
-		} else if (status == Status.WAITING_FOR_COLLECTION) {
+		} else if (status == Status.IN_COLLECTION) {
 			return "#FFC300"
 		}
 	}
@@ -129,6 +127,15 @@ const useProps = (): IUseProps => {
 		} else {
 			return { background: "#f3f4f6", height: "3rem", fontWeight: "bold" }
 		}
+	}
+
+	const handleUrl = (url: string): string => {
+		const regex = /\/Detalhes\/([^/]+)$/i
+		const match = url.match(regex)
+
+		if (match) return match[1]
+
+		return ""
 	}
 
 	const parseDepartment = (data: any[]): Array<IDepartment> => {
@@ -149,7 +156,7 @@ const useProps = (): IUseProps => {
 			return {
 				id: c._id,
 				observation: c.observation,
-				reason: c.reasonRefusal,
+				reason: c.reasonRefusal ? c.reasonRefusal : "",
 				packaging: c.packaging,
 				amount: c.amount,
 				measure: c.measure,
@@ -163,12 +170,10 @@ const useProps = (): IUseProps => {
 				risk: c.risk,
 				state: c.state,
 				userId: c.userId,
-				orderNumber: c._id.slice(-6),
+				orderNumber: c.orderNumber,
 				date: parseDate(c.createdAt),
 			}
 		})
-
-		console.log("dta", parsedData)
 
 		return parsedData
 	}
@@ -300,6 +305,7 @@ const useProps = (): IUseProps => {
 		setStatusStyle,
 		validatedStatus,
 		setColorSpinnerBar,
+		handleUrl,
 	}
 }
 

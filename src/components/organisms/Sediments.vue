@@ -109,7 +109,10 @@ const { handleAutoCompleteStyle, setTableBackground } = userProps()
 const props = defineProps({
 	headers: { type: Array as PropType<string[]>, required: true },
 
-	sedimentsName: { type: Array as PropType<string[]>, required: true },
+	sedimentsName: {
+		type: Array as PropType<Array<string | undefined>>,
+		required: true,
+	},
 
 	actions: { type: Array as PropType<string[]>, required: true },
 

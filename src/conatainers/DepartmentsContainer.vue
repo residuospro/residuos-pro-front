@@ -16,10 +16,10 @@
 		:closeDepartmentModal="closeDepartmentModal"
 		:create-or-update-department="createOrUpdateDepartment" />
 
-	<DeleteModal
+	<ActionModal
 		v-if="showDeleteModal"
 		:closeDeleteModal="() => (showDeleteModal = false)"
-		:deleteFunction="deleteDepartment"
+		:confirm-action="deleteDepartment"
 		title="Confirmar Exclusão"
 		sub-title="Ao excluir um departamento, você excluirá todos os usuários do mesmo, tem certeza disso ?" />
 
@@ -52,7 +52,7 @@
 import Departments from "@/components/organisms/Departments.vue"
 import Pagination from "../components/organisms/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
-import DeleteModal from "@/components/molecules/DeleteModal.vue"
+import ActionModal from "@/components/molecules/ActionModal.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import DepartmentModal from "@/components/organisms/DepartmentCreateOrUpdateModal.vue"
 import { computed, ref } from "vue"

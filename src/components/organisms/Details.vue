@@ -10,13 +10,48 @@
 
 		<div
 			class="flex flex-wrap justify-between w-[80%] text-v_medium_gray space-y-3">
-			<div>
-				<p class="mt-3">Nome:</p>
+			<div class="mt-3">
+				<p>Nº Pedido:</p>
 				<Input
 					input="input"
-					:disabled="disabledInput()"
+					:disabled="true"
+					:value="collectionDetails.orderNumber"
+					@input="(value: string) => collection.orderNumber = value" />
+			</div>
+
+			<div>
+				<p>Data:</p>
+				<Input
+					input="input"
+					:disabled="true"
+					:value="collectionDetails.date?.split(',')[0]"
+					@input="(value: string) => collection.status = value" />
+			</div>
+
+			<div>
+				<p>Hora:</p>
+				<Input
+					input="input"
+					:disabled="true"
+					:value="collectionDetails.date?.split(',')[1]"
+					@input="(value: string) => collection.status = value" />
+			</div>
+
+			<div>
+				<p>Status:</p>
+				<Input
+					input="input"
+					:disabled="true"
+					:value="collectionDetails.status"
+					@input="(value: string) => collection.status = value" />
+			</div>
+
+			<div>
+				<p>Nome:</p>
+				<Input
+					input="input"
+					:disabled="true"
 					:value="collectionDetails.name"
-					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.name = value" />
 			</div>
 
@@ -24,9 +59,8 @@
 				<p>Email:</p>
 				<Input
 					input="input"
-					:disabled="disabledInput()"
+					:disabled="true"
 					:value="collectionDetails.email"
-					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.email = value" />
 			</div>
 
@@ -34,9 +68,8 @@
 				<p>Departamento:</p>
 				<Input
 					input="input"
-					:disabled="disabledInput()"
+					:disabled="true"
 					:value="collectionDetails.department"
-					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.department = value" />
 			</div>
 
@@ -44,39 +77,41 @@
 				<p>Ramal:</p>
 				<Input
 					input="input"
-					:disabled="disabledInput()"
+					:disabled="true"
 					:value="collectionDetails.ramal"
-					:class="setBackgroundInputDetails()"
 					@input="(value: string) => collection.ramal = value" />
 			</div>
 
-			<div>
-				<p>Nº Pedido:</p>
-				<Input
-					input="input"
-					:disabled="disabledInput()"
-					:value="collectionDetails.orderNumber"
-					:class="setBackgroundInputDetails()"
-					@input="(value: string) => collection.orderNumber = value" />
-			</div>
-
-			<div>
+			<div class="w-[18rem]">
 				<p>Resíduo:</p>
+
+				<v-autocomplete
+					v-if="showButtonsAndInputForManager()"
+					:style="{ height: '3rem' }"
+					:onUpdate:modelValue="selectSediment"
+					clearable
+					:disabled="disabledInput()"
+					:items="sedimentsName"
+					v-model="collection.sedimentName"
+					chips></v-autocomplete>
+
 				<Input
+					v-else
 					input="input"
 					:disabled="disabledInput()"
 					:value="collectionDetails.sedimentName"
 					:class="setBackgroundInputDetails()"
-					@input="(value: string) => collection.sedimentName = value" />
+					@input="(value: string) =>
+				collection.sedimentName = value" />
 			</div>
 
 			<div>
 				<p>Classificação:</p>
 				<Input
 					input="input"
-					:disabled="disabledInput()"
-					:value="collectionDetails.classification"
+					:disabled="true"
 					:class="setBackgroundInputDetails()"
+					:value="collectionDetails.classification"
 					@input="(value: string) => collection.classification = value" />
 			</div>
 
@@ -84,9 +119,9 @@
 				<p>Risco Associado:</p>
 				<Input
 					input="input"
-					:disabled="disabledInput()"
-					:value="collectionDetails.risk"
+					:disabled="true"
 					:class="setBackgroundInputDetails()"
+					:value="collectionDetails.risk"
 					@input="(value: string) => collection.risk = value" />
 			</div>
 
@@ -94,9 +129,9 @@
 				<p>Estado:</p>
 				<Input
 					input="input"
-					:disabled="disabledInput()"
-					:value="collectionDetails.state"
+					:disabled="true"
 					:class="setBackgroundInputDetails()"
+					:value="collectionDetails.state"
 					@input="(value: string) => collection.state = value" />
 			</div>
 
@@ -115,38 +150,45 @@
 				<Input
 					input="input"
 					:disabled="disabledInput()"
-					:value="`${collectionDetails.amount}${collectionDetails.measure}`"
+					type="number"
+					:value="collectionDetails.amount"
 					:class="setBackgroundInputDetails()"
 					@input="(value: number) => collection.amount = value" />
 			</div>
 
-			<div>
-				<p>Status:</p>
+			<div class="w-[18rem]">
+				<p>Unidade medida:</p>
+
+				<v-autocomplete
+					v-if="showButtonsAndInputForManager()"
+					:onUpdate:modelValue="selectMeasure"
+					:style="{ height: '3rem' }"
+					clearable
+					:items="measure"
+					v-model="collection.measure"
+					chips></v-autocomplete>
+
 				<Input
+					v-else
 					input="input"
-					:disabled="true"
-					:value="collectionDetails.status"
+					:disabled="disabledInput()"
+					:value="collectionDetails.measure"
 					:class="setBackgroundInputDetails()"
-					@input="(value: string) => collection.status = value" />
+					@input="(value: number) => collection.amount = value" />
 			</div>
 
-			<div class="">
-				<p>Data/Hora:</p>
-				<Input
-					input="input"
-					:disabled="true"
-					:value="collectionDetails.date?.replace(',', ' -')"
-					:class="setBackgroundInputDetails()"
-					@input="(value: string) => collection.status = value" />
-			</div>
-
-			<div class="w-full">
-				<p>Observação:</p>
+			<div
+				class="w-full"
+				v-if="
+					collectionDetails.observation != '' ||
+					collectionDetails.status == Status.WAITING_FOR_APPROVAL
+				">
+				<p>Observação:{{ collectionDetails.observation }}</p>
 
 				<TextArea
 					:value="collectionDetails.observation"
 					:disabled="disabledInput()"
-					:class="setBackgroundTextArea(collection.observation)"
+					:class="setBackgroundTextArea()"
 					text="textArea"
 					@text="(value: string) =>
 				collection.observation = value"
@@ -164,12 +206,18 @@
 
 			<div
 				class="flex justify-end space-x-5 mt-5 w-full mb-5"
-				v-if="showButtonsForManager()">
-				<Button buttonType="closeButton" @click="() => console.log('oi')">
+				v-if="showButtonsAndInputForManager()">
+				<Button buttonType="closeButton" @click="openDeleteModal">
 					Cancelar
 				</Button>
 
-				<Button buttonType="confirmButton" class="bg-v_green">
+				<Button
+					buttonType="confirmButton"
+					:disabled="validateDataToUpdateCollection()"
+					:class="
+						!validateDataToUpdateCollection() ? ' bg-v_green' : 'bg-v_dark_gray'
+					"
+					@click="openConfirmationModal(collection)">
 					<p class="text-white">Atualizar</p>
 				</Button>
 			</div>
@@ -199,25 +247,58 @@ import { useHead } from "@vueuse/head"
 import Input from "@/components/atoms/Input.vue"
 import TextArea from "../atoms/TextArea.vue"
 import Button from "../atoms/Button.vue"
-import { PropType } from "vue"
+import { PropType, ref, watch, watchEffect } from "vue"
 import { ICollectionData } from "@/utils/interfaces"
-import { watch } from "vue"
-import { reactive } from "vue"
+
+import userProps from "@/context/useProps"
+import { Status } from "@/utils/enum"
+
+const { handleAutoCompleteStyle } = userProps()
 
 useHead({ title: "Resíduos Pro - Detalhes da coleta" })
 
-let collection = reactive<Partial<ICollectionData>>({})
+let collection = ref<Partial<ICollectionData>>({})
 
-console.log(collection.reason)
+const props = defineProps({
+	sedimentsName: { type: Array as PropType<string[]>, required: true },
 
-defineProps({
 	collectionDetails: {
 		type: Object as PropType<Partial<ICollectionData>>,
 		required: true,
 	},
 
+	validateDataToUpdateCollection: {
+		type: Function as PropType<() => boolean>,
+		required: true,
+	},
+
+	measure: {
+		type: Array as PropType<string[]>,
+		required: true,
+	},
+
+	selectSediment: {
+		type: Function as PropType<(sedimentName: string) => void>,
+		required: true,
+	},
+
+	selectMeasure: {
+		type: Function as PropType<(measure: string) => void>,
+		required: true,
+	},
+
 	openModalRefuse: {
 		type: Function as PropType<() => void>,
+		required: true,
+	},
+
+	openDeleteModal: {
+		type: Function as PropType<() => void>,
+		required: true,
+	},
+
+	openConfirmationModal: {
+		type: Function as PropType<(collection: Partial<ICollectionData>) => void>,
 		required: true,
 	},
 
@@ -227,7 +308,7 @@ defineProps({
 	},
 
 	setBackgroundTextArea: {
-		type: Function as PropType<(observation?: string) => string>,
+		type: Function as PropType<() => string>,
 		required: true,
 	},
 
@@ -246,7 +327,7 @@ defineProps({
 		required: true,
 	},
 
-	showButtonsForManager: {
+	showButtonsAndInputForManager: {
 		type: Function as PropType<() => boolean>,
 		required: true,
 	},
@@ -257,7 +338,13 @@ defineProps({
 	},
 })
 
-watch(collection, () => {
-	console.log("c", collection)
+watchEffect(() => {
+	collection.value = props.collectionDetails
+
+	console.log("ccoo", props.collectionDetails)
+})
+
+watch(collection.value, () => {
+	console.log("cu", collection.value)
 })
 </script>

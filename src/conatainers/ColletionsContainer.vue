@@ -26,6 +26,9 @@
 		:collectionFilter="collectionFilter"
 		:status="status"
 		:sedimentsName="sedimentsName"
+		:showClearFilterButton="showClearFilterButton"
+		:callCollectionsByPage="callCollectionsByPage"
+		:getCollectionByFilter="getCollectionByFilter"
 		:getColorByStatus="getColorByStatus"
 		:setColorSpinnerBar="setColorSpinnerBar"
 		:validatedStatus="validatedStatus"
@@ -56,12 +59,13 @@ import Loading from "@/components/molecules/Loading.vue"
 import Pagination from "../components/organisms/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
-import { AuthorizationUser, Status, SocketEvent } from "@/utils/enum"
+import { AuthorizationUser, Status } from "@/utils/enum"
 import {
 	ICollectionData,
-	ICollectionEvent,
 	ICollectionFilter,
 	ICollectionForm,
+	IFilterCollection,
+	IFilterSelected,
 	IMessage,
 	ISedimentsApi,
 	IUserInfo,
@@ -70,8 +74,13 @@ import { hasPermission } from "@/utils/permissions"
 import { onMounted } from "vue"
 import { ref } from "vue"
 import useProps from "@/context/useProps"
-import { createCollectionApi, getCollectionByPageApi } from "@/api/collection"
+import {
+	createCollectionApi,
+	getCollectionByFilterApi,
+	getCollectionByPageApi,
+} from "@/api/collection"
 import { socket } from "../socket"
+import { collectionScreenEvent } from "@/socket/collectionScreenEvent"
 import sound from "@/assets/sounds/r.mp3"
 import { audioStore } from "@/store/audioStore"
 
@@ -117,6 +126,7 @@ let showButton = ref(false)
 let showDeleteModal = ref(false)
 let showLoading = ref(false)
 let showCollectionModal = ref(false)
+let showClearFilterButton = ref(false)
 let page = ref(1)
 let itemsPerPage = ref(10)
 let totalPages = ref<number[]>([])
@@ -124,6 +134,17 @@ let typeAction = ref("Cadastrar")
 let departmentsName = ref<string[]>([])
 let sedimentsName = ref<string[]>([])
 let sedimentsData = ref<ISedimentsApi[]>([])
+let idCompany = ref("")
+let idDepartment = ref<string | undefined>("")
+let title = ref("")
+let subTitle = ref("")
+let showNotificationModal = ref(false)
+let status = ref([
+	Status.WAITING_FOR_APPROVAL,
+	Status.IN_COLLECTION,
+	Status.FINISHED,
+	Status.REFUSED,
+])
 let sediment = ref<ISedimentsApi>({
 	_id: "",
 	name: "",
@@ -131,39 +152,12 @@ let sediment = ref<ISedimentsApi>({
 	risk: "",
 	state: "",
 })
-let idCompany = ref("")
-let idDepartment = ref<string | undefined>("")
 let userInfo = ref<IUserInfo>({
 	userId: "",
 	name: "",
 	email: "",
 	ramal: "",
 	department: "",
-})
-let title = ref("")
-let subTitle = ref("")
-let showNotificationModal = ref(false)
-let status = ref([
-	Status.WAITING_FOR_APPROVAL,
-	Status.WAITING_FOR_COLLECTION,
-	Status.FINISHED,
-	Status.REFUSED,
-])
-
-socket.on(SocketEvent.COLLECTION_CREATED, (data: ICollectionEvent) => {
-	const { idCompany } = data.data
-
-	if (idCompany == idCompany_store) {
-		getCollectionsByPage(page.value, itemsPerPage.value)
-	}
-})
-
-socket.on(SocketEvent.UPDATE_COLLECTION_STATUS, (data: ICollectionEvent) => {
-	const { idCompany } = data.data
-
-	if (idCompany == idCompany_store) {
-		getCollectionsByPage(page.value, itemsPerPage.value)
-	}
 })
 
 const setPagination = (currentPage: number) => {
@@ -191,10 +185,13 @@ const closeCollectionModal = (event: Event) => {
 	showCollectionModal.value = false
 }
 
-const callCollectionsByPage = async (page: number, itemsPerPage: number) => {
+const callCollectionsByPage = async (
+	currentPage: number = page.value,
+	value: number = itemsPerPage.value
+) => {
 	showLoading.value = true
 
-	await getCollectionsByPage(page, itemsPerPage)
+	await getCollectionsByPage(currentPage, value)
 
 	showLoading.value = false
 }
@@ -243,7 +240,6 @@ const handleApiResponse = (message: IMessage) => {
 }
 
 const selectSedimentId = (sedimentName: string) => {
-	console.log("sn", sedimentName)
 	if (sedimentName) {
 		const sediments = sedimentsData.value.filter((s) => (s.name = sedimentName))
 
@@ -327,6 +323,8 @@ const getCollectionsByPage = async (
 	if (res?.status == 200) {
 		collections.value = parseCollections(res?.data.collections)
 		totalPages.value = setTotalPages(res?.data.totalPages)
+
+		showClearFilterButton.value = false
 	} else if (res?.status == 404) {
 		collections.value = []
 		totalPages.value = []
@@ -339,6 +337,40 @@ const getCollectionsByPage = async (
 	showLoading.value = false
 }
 
+const getCollectionByFilter = async (collectionFilter: IFilterSelected) => {
+	showLoading.value = true
+
+	const res: any = await getCollectionByFilterApi(
+		collectionFilter,
+		idCompany.value,
+		String(page.value),
+		String(itemsPerPage.value)
+	)
+
+	if (res?.status == 200) {
+		collections.value = parseCollections(res?.data.collections)
+
+		totalPages.value = setTotalPages(res?.data.totalPages)
+
+		showClearFilterButton.value = true
+	} else if (res?.status == 404) {
+		handleApiResponse(res?.data.message)
+		showNotificationModal.value = true
+	} else {
+		handleApiResponse(res?.response?.data?.message)
+
+		showNotificationModal.value = true
+	}
+
+	showLoading.value = false
+
+	console.log("fitler", res)
+}
+
+collectionScreenEvent(socket, async () => {
+	await getCollectionsByPage(page.value, itemsPerPage.value)
+})
+
 onMounted(async () => {
 	audio.initializeAudio(sound)
 
@@ -348,15 +380,11 @@ onMounted(async () => {
 
 	getCollectionsByPage(page.value, itemsPerPage.value)
 
-	if (
-		hasPermission([AuthorizationUser.MANAGER, AuthorizationUser.COLLABORATOR])
-	) {
-		const { sediment_data, sediments_name } =
-			await sediment_store.getSedimentsData()
+	const { sediment_data, sediments_name } =
+		await sediment_store.getSedimentsData()
 
-		sedimentsName.value = sediments_name
-		sedimentsData.value = sediment_data
-	}
+	sedimentsName.value = sediments_name
+	sedimentsData.value = sediment_data
 
 	setCollectionsFilter()
 })

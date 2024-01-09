@@ -7,10 +7,10 @@
 		@closeModal="closeModal"
 		v-if="showNotificationModal" />
 
-	<DeleteModal
+	<ActionModal
 		v-if="showDeleteModal"
 		:closeDeleteModal="() => (showDeleteModal = false)"
-		:deleteFunction="deleteSediments"
+		:confirm-action="deleteSediments"
 		title="Confirmar exclusão"
 		sub-title="Tem certeza que deseja excluir esse resíduo?" />
 
@@ -57,7 +57,7 @@ import Loading from "@/components/molecules/Loading.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
-import DeleteModal from "@/components/molecules/DeleteModal.vue"
+import ActionModal from "@/components/molecules/ActionModal.vue"
 import SedimentsCreateOrUpdateModal from "@/components/organisms/SedimentsCreateOrUpdateModal.vue"
 import { computed, ref, watch } from "vue"
 import { IMessage, ISediments } from "@/utils/interfaces"
@@ -99,7 +99,7 @@ let showLoading = ref(false)
 let showNotificationModal = ref(false)
 let showButton = ref(false)
 let typeAction = ref("Cadastrar")
-let sedimentsName = ref<string[]>([])
+let sedimentsName = ref<Array<string | undefined>>([])
 let sedimentSelected = ref(false)
 let sediments = ref<ISediments[]>([])
 let title = ref("")

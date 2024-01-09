@@ -6,9 +6,36 @@
 		:closeModalRefuse="closeModalRefuse"
 		:refuseRequest="refuseRequest" />
 
+	<Notification
+		:title="title"
+		:subTitle="subTitle"
+		@closeModal="closeModal"
+		v-if="showNotificationModal" />
+
+	<ActionModal
+		v-if="showDeleteModal"
+		:closeDeleteModal="() => (showDeleteModal = false)"
+		:confirm-action="deleteCollection"
+		title="Confirmar cancelamento"
+		sub-title="Tem certeza que deseja cancelar esse pedido?" />
+
+	<ActionModal
+		v-if="showConfirmationModal"
+		:closeDeleteModal="() => (showConfirmationModal = false)"
+		:confirm-action="updateCollection"
+		title="Confirmar atualização"
+		sub-title="Tem certeza que deseja atualizar esse pedido?" />
+
 	<Details
 		:collectionDetails="collectionDetails"
+		:sedimentsName="sedimentsName"
+		:measure="measures"
+		:validateDataToUpdateCollection="validateDataToUpdateCollection"
+		:selectMeasure="selectMeasure"
+		:openConfirmationModal="openConfirmationModal"
+		:selectSediment="selectSediment"
 		:disabledInput="disabledInput"
+		:openDeleteModal="openDeleteModal"
 		:getColorByStatus="getColorByStatus"
 		:openModalRefuse="openModalRefuse"
 		:setColorSpinnerBar="setColorSpinnerBar"
@@ -18,7 +45,7 @@
 		:setTextButton="setTextButton"
 		:showButtonsForAdm="showButtonsForAdm"
 		:setBackgroundTextArea="setBackgroundTextArea"
-		:showButtonsForManager="showButtonsForManager"
+		:showButtonsAndInputForManager="showButtonsAndInputForManager"
 		:updateCollectionStatus="updateCollectionStatus" />
 </template>
 
@@ -26,18 +53,24 @@
 /* eslint-disable no-useless-escape */
 import Details from "@/components/organisms/Details.vue"
 import ModalRefuse from "@/components/molecules/ModalRefuse.vue"
-import { ICollectionData, ICollectionEvent } from "@/utils/interfaces"
+import { ICollectionData, IMessage, ISedimentsApi } from "@/utils/interfaces"
+import ActionModal from "@/components/molecules/ActionModal.vue"
+import Notification from "@/components/molecules/NotificationModal.vue"
 import { ref, onMounted } from "vue"
 import useProps from "@/context/useProps"
 import {
+	deleteCollectionApi,
 	getCollectionByIdApi,
+	updateCollectionApi,
 	updateCollectionStatusApi,
 } from "@/api/collection"
 import Loading from "@/components/molecules/Loading.vue"
-import { AuthorizationUser, SocketEvent, Status } from "@/utils/enum"
+import { AuthorizationUser, Status } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
 import { reactive } from "vue"
 import { socket } from "@/socket"
+import router from "@/router"
+import { detailsScreenEvent } from "@/socket/detailsScreenEvent"
 
 const {
 	parseCollections,
@@ -46,25 +79,57 @@ const {
 	setStatusStyle,
 	validatedStatus,
 	setColorSpinnerBar,
+	handleUrl,
 } = useProps()
 
-const { idCompany_store, department_store, user_store } = setStore()
+const { idCompany_store, department_store, user_store, sediment_store } =
+	setStore()
+
+const measures = ["kg", "L", "m³"]
 
 let idCompany = ref("")
+let showDeleteModal = ref(false)
+let showConfirmationModal = ref(false)
+let showNotificationModal = ref(false)
 let idDepartment = ref<string | undefined>("")
 let collectionId = ref("")
 let userId = ref("")
-let collectionDetails = reactive<Partial<ICollectionData>>({})
+let collectionDetails = ref<Partial<ICollectionData>>({})
 let showLoading = ref(false)
 let showModalRefuse = ref(false)
+let title = ref("")
+let subTitle = ref("")
+let sedimentsData = ref<ISedimentsApi[]>([])
+let sedimentsName = ref<string[]>([])
+let isDeleted = ref(false)
 
-socket.on(SocketEvent.UPDATE_COLLECTION_DETAILS, (data: ICollectionEvent) => {
-	const { idCompany, collection } = data.data
+const closeModal = () => {
+	showNotificationModal.value = false
 
-	if (idCompany == idCompany_store && collection._id == collectionDetails.id) {
-		getCollectionById(collectionId.value)
+	backToCollectionScreen()
+}
+
+const backToCollectionScreen = () => {
+	if (isDeleted.value) {
+		router.back()
+		isDeleted.value = false
 	}
-})
+}
+
+const notifyCollectionCancellation = () => {
+	title.value = "Coleta cancelada"
+	subTitle.value = "Essa coleta foi cancelada pelo solicitante"
+
+	isDeleted.value = true
+	showNotificationModal.value = true
+}
+
+const notifyCollectionUpdate = () => {
+	title.value = "Coleta Atualizada"
+	subTitle.value = "Essa coleta foi atualizada pelo solicitante"
+
+	showNotificationModal.value = true
+}
 
 const closeModalRefuse = (event: Event) => {
 	event.stopPropagation()
@@ -72,8 +137,18 @@ const closeModalRefuse = (event: Event) => {
 	showModalRefuse.value = false
 }
 
+const openDeleteModal = () => {
+	showDeleteModal.value = true
+}
+
 const openModalRefuse = () => {
 	showModalRefuse.value = true
+}
+
+const openConfirmationModal = (collection: Partial<ICollectionData>) => {
+	collectionDetails.value = collection
+
+	showConfirmationModal.value = true
 }
 
 const refuseRequest = async (reason: string) => {
@@ -89,25 +164,17 @@ const refuseRequest = async (reason: string) => {
 	)
 
 	if (res?.status == 200) {
-		collectionDetails = parseCollections([res?.data])[0]
+		collectionDetails.value = parseCollections([res?.data])[0]
 	}
 
 	showLoading.value = false
 	showModalRefuse.value = false
 }
 
-const setBackgroundInputDetails = () => {
-	const status = [String(Status.FINISHED), String(Status.REFUSED)]
-
-	if (status.includes(collectionDetails.status!)) return ""
-
-	return "bg-white"
-}
-
 const setTextButton = (status?: string) => {
 	if (status == Status.WAITING_FOR_APPROVAL) {
 		return "Aceitar"
-	} else if (status == Status.WAITING_FOR_COLLECTION) {
+	} else if (status == Status.IN_COLLECTION) {
 		return "Finalizar"
 	} else {
 		return ""
@@ -117,9 +184,9 @@ const setTextButton = (status?: string) => {
 const showButtonsForAdm = () => {
 	if (
 		(hasPermission([AuthorizationUser.ADMIN]) &&
-			collectionDetails.status == Status.WAITING_FOR_APPROVAL) ||
+			collectionDetails.value.status == Status.WAITING_FOR_APPROVAL) ||
 		(hasPermission([AuthorizationUser.ADMIN]) &&
-			collectionDetails.status == Status.WAITING_FOR_COLLECTION)
+			collectionDetails.value.status == Status.IN_COLLECTION)
 	) {
 		return true
 	}
@@ -127,14 +194,14 @@ const showButtonsForAdm = () => {
 	return false
 }
 
-const showButtonsForManager = () => {
+const showButtonsAndInputForManager = () => {
 	if (
 		hasPermission([
 			AuthorizationUser.COLLABORATOR,
 			AuthorizationUser.MANAGER,
 		]) &&
-		collectionDetails.status == Status.WAITING_FOR_APPROVAL &&
-		collectionDetails.userId == userId.value
+		collectionDetails.value.status == Status.WAITING_FOR_APPROVAL &&
+		collectionDetails.value.userId == userId.value
 	) {
 		return true
 	}
@@ -142,36 +209,122 @@ const showButtonsForManager = () => {
 	return false
 }
 
-const setBackgroundTextArea = (observation?: string) => {
-	const status = [String(Status.FINISHED), String(Status.REFUSED)]
+const setBackgroundInputDetails = () => {
+	const status = [
+		String(Status.FINISHED),
+		String(Status.REFUSED),
+		String(Status.IN_COLLECTION),
+	]
 
 	if (
-		(!status.includes(collectionDetails.status!) && observation) ||
-		(collectionDetails.observation &&
-			!status.includes(collectionDetails.status!))
+		hasPermission([AuthorizationUser.ADMIN]) ||
+		status.includes(collectionDetails.value.status!) ||
+		collectionDetails.value.userId != userId.value
 	) {
-		return "bg-white !w-[40rem]"
+		return ""
 	}
 
-	return "!w-[40rem]"
+	return "bg-white"
+}
+
+const setBackgroundTextArea = () => {
+	const status = [
+		String(Status.FINISHED),
+		String(Status.REFUSED),
+		String(Status.IN_COLLECTION),
+	]
+
+	if (
+		hasPermission([AuthorizationUser.ADMIN]) ||
+		status.includes(collectionDetails.value.status!) ||
+		collectionDetails.value.userId != userId.value
+	) {
+		return "!w-[40rem]"
+	}
+
+	return "bg-white !w-[40rem]"
 }
 
 const disabledInput = () => {
 	const status = [
 		String(Status.FINISHED),
 		String(Status.REFUSED),
-		String(Status.WAITING_FOR_COLLECTION),
+		String(Status.IN_COLLECTION),
 	]
 
 	if (hasPermission([AuthorizationUser.ADMIN])) {
 		return true
-	} else if (status.includes(collectionDetails.status!)) {
+	} else if (status.includes(collectionDetails.value.status!)) {
 		return true
-	} else if (collectionDetails.userId != userId.value) {
+	} else if (collectionDetails.value.userId != userId.value) {
 		return true
 	} else {
 		return false
 	}
+}
+
+const selectSediment = (sedimentName: string) => {
+	const sediment = sedimentsData.value.find((s) => s.name == sedimentName)
+
+	updateSedimentInCollection(sediment)
+}
+
+const selectMeasure = (measure: string) => {
+	collectionDetails.value.measure = measure
+}
+
+const updateSedimentInCollection = (sediment?: ISedimentsApi) => {
+	collectionDetails.value.sedimentName = sediment?.name
+	collectionDetails.value.classification = sediment?.classification
+	collectionDetails.value.risk = sediment?.risk
+	collectionDetails.value.state = sediment?.state
+}
+
+const changeVariableState = () => {
+	showDeleteModal.value = false
+	showConfirmationModal.value = false
+	showNotificationModal.value = true
+	showLoading.value = false
+}
+
+const handleApiResponse = (message: IMessage) => {
+	title.value = message.title
+	subTitle.value = message.subTitle
+}
+
+const validateDataToUpdateCollection = () => {
+	if (
+		collectionDetails.value.amount! > 0 &&
+		collectionDetails.value.classification &&
+		collectionDetails.value.measure &&
+		collectionDetails.value.sedimentName &&
+		collectionDetails.value.state &&
+		collectionDetails.value.risk &&
+		collectionDetails.value.packaging
+	) {
+		return false
+	}
+
+	return true
+}
+
+const updateCollection = async () => {
+	showLoading.value = true
+
+	const res: any = await updateCollectionApi(
+		collectionDetails.value,
+		idCompany.value
+	)
+
+	if (res?.status == 200) {
+		collectionDetails.value = parseCollections([res?.data.collection])[0]
+
+		handleApiResponse(res?.data.message)
+	} else {
+		handleApiResponse(res?.response.data.message)
+	}
+
+	changeVariableState()
 }
 
 const updateCollectionStatus = async () => {
@@ -179,9 +332,9 @@ const updateCollectionStatus = async () => {
 
 	let status = ""
 
-	if (collectionDetails.status == Status.WAITING_FOR_APPROVAL) {
-		status = Status.WAITING_FOR_COLLECTION
-	} else if (collectionDetails.status == Status.WAITING_FOR_COLLECTION) {
+	if (collectionDetails.value.status == Status.WAITING_FOR_APPROVAL) {
+		status = Status.IN_COLLECTION
+	} else if (collectionDetails.value.status == Status.IN_COLLECTION) {
 		status = Status.FINISHED
 	}
 
@@ -192,22 +345,38 @@ const updateCollectionStatus = async () => {
 	)
 
 	if (res?.status == 200) {
-		collectionDetails = parseCollections([res?.data])[0]
+		collectionDetails.value = parseCollections([res?.data])[0]
+	} else {
+		handleApiResponse(res?.response.data.message)
+		showNotificationModal.value = true
 	}
 
 	showLoading.value = false
 }
 
-const getId = async () => {
-	let url = window.location.href
+const deleteCollection = async () => {
+	showLoading.value = true
 
-	let regex = /\/Detalhes\/([^/]+)$/i
-	let match = url.match(regex)
+	const res: any = await deleteCollectionApi(
+		idCompany.value,
+		collectionDetails.value.id
+	)
 
-	if (match) {
-		collectionId.value = match[1]
-		await getCollectionById(match[1])
+	if (res?.status == 201) {
+		handleApiResponse(res?.data.message)
+	} else {
+		handleApiResponse(res?.response.data.message)
 	}
+
+	changeVariableState()
+}
+
+const getId = async () => {
+	let id = handleUrl(window.location.href)
+
+	collectionId.value = id
+
+	await getCollectionById(id)
 }
 
 const getCollectionById = async (id: string) => {
@@ -220,17 +389,37 @@ const getCollectionById = async (id: string) => {
 	)
 
 	if (res?.status == 200) {
-		collectionDetails = parseCollections([res?.data])[0]
+		collectionDetails.value = parseCollections([res?.data])[0]
+	} else {
+		handleApiResponse(res?.response.data.message)
 	}
 
 	showLoading.value = false
 }
 
-onMounted(() => {
+detailsScreenEvent(window.location.href, socket, {
+	getCollectionById: async () => {
+		await getCollectionById(collectionId.value)
+	},
+	notifyCollectionCancellation: () => notifyCollectionCancellation(),
+	notifyCollectionUpdate: () => notifyCollectionUpdate(),
+})
+
+onMounted(async () => {
 	idCompany.value = idCompany_store
 	idDepartment.value = department_store.getIdDepartment
 	userId.value = user_store.getUserId
 
 	getId()
+
+	if (
+		hasPermission([AuthorizationUser.MANAGER, AuthorizationUser.COLLABORATOR])
+	) {
+		const { sediment_data, sediments_name } =
+			await sediment_store.getSedimentsData()
+
+		sedimentsName.value = sediments_name
+		sedimentsData.value = sediment_data
+	}
 })
 </script>

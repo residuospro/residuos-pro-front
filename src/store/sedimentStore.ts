@@ -1,4 +1,4 @@
-import { ISediments, ISedimentStore } from "@/utils/interfaces"
+import { ISediments, ISedimentsApi, ISedimentStore } from "@/utils/interfaces"
 import { defineStore } from "pinia"
 import { getSedimentsByPageApi } from "@/api/sediments"
 import { companyStore } from "@/store/companyStore"
@@ -47,11 +47,16 @@ export const sedimentStore = defineStore("sedimentStore", {
 				idDepartment
 			)
 
-			const sediments = res?.data.sediments as []
+			let sediments_name: string[] = []
+			let sediment_data: ISedimentsApi[] = []
 
-			const sediments_name = sediments.map((s: any) => s.name) as string[]
+			if (res?.status == 200) {
+				const sediments = res?.data.sediments as ISedimentsApi[]
 
-			const sediment_data = sediments
+				sediments_name = sediments.map((s: any) => s.name) as string[]
+
+				sediment_data = sediments
+			}
 
 			return { sediments_name, sediment_data }
 		},

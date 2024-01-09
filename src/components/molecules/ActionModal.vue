@@ -12,7 +12,7 @@
 					<Button
 						buttonType="confirmButton"
 						class="text-white bg-v_green"
-						@click="deleteFunction">
+						@click="confirmAction">
 						Sim
 					</Button>
 
@@ -37,7 +37,7 @@ defineProps({
 		required: true,
 	},
 
-	deleteFunction: {
+	confirmAction: {
 		type: Function as any as () => (event: MouseEvent) => void,
 		required: true,
 	},

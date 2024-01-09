@@ -1,5 +1,8 @@
 <template>
-	<textarea :class="textClass" @input="handleText($event)" />
+	<textarea
+		:class="textClass"
+		@input="handleText($event)"
+		style="color: #9d9797 !important" />
 </template>
 
 <script setup lang="ts">
