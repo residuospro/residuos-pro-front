@@ -69,13 +69,12 @@
 
 						<td
 							v-if="items.username == undefined"
-							:style="setTableBackground(index)"
-							class="flex flex-col justify-center items-center py-5">
+							:style="setTableBackground(index)">
 							<v-tooltip activator="parent" location="center">
 								Aguardando cadastro
 							</v-tooltip>
 
-							<VueSpinnerBar color="#36802d" height="2" width="80" class="" />
+							<VueSpinnerBar color="#36802d" height="2" width="80" />
 						</td>
 
 						<td v-else :style="setTableBackground(index)">
@@ -206,7 +205,7 @@ useHead({
 })
 </script>
 
-<style>
+<style scoped>
 table {
 	border-collapse: collapse;
 	width: 100%;
@@ -214,8 +213,8 @@ table {
 
 th,
 td {
-	text-align: center;
-	padding: 0 0.5em;
+	text-align: start;
+	padding: 0 2em;
 }
 
 th {

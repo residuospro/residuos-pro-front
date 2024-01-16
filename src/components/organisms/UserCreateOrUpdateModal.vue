@@ -1,7 +1,10 @@
 <template>
-	<Container type="backgroundContainer">
+	<Container
+		type="backgroundContainer"
+		ref="modalContainer"
+		@click="closeUserModalOutside">
 		<Wrapper type="modal">
-			<Wrapper type="actionsModal" :style="inputContainerStyle()">
+			<Wrapper type="actionsModal" :style="inputContainerStyle()" @click.stop>
 				<form @submit.prevent="createOrUpdateUser(user, typeAction)">
 					<Typograph type="H2" class="text-v_medium_gray">
 						{{ typeAction }} usuário
@@ -57,7 +60,7 @@ import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
 import Button from "../atoms/Button.vue"
-import { PropType, reactive, watch, ref } from "vue"
+import { PropType, reactive, watch, ref, Ref } from "vue"
 import {
 	IInputContainerStyle,
 	IInputWrappingStyle,
@@ -75,6 +78,14 @@ const user: IUserForm = reactive({
 	email: "",
 	department: undefined,
 })
+
+const modalContainer: Ref<HTMLElement | null> = ref(null)
+
+const closeUserModalOutside = () => {
+	if (modalContainer.value) {
+		props.closeUserModal()
+	}
+}
 
 const props = defineProps({
 	inputWrappingStyle: {

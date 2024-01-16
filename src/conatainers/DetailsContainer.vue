@@ -30,6 +30,7 @@
 		:collectionDetails="collectionDetails"
 		:sedimentsName="sedimentsName"
 		:measure="measures"
+		:showTextArea="showTextArea"
 		:validateDataToUpdateCollection="validateDataToUpdateCollection"
 		:selectMeasure="selectMeasure"
 		:openConfirmationModal="openConfirmationModal"
@@ -171,10 +172,35 @@ const refuseRequest = async (reason: string) => {
 	showModalRefuse.value = false
 }
 
+const showTextArea = () => {
+	const status = [String(Status.WAITING_FOR_APPROVAL)]
+
+	if (
+		hasPermission([AuthorizationUser.ADMIN]) &&
+		collectionDetails.value.observation != ""
+	) {
+		return true
+	} else if (
+		!hasPermission([AuthorizationUser.ADMIN]) &&
+		collectionDetails.value.observation != ""
+	) {
+		return true
+	} else if (
+		!hasPermission([AuthorizationUser.ADMIN]) &&
+		collectionDetails.value.userId == userId.value &&
+		status.includes(String(collectionDetails.value.status))
+	) {
+		return true
+	} else {
+		return false
+	}
+}
 const setTextButton = (status?: string) => {
 	if (status == Status.WAITING_FOR_APPROVAL) {
 		return "Aceitar"
-	} else if (status == Status.IN_COLLECTION) {
+	} else if (status == Status.AWAITING_COLLECTION) {
+		return "Sair para coleta"
+	} else if (status == Status.WENT_OUT_FOR_COLLECTION) {
 		return "Finalizar"
 	} else {
 		return ""
@@ -182,11 +208,14 @@ const setTextButton = (status?: string) => {
 }
 
 const showButtonsForAdm = () => {
+	const status = [
+		String(Status.AWAITING_COLLECTION),
+		String(Status.WAITING_FOR_APPROVAL),
+		String(Status.WENT_OUT_FOR_COLLECTION),
+	]
 	if (
-		(hasPermission([AuthorizationUser.ADMIN]) &&
-			collectionDetails.value.status == Status.WAITING_FOR_APPROVAL) ||
-		(hasPermission([AuthorizationUser.ADMIN]) &&
-			collectionDetails.value.status == Status.IN_COLLECTION)
+		hasPermission([AuthorizationUser.ADMIN]) &&
+		status.includes(String(collectionDetails.value.status))
 	) {
 		return true
 	}
@@ -213,7 +242,7 @@ const setBackgroundInputDetails = () => {
 	const status = [
 		String(Status.FINISHED),
 		String(Status.REFUSED),
-		String(Status.IN_COLLECTION),
+		String(Status.AWAITING_COLLECTION),
 	]
 
 	if (
@@ -231,7 +260,7 @@ const setBackgroundTextArea = () => {
 	const status = [
 		String(Status.FINISHED),
 		String(Status.REFUSED),
-		String(Status.IN_COLLECTION),
+		String(Status.AWAITING_COLLECTION),
 	]
 
 	if (
@@ -249,7 +278,7 @@ const disabledInput = () => {
 	const status = [
 		String(Status.FINISHED),
 		String(Status.REFUSED),
-		String(Status.IN_COLLECTION),
+		String(Status.AWAITING_COLLECTION),
 	]
 
 	if (hasPermission([AuthorizationUser.ADMIN])) {
@@ -333,8 +362,10 @@ const updateCollectionStatus = async () => {
 	let status = ""
 
 	if (collectionDetails.value.status == Status.WAITING_FOR_APPROVAL) {
-		status = Status.IN_COLLECTION
-	} else if (collectionDetails.value.status == Status.IN_COLLECTION) {
+		status = Status.AWAITING_COLLECTION
+	} else if (collectionDetails.value.status == Status.AWAITING_COLLECTION) {
+		status = Status.WENT_OUT_FOR_COLLECTION
+	} else if (collectionDetails.value.status == Status.WENT_OUT_FOR_COLLECTION) {
 		status = Status.FINISHED
 	}
 

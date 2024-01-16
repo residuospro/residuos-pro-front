@@ -26,17 +26,6 @@ export const sedimentEvent = (socket: Socket) => {
 			sediment_store.setSediments([...sediments, ...parseSediments([sediment])])
 
 			sediment_store.setTotalPages(setTotalPages(totalPages))
-
-			notify({
-				title: "Pedido de coleta",
-				text: "Você recebeu um novo pedido",
-				closeOnClick: true,
-				ignoreDuplicates: true,
-			})
-
-			const audio = audioStore()
-
-			audio.playAudio()
 		}
 	})
 

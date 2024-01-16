@@ -141,6 +141,27 @@ useHead({
 </script>
 
 <style scoped>
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th,
+td {
+	text-align: start;
+	padding: 0 2em;
+}
+
+th {
+	background-color: #77ab59;
+	color: #fff;
+	height: 3rem;
+}
+
+tbody td {
+	line-height: 3;
+}
+
 .overflow {
 	overflow: hidden;
 	-ms-text-overflow: ellipsis;
@@ -159,5 +180,13 @@ useHead({
 	color: #000;
 	width: auto;
 	z-index: 10;
+}
+
+.glass-effect {
+	background: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(13.5px);
+	border: 1px solid rgba(255, 255, 255, 0.18);
 }
 </style>

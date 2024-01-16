@@ -38,4 +38,12 @@ if (token.length > 0) {
 	color: #606060;
 	font-weight: bold;
 }
+
+.glass-effect {
+	background: rgba(255, 255, 255, 0.1);
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(13.5px);
+	border: 1px solid rgba(255, 255, 255, 0.18);
+}
 </style>

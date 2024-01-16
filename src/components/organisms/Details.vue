@@ -177,13 +177,8 @@
 					@input="(value: number) => collection.amount = value" />
 			</div>
 
-			<div
-				class="w-full"
-				v-if="
-					collectionDetails.observation != '' ||
-					collectionDetails.status == Status.WAITING_FOR_APPROVAL
-				">
-				<p>Observação:{{ collectionDetails.observation }}</p>
+			<div class="w-full" v-if="showTextArea()">
+				<p>Observação</p>
 
 				<TextArea
 					:value="collectionDetails.observation"
@@ -272,6 +267,11 @@ const props = defineProps({
 		required: true,
 	},
 
+	showTextArea: {
+		type: Function as PropType<() => boolean>,
+		required: true,
+	},
+
 	measure: {
 		type: Array as PropType<string[]>,
 		required: true,
@@ -340,11 +340,5 @@ const props = defineProps({
 
 watchEffect(() => {
 	collection.value = props.collectionDetails
-
-	console.log("ccoo", props.collectionDetails)
-})
-
-watch(collection.value, () => {
-	console.log("cu", collection.value)
 })
 </script>

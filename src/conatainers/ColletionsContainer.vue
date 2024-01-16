@@ -19,7 +19,7 @@
 
 	<Collections
 		:itemsPerPage="itemsPerPage"
-		:departments="departmentsName"
+		:departmentNames="departmentNames"
 		:headers="headers"
 		:actions="actions"
 		:collections="collections"
@@ -32,7 +32,6 @@
 		:getColorByStatus="getColorByStatus"
 		:setColorSpinnerBar="setColorSpinnerBar"
 		:validatedStatus="validatedStatus"
-		:handleCollectionsFilter="handleCollectionsFilter"
 		:showDeleteModal="openDeleteModal"
 		:openCollectionsModal="openCollectionModal"
 		:collectionsFilterCleaning="collectionFilterCleaning"
@@ -64,7 +63,6 @@ import {
 	ICollectionData,
 	ICollectionFilter,
 	ICollectionForm,
-	IFilterCollection,
 	IFilterSelected,
 	IMessage,
 	ISedimentsApi,
@@ -131,7 +129,7 @@ let page = ref(1)
 let itemsPerPage = ref(10)
 let totalPages = ref<number[]>([])
 let typeAction = ref("Cadastrar")
-let departmentsName = ref<string[]>([])
+let departmentNames = ref<string[]>([])
 let sedimentsName = ref<string[]>([])
 let sedimentsData = ref<ISedimentsApi[]>([])
 let idCompany = ref("")
@@ -141,7 +139,8 @@ let subTitle = ref("")
 let showNotificationModal = ref(false)
 let status = ref([
 	Status.WAITING_FOR_APPROVAL,
-	Status.IN_COLLECTION,
+	Status.AWAITING_COLLECTION,
+	Status.WENT_OUT_FOR_COLLECTION,
 	Status.FINISHED,
 	Status.REFUSED,
 ])
@@ -217,10 +216,6 @@ const collectionFilterCleaning = () => {
 	}
 }
 
-const handleCollectionsFilter = (filter: string[]) => {
-	console.log("collections", filter)
-}
-
 const setCollectionsFilter = () => {
 	if (hasPermission([AuthorizationUser.ADMIN])) {
 		collectionFilter.push({ label: "Departamento", value: "department" })
@@ -231,7 +226,7 @@ const changeVariableState = () => {
 	showNotificationModal.value = true
 	showCollectionModal.value = false
 	showButton.value = false
-	showLoading.value = false
+	//showLoading.value = false
 }
 
 const handleApiResponse = (message: IMessage) => {
@@ -363,8 +358,6 @@ const getCollectionByFilter = async (collectionFilter: IFilterSelected) => {
 	}
 
 	showLoading.value = false
-
-	console.log("fitler", res)
 }
 
 collectionScreenEvent(socket, async () => {
@@ -379,6 +372,8 @@ onMounted(async () => {
 	idDepartment.value = department_store.getIdDepartment
 
 	getCollectionsByPage(page.value, itemsPerPage.value)
+
+	departmentNames.value = await department_store.getDepartmentNames()
 
 	const { sediment_data, sediments_name } =
 		await sediment_store.getSedimentsData()

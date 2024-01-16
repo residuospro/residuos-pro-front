@@ -1,5 +1,7 @@
 import { IDepartmentState, IUserDepartmentInfo } from "@/utils/interfaces"
 import { defineStore } from "pinia"
+import { companyStore } from "@/store/companyStore"
+import { getDepartmentNamesApi } from "@/api/department"
 
 export const departmentStore = defineStore("departmentStore", {
 	state: (): IDepartmentState => ({
@@ -56,6 +58,14 @@ export const departmentStore = defineStore("departmentStore", {
 			this.departments = []
 
 			this.totalPages = []
+		},
+
+		async getDepartmentNames() {
+			const idCompany = companyStore().getIdCompany
+
+			const res: any = await getDepartmentNamesApi(idCompany)
+
+			return res.data
 		},
 	},
 })

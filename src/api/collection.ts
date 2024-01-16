@@ -80,8 +80,6 @@ export const getCollectionByFilterApi = async (
 			}
 		}
 
-		console.log("d", data)
-
 		const res = await useClient().post(Routes.GET_COLLECTION_BY_FILTER, data)
 
 		return res

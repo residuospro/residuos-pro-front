@@ -5,6 +5,7 @@ export enum Routes {
 	GET_ALL_DEPARTMENT = "/department",
 	GET_DEPARTMENT_BY_PAGE = "/department/pagineted",
 	GET_DEPARTMENT_BY_NAME = "/department/by-name",
+	GET_DEPARTMENT_NAMES = "/api/department/names",
 	DELETE_DEPARTMENT = "/department/",
 	UPDATE_DEPARTMENT = "/department/update/",
 	GET_ALL_USERS = "/users",
@@ -112,7 +113,8 @@ export enum SocketEvent {
 
 export enum Status {
 	WAITING_FOR_APPROVAL = "Aguardando aprovação",
-	IN_COLLECTION = "Em coleta",
+	AWAITING_COLLECTION = "Aguardando coleta",
+	WENT_OUT_FOR_COLLECTION = "Saiu para coleta",
 	FINISHED = "Finalizado",
 	REFUSED = "Recusado",
 }

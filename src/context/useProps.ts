@@ -61,7 +61,8 @@ const useProps = (): IUseProps => {
 	const getBackgroundColorByStatus = (status: string) => {
 		const backgroundColorByStatus: ICollectionStatus = {
 			"Aguardando aprovação": "rgba(255, 168, 0, 0.2)",
-			"Em coleta": "rgba(255, 215, 0, 0.2)",
+			"Aguardando coleta": "rgba(255, 215, 0, 0.2)",
+			"Saiu para coleta": "rgba(0, 255, 0, 0.5)",
 			Finalizado: "rgba(0, 128, 0, 0.2)",
 			Recusado: "rgba(255, 0, 0, 0.2)",
 		}
@@ -72,7 +73,8 @@ const useProps = (): IUseProps => {
 	const getColorByStatus = (status: string) => {
 		const colorByStatus: ICollectionStatus = {
 			"Aguardando aprovação": "#FFa100",
-			"Em coleta": "#FFC300 ",
+			"Aguardando coleta": "#FFC300",
+			"Saiu para coleta": "#00FF00",
 			Finalizado: "#008000",
 			Recusado: "#FF0000",
 		}
@@ -92,6 +94,7 @@ const useProps = (): IUseProps => {
 				fontWeight: "bold",
 				borderColor: "",
 				borderWidth: "1px",
+				width: "60%",
 			},
 		]
 
@@ -102,11 +105,13 @@ const useProps = (): IUseProps => {
 		return style[0]
 	}
 
-	const validatedStatus = (status: string) => {
-		if (
-			status == Status.WAITING_FOR_APPROVAL ||
-			status == Status.IN_COLLECTION
-		) {
+	const validatedStatus = (currentStatus: string) => {
+		const status = [
+			String(Status.WAITING_FOR_APPROVAL),
+			String(Status.AWAITING_COLLECTION),
+			String(Status.WENT_OUT_FOR_COLLECTION),
+		]
+		if (status.includes(currentStatus)) {
 			return true
 		}
 
@@ -116,8 +121,10 @@ const useProps = (): IUseProps => {
 	const setColorSpinnerBar = (status: string): string | undefined => {
 		if (status == Status.WAITING_FOR_APPROVAL) {
 			return "#FFa100"
-		} else if (status == Status.IN_COLLECTION) {
+		} else if (status == Status.AWAITING_COLLECTION) {
 			return "#FFC300"
+		} else if (status == Status.WENT_OUT_FOR_COLLECTION) {
+			return "#00FF00"
 		}
 	}
 

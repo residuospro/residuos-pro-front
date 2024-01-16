@@ -39,7 +39,6 @@ export const userStore = defineStore("userStore", {
 
 		setUser(user: IUserInfo) {
 			this.user = user
-			console.log("us", user)
 		},
 
 		setTotalPages(details: number[]) {

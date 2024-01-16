@@ -60,6 +60,20 @@ export const takeAllDepartments = async (idCompany: string) => {
 	}
 }
 
+export const getDepartmentNamesApi = async (idCompany: string) => {
+	try {
+		const data = {
+			idCompany,
+		}
+
+		const res = await useClient().post(Routes.GET_DEPARTMENT_NAMES, data)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
 export const deleteDepartments = async (id: string, idCompany: string) => {
 	try {
 		const data = {

@@ -158,6 +158,7 @@ export interface IPropsDepartmentStore {
 	setTotalPages(details: number[]): void
 	setDepartments(details: IUserDepartmentInfo[]): void
 	resetDepartmentState(): void
+	getDepartmentNames(): Promise<string[]>
 }
 
 export interface IPropsSedimentStore {
@@ -315,7 +316,8 @@ export interface ICollectionApi extends ICollectionData {
 
 export interface ICollectionStatus {
 	"Aguardando aprovação": string
-	"Em coleta": string
+	"Aguardando coleta": string
+	"Saiu para coleta": string
 	Finalizado: string
 	Recusado: string
 }
@@ -330,6 +332,7 @@ export interface IStatusStyle {
 	fontWeight: string
 	borderColor: string
 	borderWidth: string
+	width: string
 }
 
 export interface Fn {
