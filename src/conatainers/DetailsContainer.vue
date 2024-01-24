@@ -30,6 +30,7 @@
 		:collectionDetails="collectionDetails"
 		:sedimentsName="sedimentsName"
 		:measure="measures"
+		:pdfDownload="pdfDownload"
 		:showTextArea="showTextArea"
 		:validateDataToUpdateCollection="validateDataToUpdateCollection"
 		:selectMeasure="selectMeasure"
@@ -72,6 +73,9 @@ import { reactive } from "vue"
 import { socket } from "@/socket"
 import router from "@/router"
 import { detailsScreenEvent } from "@/socket/detailsScreenEvent"
+import { generateHtmlCollections } from "@/utils/generateHtmlCollections"
+import jsPDF from "jspdf"
+import html2canvas from "html2canvas"
 
 const {
 	parseCollections,
@@ -435,6 +439,32 @@ detailsScreenEvent(window.location.href, socket, {
 	notifyCollectionCancellation: () => notifyCollectionCancellation(),
 	notifyCollectionUpdate: () => notifyCollectionUpdate(),
 })
+
+const handleCanvas = async () => {
+	const collectionHtml = generateHtmlCollections(collectionDetails.value)
+
+	const canvas = await html2canvas(collectionHtml)
+
+	document.body.removeChild(collectionHtml)
+
+	const imgData = canvas.toDataURL("image/png")
+
+	const imgWidth = 510
+
+	const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+	return { imgData, imgWidth, imgHeight }
+}
+
+const pdfDownload = async () => {
+	const { imgData, imgWidth, imgHeight } = await handleCanvas()
+
+	const pdf = new jsPDF("p", "pt", "letter")
+
+	pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight)
+
+	pdf.save("pedido_coleta.pdf")
+}
 
 onMounted(async () => {
 	idCompany.value = idCompany_store

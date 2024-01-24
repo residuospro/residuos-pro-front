@@ -169,8 +169,15 @@
 									v-if="items.status == Status.AWAITING_COLLECTION"
 									:animationData="awating_collection"
 									:height="100"
-									:width="250"
+									:width="150"
 									class="-mb-10 -mt-6" />
+
+								<VueSpinnerBar
+									v-if="items.status == Status.WAITING_FOR_APPROVAL"
+									:color="setColorSpinnerBar(String(items.status))"
+									height="5"
+									width="40%"
+									class="mt-3" />
 
 								<p
 									:style="{
@@ -179,13 +186,6 @@
 									}">
 									{{ items.status }}
 								</p>
-
-								<VueSpinnerBar
-									v-if="items.status == Status.WAITING_FOR_APPROVAL"
-									:color="setColorSpinnerBar(String(items.status))"
-									height="5"
-									width="60%"
-									class="mb-4" />
 							</div>
 
 							<div v-else class="flex flex-col items-center">

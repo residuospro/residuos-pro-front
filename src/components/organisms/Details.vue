@@ -200,21 +200,29 @@
 			</div>
 
 			<div
-				class="flex justify-end space-x-5 mt-5 w-full mb-5"
+				class="flex justify-between w-full mt-5 mb-5"
 				v-if="showButtonsAndInputForManager()">
-				<Button buttonType="closeButton" @click="openDeleteModal">
-					Cancelar
+				<Button buttonType="closeButton" @click="pdfDownload">
+					Baixar pedido
 				</Button>
 
-				<Button
-					buttonType="confirmButton"
-					:disabled="validateDataToUpdateCollection()"
-					:class="
-						!validateDataToUpdateCollection() ? ' bg-v_green' : 'bg-v_dark_gray'
-					"
-					@click="openConfirmationModal(collection)">
-					<p class="text-white">Atualizar</p>
-				</Button>
+				<div class="flex justify-end space-x-5">
+					<Button buttonType="closeButton" @click="openDeleteModal">
+						Cancelar
+					</Button>
+
+					<Button
+						buttonType="confirmButton"
+						:disabled="validateDataToUpdateCollection()"
+						:class="
+							!validateDataToUpdateCollection()
+								? ' bg-v_green'
+								: 'bg-v_dark_gray'
+						"
+						@click="openConfirmationModal(collection)">
+						<p class="text-white">Atualizar</p>
+					</Button>
+				</div>
 			</div>
 
 			<div
@@ -293,6 +301,11 @@ const props = defineProps({
 	},
 
 	openDeleteModal: {
+		type: Function as PropType<() => void>,
+		required: true,
+	},
+
+	pdfDownload: {
 		type: Function as PropType<() => void>,
 		required: true,
 	},

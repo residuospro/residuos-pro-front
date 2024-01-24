@@ -90,11 +90,14 @@ const useProps = (): IUseProps => {
 				marginBottom: "0.5em",
 				borderRadius: "8px",
 				color: "",
-				textAlign: "center",
 				fontWeight: "bold",
 				borderColor: "",
 				borderWidth: "1px",
-				width: "60%",
+				display: "flex",
+				flexDirection: "columun",
+				justifyContent: "center",
+				padding: "0 2rem",
+				width: "80%",
 			},
 		]
 

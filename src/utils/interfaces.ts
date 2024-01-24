@@ -328,11 +328,14 @@ export interface IStatusStyle {
 	marginBottom: string
 	borderRadius: string
 	color: string
-	textAlign: string
 	fontWeight: string
 	borderColor: string
 	borderWidth: string
 	width: string
+	padding: string
+	display: string
+	flexDirection: string
+	justifyContent: string
 }
 
 export interface Fn {

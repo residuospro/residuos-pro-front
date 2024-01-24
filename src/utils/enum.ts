@@ -28,6 +28,7 @@ export enum Routes {
 	UPDATE_COLLECTION_STATUS = "/api/update_collection_status/",
 	UPDATE_COLLECTION = "/api/update_collection/",
 	DELETE_COLLECTION = "/api/delete_collection/",
+	GENERATE_COLLECTION_ORDER_DOWNLOAD = "/api/generate_collection_order_download",
 }
 
 export enum TypeErrors {
