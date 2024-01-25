@@ -19,6 +19,7 @@
 
 	<Collections
 		:itemsPerPage="itemsPerPage"
+		:page="page"
 		:departmentNames="departmentNames"
 		:headers="headers"
 		:actions="actions"
@@ -26,7 +27,7 @@
 		:collectionFilter="collectionFilter"
 		:status="status"
 		:sedimentsName="sedimentsName"
-		:showClearFilterButton="showClearFilterButton"
+		:showClearFilterButton="collection_store.showClearFilterButton"
 		:callCollectionsByPage="callCollectionsByPage"
 		:getCollectionByFilter="getCollectionByFilter"
 		:getColorByStatus="getColorByStatus"
@@ -34,7 +35,6 @@
 		:validatedStatus="validatedStatus"
 		:showDeleteModal="openDeleteModal"
 		:openCollectionsModal="openCollectionModal"
-		:collectionsFilterCleaning="collectionFilterCleaning"
 		:setStatusStyle="setStatusStyle" />
 
 	<div
@@ -81,7 +81,7 @@ import { socket } from "../socket"
 import { collectionScreenEvent } from "@/socket/collectionScreenEvent"
 import sound from "@/assets/sounds/r.mp3"
 import { audioStore } from "@/store/audioStore"
-
+import { stores } from "../store"
 const audio = audioStore()
 
 const {
@@ -96,6 +96,8 @@ const {
 
 const { sediment_store, idCompany_store, department_store, user_store } =
 	setStore()
+
+const { collection_store } = stores()
 
 const headers = [
 	"Nº Pedido",
@@ -118,13 +120,11 @@ let collectionFilter: ICollectionFilter[] = [
 const actions = ["Atualizar", "Deletar"]
 
 let collections = ref<Partial<ICollectionData>[]>([])
-let collectiontSelected = ref(false)
 let idCollections = ref<string | undefined>("")
 let showButton = ref(false)
 let showDeleteModal = ref(false)
 let showLoading = ref(false)
 let showCollectionModal = ref(false)
-let showClearFilterButton = ref(false)
 let page = ref(1)
 let itemsPerPage = ref(10)
 let totalPages = ref<number[]>([])
@@ -163,7 +163,11 @@ const setPagination = (currentPage: number) => {
 	if (page.value != currentPage) {
 		page.value = currentPage
 
-		getCollectionsByPage(currentPage, itemsPerPage.value)
+		if (collection_store.showClearFilterButton) {
+			getCollectionByFilter(collection_store.getCollectionDataForFilter)
+		} else {
+			getCollectionsByPage(currentPage, itemsPerPage.value)
+		}
 	}
 }
 
@@ -184,13 +188,10 @@ const closeCollectionModal = (event: Event) => {
 	showCollectionModal.value = false
 }
 
-const callCollectionsByPage = async (
-	currentPage: number = page.value,
-	value: number = itemsPerPage.value
-) => {
+const callCollectionsByPage = async () => {
 	showLoading.value = true
 
-	await getCollectionsByPage(currentPage, value)
+	await getCollectionsByPage(page.value, itemsPerPage.value)
 
 	showLoading.value = false
 }
@@ -204,16 +205,6 @@ const openCollectionModal = async (action: string, id?: string) => {
 	showCollectionModal.value = true
 	typeAction.value = action
 	idCollections.value = id
-}
-
-const collectionFilterCleaning = () => {
-	if (collectiontSelected.value) {
-		collections.value = []
-
-		callCollectionsByPage(page.value, itemsPerPage.value)
-
-		collectiontSelected.value = false
-	}
 }
 
 const setCollectionsFilter = () => {
@@ -308,6 +299,8 @@ const getCollectionsByPage = async (
 ) => {
 	showLoading.value = true
 
+	console.log("c", collection_store.getCollectionDataForFilter)
+
 	const res: any = await getCollectionByPageApi(
 		idCompany.value,
 		currentPage,
@@ -319,7 +312,7 @@ const getCollectionsByPage = async (
 		collections.value = parseCollections(res?.data.collections)
 		totalPages.value = setTotalPages(res?.data.totalPages)
 
-		showClearFilterButton.value = false
+		collection_store.setShowClearFilterButton(false)
 	} else if (res?.status == 404) {
 		collections.value = []
 		totalPages.value = []
@@ -333,13 +326,18 @@ const getCollectionsByPage = async (
 }
 
 const getCollectionByFilter = async (collectionFilter: IFilterSelected) => {
+	collection_store.setCollectionDataForFilter(collectionFilter)
+
+	console.log("cucva", collectionFilter)
+
 	showLoading.value = true
 
 	const res: any = await getCollectionByFilterApi(
 		collectionFilter,
 		idCompany.value,
 		String(page.value),
-		String(itemsPerPage.value)
+		String(itemsPerPage.value),
+		idDepartment.value
 	)
 
 	if (res?.status == 200) {
@@ -347,7 +345,7 @@ const getCollectionByFilter = async (collectionFilter: IFilterSelected) => {
 
 		totalPages.value = setTotalPages(res?.data.totalPages)
 
-		showClearFilterButton.value = true
+		collection_store.setShowClearFilterButton(true)
 	} else if (res?.status == 404) {
 		handleApiResponse(res?.data.message)
 		showNotificationModal.value = true
@@ -358,6 +356,8 @@ const getCollectionByFilter = async (collectionFilter: IFilterSelected) => {
 	}
 
 	showLoading.value = false
+
+	console.log("cdedde", collection_store.getCollectionDataForFilter)
 }
 
 collectionScreenEvent(socket, async () => {

@@ -61,13 +61,15 @@ export const getCollectionByFilterApi = async (
 	collectionFilter: IFilterSelected,
 	idCompany: string,
 	page: string,
-	itemsPerPage: string
+	itemsPerPage: string,
+	idDepartment?: string
 ) => {
 	try {
 		const data: Partial<IFilterCollection> = {
 			idCompany,
 			page,
 			itemsPerPage,
+			idDepartment,
 		}
 
 		for (const key in collectionFilter) {

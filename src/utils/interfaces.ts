@@ -131,6 +131,7 @@ export interface IFilterSelected {
 	department: null | string
 	status: null | string
 	date: string
+	idDepartment?: string
 }
 
 export interface IFilterCollection extends IFilterSelected {
@@ -342,4 +343,9 @@ export interface Fn {
 	getCollectionById: () => Promise<void>
 	notifyCollectionCancellation: () => void
 	notifyCollectionUpdate: () => void
+}
+
+export interface ICollectionState {
+	collectionDataForFilter: IFilterSelected
+	showClearFilterButton: boolean
 }

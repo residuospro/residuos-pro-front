@@ -10,6 +10,7 @@
 					<template v-slot:activator="{ props }">
 						<div class="flex space-x-8">
 							<button
+								v-if="page == 1"
 								v-bind="props"
 								class="bg-white flex"
 								@click="disableFilterInputs"
@@ -127,7 +128,7 @@
 
 				<tbody style="height: auto">
 					<tr
-						v-for="(items, index) in collections.slice(0, itemsPerPage)"
+						v-for="(items, index) in collections"
 						:key="items.id"
 						class="font-medium">
 						<td :style="setTableBackground(index)">
@@ -252,6 +253,7 @@ watch(closeMenu, () => {
 		filterSelected.value.sedimentName = null
 		filterSelected.value.status = null
 		filterSelected.value.date = ""
+		filterSelected.value.orderNumber = ""
 	}
 })
 
@@ -273,6 +275,8 @@ const { setTableBackground, handleAutoCompleteStyle } = userProps()
 
 defineProps({
 	itemsPerPage: { type: Number, required: true },
+
+	page: { type: Number, required: true },
 
 	showClearFilterButton: { type: Boolean, required: true },
 
@@ -302,11 +306,6 @@ defineProps({
 
 	openCollectionsModal: {
 		type: Function as PropType<(action: string, id?: string) => void>,
-		required: true,
-	},
-
-	collectionsFilterCleaning: {
-		type: Function as unknown as () => () => void,
 		required: true,
 	},
 
