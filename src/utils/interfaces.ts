@@ -134,6 +134,15 @@ export interface IFilterSelected {
 	idDepartment?: string
 }
 
+export interface IReports {
+	sedimentName: null | string
+	department: null | string
+	status: null | string
+	initialDate: string
+	finalDate: string
+	idDepartment?: string
+}
+
 export interface IFilterCollection extends IFilterSelected {
 	idCompany: string
 	page: string
@@ -309,6 +318,13 @@ export interface ICollectionData {
 	date?: string
 }
 
+export interface ISedimentsInfo {
+	total: number
+	measure: string
+	sedimentName: string
+	state?: string
+}
+
 export interface ICollectionApi extends ICollectionData {
 	_id: string
 	reasonRefusal?: string
@@ -348,4 +364,21 @@ export interface Fn {
 export interface ICollectionState {
 	collectionDataForFilter: IFilterSelected
 	showClearFilterButton: boolean
+}
+
+export interface IStates {
+	Sólido: string
+	Líquido: string
+	Gasoso: string
+}
+
+export interface IBgColor {
+	background?: string
+	color?: string
+}
+
+export interface ISedimentsColor {
+	Sólido: IBgColor
+	Líquido: IBgColor
+	Gasoso: IBgColor
 }

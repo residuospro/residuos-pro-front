@@ -90,6 +90,21 @@ export const getCollectionByFilterApi = async (
 	}
 }
 
+export const getAllCollectionsApi = async (
+	idCompany: string,
+	idDepartment?: string
+) => {
+	try {
+		const data = { idCompany, idDepartment }
+
+		const res = await useClient().post(Routes.GET_ALL_COLLECTIONS, data)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}
+
 export const updateCollectionStatusApi = async (
 	id: string,
 	status: string,

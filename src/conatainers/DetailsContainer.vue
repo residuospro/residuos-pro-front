@@ -30,6 +30,7 @@
 		:collectionDetails="collectionDetails"
 		:sedimentsName="sedimentsName"
 		:measure="measures"
+		:showDownlaodPdfButton="showDownlaodPdfButton"
 		:pdfDownload="pdfDownload"
 		:showTextArea="showTextArea"
 		:validateDataToUpdateCollection="validateDataToUpdateCollection"
@@ -211,12 +212,33 @@ const setTextButton = (status?: string) => {
 	}
 }
 
+const showDownlaodPdfButton = () => {
+	const status = [
+		String(Status.AWAITING_COLLECTION),
+		String(Status.WAITING_FOR_APPROVAL),
+		String(Status.WENT_OUT_FOR_COLLECTION),
+	]
+
+	if (
+		hasPermission([
+			AuthorizationUser.COLLABORATOR,
+			AuthorizationUser.MANAGER,
+		]) &&
+		status.includes(String(collectionDetails.value.status))
+	) {
+		return true
+	}
+
+	return false
+}
+
 const showButtonsForAdm = () => {
 	const status = [
 		String(Status.AWAITING_COLLECTION),
 		String(Status.WAITING_FOR_APPROVAL),
 		String(Status.WENT_OUT_FOR_COLLECTION),
 	]
+
 	if (
 		hasPermission([AuthorizationUser.ADMIN]) &&
 		status.includes(String(collectionDetails.value.status))
@@ -247,6 +269,7 @@ const setBackgroundInputDetails = () => {
 		String(Status.FINISHED),
 		String(Status.REFUSED),
 		String(Status.AWAITING_COLLECTION),
+		String(Status.WENT_OUT_FOR_COLLECTION),
 	]
 
 	if (
@@ -265,6 +288,7 @@ const setBackgroundTextArea = () => {
 		String(Status.FINISHED),
 		String(Status.REFUSED),
 		String(Status.AWAITING_COLLECTION),
+		String(Status.WENT_OUT_FOR_COLLECTION),
 	]
 
 	if (
@@ -283,6 +307,7 @@ const disabledInput = () => {
 		String(Status.FINISHED),
 		String(Status.REFUSED),
 		String(Status.AWAITING_COLLECTION),
+		String(Status.WENT_OUT_FOR_COLLECTION),
 	]
 
 	if (hasPermission([AuthorizationUser.ADMIN])) {

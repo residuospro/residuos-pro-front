@@ -21,7 +21,7 @@
 								</p>
 								<v-icon
 									icon="mdi-filter-outline "
-									class="text-v_dark_gray underline underline-offset-[10px]" />
+									class="text-v_dark_gray underline underline-offset-[11px]" />
 							</button>
 
 							<Button
@@ -228,7 +228,7 @@ import {
 	IFilterSelected,
 } from "@/utils/interfaces"
 import { hasPermission } from "@/utils/permissions"
-import { VueSpinnerBar, VueSpinnerDots } from "vue3-spinners"
+import { VueSpinnerBar } from "vue3-spinners"
 import Input from "@/components/atoms/Input.vue"
 import { Vue3Lottie } from "vue3-lottie"
 import collect from "../../assets/collect.json"

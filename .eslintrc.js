@@ -43,6 +43,7 @@ module.exports = {
 					"Sediments",
 					"Wrapper",
 					"Details",
+					"Reports",
 				],
 			},
 		],

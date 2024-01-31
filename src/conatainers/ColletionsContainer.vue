@@ -125,6 +125,7 @@ let showButton = ref(false)
 let showDeleteModal = ref(false)
 let showLoading = ref(false)
 let showCollectionModal = ref(false)
+let showNotificationModal = ref(false)
 let page = ref(1)
 let itemsPerPage = ref(10)
 let totalPages = ref<number[]>([])
@@ -136,7 +137,7 @@ let idCompany = ref("")
 let idDepartment = ref<string | undefined>("")
 let title = ref("")
 let subTitle = ref("")
-let showNotificationModal = ref(false)
+
 let status = ref([
 	Status.WAITING_FOR_APPROVAL,
 	Status.AWAITING_COLLECTION,
@@ -175,7 +176,11 @@ const setItemsPerPage = (value: number) => {
 	if (itemsPerPage.value != value) {
 		itemsPerPage.value = value
 
-		getCollectionsByPage(page.value, value)
+		if (collection_store.showClearFilterButton) {
+			getCollectionByFilter(collection_store.getCollectionDataForFilter)
+		} else {
+			getCollectionsByPage(page.value, value)
+		}
 	}
 }
 
@@ -217,7 +222,6 @@ const changeVariableState = () => {
 	showNotificationModal.value = true
 	showCollectionModal.value = false
 	showButton.value = false
-	//showLoading.value = false
 }
 
 const handleApiResponse = (message: IMessage) => {
@@ -225,12 +229,8 @@ const handleApiResponse = (message: IMessage) => {
 	subTitle.value = message.subTitle
 }
 
-const selectSedimentId = (sedimentName: string) => {
-	if (sedimentName) {
-		const sediments = sedimentsData.value.filter((s) => (s.name = sedimentName))
-
-		sediment.value = sediments[0]
-	}
+const selectSedimentId = (n: string) => {
+	sediment.value = sedimentsData.value.find((s) => s.name == n)!
 }
 
 const validateDataToCreateCollection = (collection: ICollectionForm) => {
@@ -299,8 +299,6 @@ const getCollectionsByPage = async (
 ) => {
 	showLoading.value = true
 
-	console.log("c", collection_store.getCollectionDataForFilter)
-
 	const res: any = await getCollectionByPageApi(
 		idCompany.value,
 		currentPage,
@@ -328,8 +326,6 @@ const getCollectionsByPage = async (
 const getCollectionByFilter = async (collectionFilter: IFilterSelected) => {
 	collection_store.setCollectionDataForFilter(collectionFilter)
 
-	console.log("cucva", collectionFilter)
-
 	showLoading.value = true
 
 	const res: any = await getCollectionByFilterApi(
@@ -356,8 +352,6 @@ const getCollectionByFilter = async (collectionFilter: IFilterSelected) => {
 	}
 
 	showLoading.value = false
-
-	console.log("cdedde", collection_store.getCollectionDataForFilter)
 }
 
 collectionScreenEvent(socket, async () => {

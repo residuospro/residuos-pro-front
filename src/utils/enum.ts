@@ -29,6 +29,7 @@ export enum Routes {
 	UPDATE_COLLECTION = "/api/update_collection/",
 	DELETE_COLLECTION = "/api/delete_collection/",
 	GENERATE_COLLECTION_ORDER_DOWNLOAD = "/api/generate_collection_order_download",
+	GET_ALL_COLLECTIONS = "/api/all_collections",
 }
 
 export enum TypeErrors {

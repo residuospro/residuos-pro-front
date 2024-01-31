@@ -199,14 +199,17 @@
 				</div>
 			</div>
 
-			<div
-				class="flex justify-between w-full mt-5 mb-5"
-				v-if="showButtonsAndInputForManager()">
-				<Button buttonType="closeButton" @click="pdfDownload">
+			<div class="flex justify-between w-full mt-5 mb-5">
+				<Button
+					buttonType="closeButton"
+					@click="pdfDownload"
+					v-if="showDownlaodPdfButton()">
 					Baixar pedido
 				</Button>
 
-				<div class="flex justify-end space-x-5">
+				<div
+					class="flex justify-end space-x-5"
+					v-if="showButtonsAndInputForManager()">
 					<Button buttonType="closeButton" @click="openDeleteModal">
 						Cancelar
 					</Button>
@@ -250,13 +253,8 @@ import { useHead } from "@vueuse/head"
 import Input from "@/components/atoms/Input.vue"
 import TextArea from "../atoms/TextArea.vue"
 import Button from "../atoms/Button.vue"
-import { PropType, ref, watch, watchEffect } from "vue"
+import { PropType, ref, watchEffect } from "vue"
 import { ICollectionData } from "@/utils/interfaces"
-
-import userProps from "@/context/useProps"
-import { Status } from "@/utils/enum"
-
-const { handleAutoCompleteStyle } = userProps()
 
 useHead({ title: "Resíduos Pro - Detalhes da coleta" })
 
@@ -332,6 +330,11 @@ const props = defineProps({
 
 	setTextButton: {
 		type: Function as PropType<(status?: string) => string>,
+		required: true,
+	},
+
+	showDownlaodPdfButton: {
+		type: Function as PropType<() => boolean>,
 		required: true,
 	},
 

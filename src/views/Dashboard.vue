@@ -1,5 +1,7 @@
 <template>
-	<h1>Dashboard</h1>
+	<div class="w-full ml-8 mt-2">
+		<slot></slot>
+	</div>
 </template>
 
 <script setup lang="ts">

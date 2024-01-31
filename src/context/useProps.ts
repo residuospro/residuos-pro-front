@@ -161,7 +161,9 @@ const useProps = (): IUseProps => {
 		return parsedData
 	}
 
-	const parseCollections = (data: any[]): Array<Partial<ICollectionData>> => {
+	const parseCollections = (
+		data: ICollectionApi[]
+	): Array<Partial<ICollectionData>> => {
 		const parsedData = data.map((c: ICollectionApi) => {
 			return {
 				id: c._id,
