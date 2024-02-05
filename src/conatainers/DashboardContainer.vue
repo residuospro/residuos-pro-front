@@ -223,8 +223,6 @@ const calculateMonthlyTotals = (data: ICollectionApi[]): MonthTotals => {
 		}
 	}
 
-	console.log("anual", monthTotals)
-
 	return monthTotals
 }
 
@@ -258,7 +256,7 @@ const calculateTotalsDay = (data: ICollectionApi[]): DayStateTotal[] => {
 			}
 		}
 	}
-	console.log("dayyy", Object.values(dayStateTotals))
+
 	return Object.values(dayStateTotals)
 }
 

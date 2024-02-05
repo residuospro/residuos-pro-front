@@ -90,7 +90,6 @@ const createChart = () => {
 
 onMounted(() => {
 	setTimeout(() => {
-		console.log("mmmms", props.annualSediments)
 		createChart()
 	}, 1000)
 })
