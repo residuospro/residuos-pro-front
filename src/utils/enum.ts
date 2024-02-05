@@ -54,6 +54,11 @@ export enum Service {
 	RESIDUOSPRO = "Residuos-Pro",
 }
 
+export enum RangeType {
+	MONTH = "month",
+	YEAR = "year",
+}
+
 export enum Messages {
 	TITLE_REGISTER = "Cadastrado",
 	SUBTITLE_REGISTER = "Cadastro realizado com sucesso",

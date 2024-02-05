@@ -2,8 +2,9 @@ import { Socket } from "socket.io-client"
 import useProps from "@/context/useProps"
 import { Fn, ICollectionEvent } from "@/utils/interfaces"
 import { SocketEvent } from "@/utils/enum"
+import { stores } from "@/store"
 
-const { setStore, handleUrl } = useProps()
+const { handleUrl } = useProps()
 
 export const detailsScreenEvent = (url: string, socket: Socket, fn: Fn) => {
 	socket.on(
@@ -11,7 +12,8 @@ export const detailsScreenEvent = (url: string, socket: Socket, fn: Fn) => {
 		async (data: ICollectionEvent) => {
 			const { idCompany, collection } = data.data
 
-			const { idCompany_store } = setStore()
+			const { company_store } = stores()
+			const idCompany_store = company_store.getIdCompany
 
 			const collectionId = handleUrl(url)
 
@@ -26,7 +28,8 @@ export const detailsScreenEvent = (url: string, socket: Socket, fn: Fn) => {
 		async (data: ICollectionEvent) => {
 			const { idCompany, collection } = data.data
 
-			const { idCompany_store } = setStore()
+			const { company_store } = stores()
+			const idCompany_store = company_store.getIdCompany
 
 			const collectionId = handleUrl(url)
 
@@ -39,7 +42,8 @@ export const detailsScreenEvent = (url: string, socket: Socket, fn: Fn) => {
 	socket.on(SocketEvent.UPDATE_COLLECTION, async (data: ICollectionEvent) => {
 		const { idCompany, collection } = data.data
 
-		const { idCompany_store } = setStore()
+		const { company_store } = stores()
+		const idCompany_store = company_store.getIdCompany
 
 		const collectionId = handleUrl(url)
 

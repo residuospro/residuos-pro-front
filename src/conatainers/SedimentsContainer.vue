@@ -70,10 +70,11 @@ import {
 	updateSedimentsApi,
 } from "@/api/sediments"
 import useProps from "@/context/useProps"
+import { stores } from "@/store"
 
-const { setTotalPages, parseSediments, setStore } = useProps()
+const { setTotalPages, parseSediments } = useProps()
 
-const { sediment_store, department_store, idCompany_store } = setStore()
+const { sediment_store, department_store, company_store } = stores()
 
 const headers = ["Nome", "Classificação", "Risco Associado", "Estado"]
 
@@ -110,6 +111,7 @@ let totalPages = ref<number[]>([])
 let sedimentId = ref()
 let idDepartment = ref<string | undefined>("")
 let resetComputed = ref(0)
+let idCompany = ref("")
 
 const callGetSedimentsByPage = async (
 	currentPage: number,
@@ -263,7 +265,7 @@ const createOrUpdateSediments = (sediment: ISediments, action: string) => {
 }
 
 const createSediments = async (sediment: ISediments) => {
-	sediment.idCompany = idCompany_store
+	sediment.idCompany = idCompany.value
 	sediment.idDepartment = idDepartment.value
 	sediment.totalItems = String(sediment_store.getSediments.length)
 
@@ -283,7 +285,7 @@ const createSediments = async (sediment: ISediments) => {
 }
 
 const updateSediments = async (sediment: ISediments) => {
-	sediment.idCompany = idCompany_store
+	sediment.idCompany = idCompany.value
 	sediment.idDepartment = idDepartment.value
 
 	const res: any = await updateSedimentsApi(sediment, sedimentId.value)
@@ -304,7 +306,7 @@ const deleteSediments = async () => {
 
 	const res: any = await deleteSedimentApi(
 		sedimentId.value,
-		idCompany_store,
+		idCompany.value,
 		idDepartment.value
 	)
 
@@ -324,7 +326,7 @@ const getSedimentsByPage = async (
 	const res: any = await getSedimentsByPageApi(
 		currentPage,
 		itemsPerPage,
-		idCompany_store,
+		idCompany.value,
 		idDepartment.value
 	)
 
@@ -358,11 +360,13 @@ const parseUpdateSediments = (data: any[]) => {
 }
 
 const getId = () => {
-	idCompany_store
+	idCompany.value
 	idDepartment.value = department_store.getIdDepartment
 }
 
 onMounted(async () => {
+	idCompany.value = company_store.getIdCompany
+
 	getId()
 
 	callGetSedimentsByPage(page.value, itemsPerPage.value)

@@ -18,14 +18,6 @@
 							chips
 							label="Resíduos:"></v-autocomplete>
 
-						<v-autocomplete
-							:style="handleAutoCompleteStyle(collection.measure)"
-							clearable
-							:items="measure"
-							v-model="collection.measure"
-							chips
-							label="Unidade de medida:"></v-autocomplete>
-
 						<Input
 							input="input"
 							type="number"
@@ -83,7 +75,6 @@ const { handleAutoCompleteStyle } = userProps()
 
 const collection: ICollectionForm = reactive({
 	sediments: undefined,
-	measure: undefined,
 	packaging: "",
 	amount: 0,
 	observation: "",

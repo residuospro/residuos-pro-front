@@ -4,7 +4,7 @@
 	<Notification
 		:title="title"
 		:subTitle="subTitle"
-		@closeModal="closeModal"
+		@closeModal="showNotificationModal = false"
 		v-if="showNotificationModal" />
 
 	<CollectionsModal
@@ -63,9 +63,12 @@ import {
 	ICollectionData,
 	ICollectionFilter,
 	ICollectionForm,
+	ICollectionStatus,
 	IFilterSelected,
 	IMessage,
 	ISedimentsApi,
+	IStates,
+	IStatusStyle,
 	IUserInfo,
 } from "@/utils/interfaces"
 import { hasPermission } from "@/utils/permissions"
@@ -81,32 +84,28 @@ import { socket } from "../socket"
 import { collectionScreenEvent } from "@/socket/collectionScreenEvent"
 import sound from "@/assets/sounds/r.mp3"
 import { audioStore } from "@/store/audioStore"
-import { stores } from "../store"
+import { stores } from "@/store"
+
 const audio = audioStore()
 
+const { parseCollections, setTotalPages } = useProps()
+
 const {
-	setStore,
-	parseCollections,
-	setTotalPages,
-	getColorByStatus,
-	setStatusStyle,
-	validatedStatus,
-	setColorSpinnerBar,
-} = useProps()
-
-const { sediment_store, idCompany_store, department_store, user_store } =
-	setStore()
-
-const { collection_store } = stores()
+	collection_store,
+	sediment_store,
+	company_store,
+	department_store,
+	user_store,
+} = stores()
 
 const headers = [
 	"Nº Pedido",
+	"Status",
 	"Resíduo",
 	"Acondicionamento",
 	"Quantidade",
 	"Departamento",
 	"Data",
-	"Status",
 ]
 
 const measures = ["kg", "L", "m³"]
@@ -160,6 +159,77 @@ let userInfo = ref<IUserInfo>({
 	department: "",
 })
 
+const getBackgroundColorByStatus = (status: string) => {
+	const backgroundColorByStatus: ICollectionStatus = {
+		"Aguardando aprovação": "rgba(255, 168, 0, 0.2)",
+		"Aguardando coleta": "rgba(255, 215, 0, 0.2)",
+		"Saiu para coleta": "rgba(0, 255, 0, 0.5)",
+		Finalizado: "rgba(0, 128, 0, 0.2)",
+		Recusado: "rgba(255, 0, 0, 0.2)",
+	}
+
+	return backgroundColorByStatus[status as keyof ICollectionStatus]
+}
+
+const getColorByStatus = (status: string) => {
+	const colorByStatus: ICollectionStatus = {
+		"Aguardando aprovação": "#FFa100",
+		"Aguardando coleta": "#FFC300",
+		"Saiu para coleta": "#00FF00",
+		Finalizado: "#008000",
+		Recusado: "#FF0000",
+	}
+
+	return colorByStatus[status as keyof ICollectionStatus]
+}
+
+const setStatusStyle = (status: string): any => {
+	const style: IStatusStyle[] = [
+		{
+			background: getBackgroundColorByStatus(status),
+			marginTop: "0.5em",
+			marginBottom: "0.5em",
+			borderRadius: "8px",
+			color: getColorByStatus(status),
+			fontWeight: "bold",
+			borderColor: getColorByStatus(status),
+			borderWidth: "1px",
+			display: "flex",
+			flexDirection: "columun",
+			justifyContent: "center",
+			padding: "0 2rem",
+			width: "70%",
+			height: "2rem",
+			alignItems: "center",
+		},
+	]
+
+	return style[0]
+}
+
+const validatedStatus = (currentStatus: string) => {
+	const status = [
+		String(Status.WAITING_FOR_APPROVAL),
+		String(Status.AWAITING_COLLECTION),
+		String(Status.WENT_OUT_FOR_COLLECTION),
+	]
+	if (status.includes(currentStatus)) {
+		return true
+	}
+
+	return false
+}
+
+const setColorSpinnerBar = (status: string): string | undefined => {
+	if (status == Status.WAITING_FOR_APPROVAL) {
+		return "#FFa100"
+	} else if (status == Status.AWAITING_COLLECTION) {
+		return "#FFC300"
+	} else if (status == Status.WENT_OUT_FOR_COLLECTION) {
+		return "#00FF00"
+	}
+}
+
 const setPagination = (currentPage: number) => {
 	if (page.value != currentPage) {
 		page.value = currentPage
@@ -182,10 +252,6 @@ const setItemsPerPage = (value: number) => {
 			getCollectionsByPage(page.value, value)
 		}
 	}
-}
-
-const closeModal = () => {
-	showNotificationModal.value = false
 }
 
 const closeCollectionModal = (event: Event) => {
@@ -245,7 +311,7 @@ const validateDataToCreateCollection = (collection: ICollectionForm) => {
 		}
 	}
 
-	if (validate.length >= 4) showButton.value = true
+	if (validate.length >= 3) showButton.value = true
 	else showButton.value = false
 }
 
@@ -285,12 +351,22 @@ const setCollection = (
 		risk: sediment.value.risk,
 		state: sediment.value.state,
 		amount: collectionData.amount!,
-		measure: collectionData.measure!,
+		measure: setMeasure(sediment.value.state!),
 		packaging: collectionData.packaging!,
 		observation: collectionData.observation,
 	}
 
 	return collection
+}
+
+const setMeasure = (state: string) => {
+	const states: IStates = {
+		Sólido: "Kg",
+		Gasoso: "m³",
+		Líquido: "L",
+	}
+
+	return states[state as keyof IStates]
 }
 
 const getCollectionsByPage = async (
@@ -361,7 +437,7 @@ collectionScreenEvent(socket, async () => {
 onMounted(async () => {
 	audio.initializeAudio(sound)
 
-	idCompany.value = idCompany_store
+	idCompany.value = company_store.getIdCompany
 	userInfo.value = user_store.getUser
 	idDepartment.value = department_store.getIdDepartment
 

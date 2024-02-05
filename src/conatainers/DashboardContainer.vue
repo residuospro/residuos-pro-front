@@ -12,16 +12,30 @@
 			:departmentNames="departmentNames"
 			:sedimentsName="sedimentsName" />
 
-		<SedimetsCard
-			:sedimentsInfo="sedimentsInfo"
-			:validadeState="validadeState"
-			:setBackgroundColor="setBackgroundColor"
-			:setTextColor="setTextColor" />
+		<Wrapper type="chart">
+			<Chart :months="months" :annualSediments="annualSediments" />
+
+			<DailyEntries
+				:dailySediment="dailySediment"
+				:setTextColor="setTextColor" />
+		</Wrapper>
+
+		<WrapperSendimentCard :sedimentsInfo="sedimentsInfo">
+			<SedimetsCard
+				:sedimentsInfo="sedimentsInfo"
+				:validadeState="validadeState"
+				:setBackgroundColor="setBackgroundColor"
+				:setTextColor="setTextColor" />
+		</WrapperSendimentCard>
 	</Dashboard>
 </template>
 
 <script setup lang="ts">
 import Loading from "@/components/molecules/Loading.vue"
+import DailyEntries from "@/components/molecules/DailyEntries.vue"
+import Chart from "@/components/molecules/Chart.vue"
+import Wrapper from "@/components/atoms/Wrapper.vue"
+import WrapperSendimentCard from "@/components/molecules/WrapperSendimentCard.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import SedimetsCard from "@/components/organisms/SedimentsCard.vue"
 import Dashboard from "@/views/Dashboard.vue"
@@ -31,13 +45,15 @@ import { onMounted } from "vue"
 import { stores } from "@/store"
 import { getAllCollectionsApi } from "@/api/collection"
 import {
+	DayStateTotal,
 	ICollectionApi,
 	IMessage,
 	ISedimentsColor,
 	ISedimentsInfo,
 	IStates,
+	MonthTotals,
 } from "@/utils/interfaces"
-import gas from "@/assets/cilindro.json"
+import gas from "@/assets/gas.json"
 import liquid from "@/assets/liquid.json"
 import solid from "@/assets/solid.json"
 
@@ -52,6 +68,9 @@ let title = ref("")
 let subTitle = ref("")
 let showNotificationModal = ref(false)
 let sedimentsInfo = ref<ISedimentsInfo[]>([])
+let annualSediments = ref<MonthTotals>({ solid: [], liquid: [], gaseous: [] })
+let dailySediment = ref<DayStateTotal[]>([])
+let months = ref<string[]>([])
 
 const handleApiResponse = (message: IMessage) => {
 	title.value = message.title
@@ -70,9 +89,9 @@ const validadeState = (state?: string) => {
 
 const setBackgroundColor = (state?: string) => {
 	const states: ISedimentsColor = {
-		Sólido: { background: "rgba(255, 168, 0, 0.2)" },
-		Líquido: { background: "rgba(46, 124, 221, 0.1)" },
-		Gasoso: { background: "rgba(74, 217, 137, 0.1)" },
+		Sólido: { background: "rgba(255, 206, 86, 0.2)" },
+		Líquido: { background: "rgba(54, 162, 235, 0.2)" },
+		Gasoso: { background: " rgba(255, 0, 0, 0.1)" },
 	}
 
 	return states[state as keyof ISedimentsColor]
@@ -80,23 +99,60 @@ const setBackgroundColor = (state?: string) => {
 
 const setTextColor = (state?: string) => {
 	const states: ISedimentsColor = {
-		Sólido: { color: "#FFa100" },
-		Líquido: { color: "#2E7CDD" },
-		Gasoso: { color: "#36802d" },
+		Sólido: { color: "rgba(255, 159, 64, 1)" },
+		Líquido: { color: "rgba(54, 162, 235, 1)" },
+		Gasoso: { color: "#ff0000" },
 	}
 
 	return states[state as keyof ISedimentsColor]
 }
 
+function getMonthAbbreviations(collections: ICollectionApi[]) {
+	const monthNames: string[] = [
+		"Jan",
+		"Fev",
+		"Mar",
+		"Abr",
+		"Mai",
+		"Jun",
+		"Jul",
+		"Ago",
+		"Set",
+		"Out",
+		"Nov",
+		"Dez",
+	]
+
+	const uniqueMonths: Set<number> = new Set()
+
+	for (const collection of collections) {
+		const month = new Date(collection.createdAt).getMonth()
+		uniqueMonths.add(month)
+	}
+
+	uniqueMonths.forEach((month) => {
+		months.value.push(monthNames[month])
+	})
+}
+
 const getAllCollections = async () => {
 	showLoading.value = true
+
 	const res: any = await getAllCollectionsApi(
 		idCompany.value,
 		idDepartment.value
 	)
 
 	if (res?.status == 200) {
-		sedimentsInfo.value = sumItemsBySedimentName(res?.data)
+		sedimentsInfo.value = sumItemsBySedimentName(res?.data.collectionsThisMonth)
+
+		annualSediments.value = calculateMonthlyTotals(
+			res?.data.collectionsThisYear
+		)
+
+		getMonthAbbreviations(res?.data.collectionsThisYear)
+
+		dailySediment.value = calculateTotalsDay(res?.data.collectionsToday)
 	} else if (res?.status == 404) {
 		handleApiResponse(res?.data.message)
 		showNotificationModal.value = true
@@ -137,6 +193,73 @@ const sumItemsBySedimentName = (
 		measure: groupedItems[sedimentName].measure,
 		state: groupedItems[sedimentName].state,
 	}))
+}
+
+const calculateMonthlyTotals = (data: ICollectionApi[]): MonthTotals => {
+	const monthTotals: MonthTotals = {
+		solid: Array(12).fill(0),
+		liquid: Array(12).fill(0),
+		gaseous: Array(12).fill(0),
+	}
+
+	const stateMapping: { [key: string]: keyof MonthTotals } = {
+		Sólido: "solid",
+		Líquido: "liquid",
+		Gasoso: "gaseous",
+	}
+
+	for (const item of data) {
+		const createdAtDate = new Date(item.createdAt)
+		const month = createdAtDate.getMonth()
+
+		if (item.state && month >= 0 && month < 12) {
+			const amount = item.amount
+
+			const stateKey = stateMapping[item.state]
+
+			if (stateKey) {
+				monthTotals[stateKey][month] += amount
+			}
+		}
+	}
+
+	console.log("anual", monthTotals)
+
+	return monthTotals
+}
+
+const calculateTotalsDay = (data: ICollectionApi[]): DayStateTotal[] => {
+	const dayStateTotals: { [key: string]: DayStateTotal } = {
+		Sólido: { name: "Sólido", total: 0, lastEntry: 0, measure: "" },
+		Líquido: { name: "Líquido", total: 0, lastEntry: 0, measure: "" },
+		Gasoso: { name: "Gasoso", total: 0, lastEntry: 0, measure: "" },
+	}
+
+	const stateMapping: { [key: string]: keyof typeof dayStateTotals } = {
+		Sólido: "Sólido",
+		Líquido: "Líquido",
+		Gasoso: "Gasoso",
+	}
+
+	for (const item of data) {
+		const createdAtDate = new Date(item.createdAt)
+		const day = createdAtDate.getDay()
+
+		if (item.state && day >= 0 && day <= 31) {
+			const amount = item.amount
+			const measure = item.measure
+
+			const stateKey = stateMapping[item.state]
+
+			if (stateKey) {
+				dayStateTotals[stateKey].total += amount
+				dayStateTotals[stateKey].lastEntry = amount
+				dayStateTotals[stateKey].measure = measure
+			}
+		}
+	}
+	console.log("dayyy", Object.values(dayStateTotals))
+	return Object.values(dayStateTotals)
 }
 
 onMounted(async () => {

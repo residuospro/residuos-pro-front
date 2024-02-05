@@ -10,7 +10,6 @@ import {
 	useAuthClient,
 	useClient,
 } from "./clients/AxiosClient"
-import { onMounted } from "vue"
 
 const token = isAuthenticated()
 

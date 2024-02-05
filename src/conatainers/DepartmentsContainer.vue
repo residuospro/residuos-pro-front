@@ -55,7 +55,7 @@ import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
 import ActionModal from "@/components/molecules/ActionModal.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import DepartmentModal from "@/components/organisms/DepartmentCreateOrUpdateModal.vue"
-import { computed, ref } from "vue"
+import { computed, ref, watch, onMounted } from "vue"
 import { IDepartment, IMessage } from "@/utils/interfaces"
 import {
 	createDepartment,
@@ -65,18 +65,15 @@ import {
 } from "@/api/department"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import { Actions } from "@/utils/enum"
-import { onMounted } from "vue"
 import { companyStore } from "@/store/companyStore"
 import { departmentStore } from "@/store/departmentStore"
 import { getPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
-import { watch } from "vue"
+import { stores } from "@/store"
 
 const { parseDepartment, setTotalPages } = useProps()
 
-const idCompanyStore = companyStore()
-
-const department_store = departmentStore()
+const { company_store, department_store } = stores()
 
 let showDeleteModal = ref(false)
 let showLoading = ref(false)
@@ -348,7 +345,7 @@ const filterDepartment = async (department: string) => {
 }
 
 const getInfos = async () => {
-	idCompany.value = idCompanyStore.getIdCompany
+	idCompany.value = company_store.getIdCompany
 
 	callGetDepartmentsByPage(page.value, itemsPerPage.value)
 }

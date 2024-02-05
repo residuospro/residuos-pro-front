@@ -12,11 +12,9 @@ import { watchEffect, ref } from "vue"
 import { removeItems } from "@/utils/permissions"
 import { AuthorizationUser } from "@/utils/enum"
 import router from "@/router"
-import useProps from "@/context/useProps"
+import { stores } from "@/store"
 
-const { setStore } = useProps()
-
-const { department_store, user_store, sediment_store } = setStore()
+const { department_store, user_store, sediment_store } = stores()
 
 const menuIcons = [
 	{

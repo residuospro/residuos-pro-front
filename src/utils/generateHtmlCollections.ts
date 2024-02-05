@@ -3,8 +3,6 @@ import { ICollectionData } from "./interfaces"
 export const generateHtmlCollections = (
 	collection: Partial<ICollectionData>
 ): HTMLDivElement => {
-	console.log("cooo", collection)
-
 	const html = `
 <html lang="pt-BR">
   <head>

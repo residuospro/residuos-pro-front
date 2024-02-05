@@ -2,16 +2,16 @@ import { Socket } from "socket.io-client"
 import useProps from "@/context/useProps"
 import { SocketEvent } from "../utils/enum"
 import { ISedimentEvent } from "@/utils/interfaces"
-import { notify } from "@kyvg/vue3-notification"
-import { audioStore } from "@/store/audioStore"
+import { stores } from "@/store"
 
-const { setTotalPages, setStore, parseSediments, parseUpdateSediment } =
-	useProps()
+const { setTotalPages, parseSediments, parseUpdateSediment } = useProps()
 
 export const sedimentEvent = (socket: Socket) => {
 	socket.on(SocketEvent.SEDIMENT_CREATED, (data: ISedimentEvent) => {
-		const { idCompany_store, sediments, sediment_store, department_store } =
-			setStore()
+		const { company_store, sediment_store, department_store } = stores()
+
+		const sediments = sediment_store.getSediments
+		const idCompany_store = company_store.getIdCompany
 
 		const { idCompany, idDepartment, sediment, totalPages } = data.data
 
@@ -30,8 +30,10 @@ export const sedimentEvent = (socket: Socket) => {
 	})
 
 	socket.on(SocketEvent.UPDATED_SEDIMENT, (data: ISedimentEvent) => {
-		const { idCompany_store, sediments, sediment_store, department_store } =
-			setStore()
+		const { company_store, sediment_store, department_store } = stores()
+
+		const sediments = sediment_store.getSediments
+		const idCompany_store = company_store.getIdCompany
 
 		const { idCompany, idDepartment, sediment } = data.data
 
@@ -48,8 +50,10 @@ export const sedimentEvent = (socket: Socket) => {
 	})
 
 	socket.on(SocketEvent.DELETED_SEDIMENT, (data: ISedimentEvent) => {
-		const { idCompany_store, sediments, sediment_store, department_store } =
-			setStore()
+		const { company_store, sediment_store, department_store } = stores()
+
+		const sediments = sediment_store.getSediments
+		const idCompany_store = company_store.getIdCompany
 
 		const { idCompany, idDepartment, sediment } = data.data
 

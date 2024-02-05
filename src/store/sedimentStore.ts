@@ -53,13 +53,10 @@ export const sedimentStore = defineStore("sedimentStore", {
 
 			if (res?.status == 200) {
 				sediments = res?.data.sediments as ISedimentsApi[]
-				console.log("sss0", sediments)
 
 				sediments_name = sediments.map((s: any) => s.name) as string[]
 
 				sediment_data = sediments
-
-				console.log("sdfg", sediment_data)
 			}
 
 			return { sediments_name, sediment_data }

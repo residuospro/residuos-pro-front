@@ -17,13 +17,7 @@ export interface IUseProps {
 	parseUpdateUser: (data: IUserApi[], users: IUsers[]) => IUsers[]
 	parseUpdateSediment: (data: any, sediments: ISediments[]) => ISediments[]
 	parseUpdateUserAfterDepartment: (data: IUsers[], users: IUsers[]) => IUsers[]
-	setStore: () => ISetStore
 	parseCollections: (data: any[]) => Array<Partial<ICollectionData>>
-	getBackgroundColorByStatus: (status: string) => string
-	getColorByStatus: (status: string) => string
-	setStatusStyle: (status: string) => any
-	validatedStatus: (status: string) => boolean
-	setColorSpinnerBar: (status: string) => string | undefined
 	handleUrl: (url: string) => string
 }
 
@@ -188,16 +182,6 @@ interface IPropsUserStore {
 	resetUserState(): void
 }
 
-export interface ISetStore {
-	idCompany_store: string
-	departments: IDepartment[]
-	department_store: IPropsDepartmentStore
-	sediments: ISediments[]
-	sediment_store: IPropsSedimentStore
-	users: IUsers[]
-	user_store: IPropsUserStore
-}
-
 interface userInfo {
 	idCompany: string
 	idDepartment: string
@@ -323,6 +307,7 @@ export interface ISedimentsInfo {
 	measure: string
 	sedimentName: string
 	state?: string
+	month?: string
 }
 
 export interface ICollectionApi extends ICollectionData {
@@ -353,6 +338,8 @@ export interface IStatusStyle {
 	display: string
 	flexDirection: string
 	justifyContent: string
+	height: string
+	alignItems: string
 }
 
 export interface Fn {
@@ -381,4 +368,21 @@ export interface ISedimentsColor {
 	Sólido: IBgColor
 	Líquido: IBgColor
 	Gasoso: IBgColor
+}
+
+export interface MonthTotals {
+	solid: number[]
+	liquid: number[]
+	gaseous: number[]
+}
+
+export interface DayStateTotal {
+	name: string
+	total: number
+	lastEntry: number
+	measure: string
+}
+
+export interface IStateCondition {
+	[key: string]: number
 }

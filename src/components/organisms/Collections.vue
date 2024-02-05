@@ -136,26 +136,6 @@
 						</td>
 
 						<td :style="setTableBackground(index)">
-							{{ items.sedimentName }}
-						</td>
-
-						<td :style="setTableBackground(index)">
-							{{ items.packaging }}
-						</td>
-
-						<td :style="setTableBackground(index)">
-							{{ items.amount }}{{ items.measure }}
-						</td>
-
-						<td :style="setTableBackground(index)">
-							{{ items.department }}
-						</td>
-
-						<td :style="setTableBackground(index)">
-							{{ items.date?.split(",")[0] }}
-						</td>
-
-						<td :style="setTableBackground(index)">
 							<div
 								v-if="validatedStatus(items.status!)"
 								class="flex flex-col items-center">
@@ -194,6 +174,26 @@
 									{{ items.status }}
 								</div>
 							</div>
+						</td>
+
+						<td :style="setTableBackground(index)">
+							{{ items.sedimentName }}
+						</td>
+
+						<td :style="setTableBackground(index)">
+							{{ items.packaging }}
+						</td>
+
+						<td :style="setTableBackground(index)">
+							{{ items.amount }}{{ items.measure }}
+						</td>
+
+						<td :style="setTableBackground(index)">
+							{{ items.department }}
+						</td>
+
+						<td :style="setTableBackground(index)">
+							{{ items.date?.split(",")[0] }}
 						</td>
 
 						<td :style="setTableBackground(index)">

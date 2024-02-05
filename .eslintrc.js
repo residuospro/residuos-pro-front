@@ -44,6 +44,8 @@ module.exports = {
 					"Wrapper",
 					"Details",
 					"Reports",
+					"Chart",
+					"DailyEntries",
 				],
 			},
 		],

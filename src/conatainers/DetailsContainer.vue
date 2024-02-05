@@ -39,11 +39,7 @@
 		:selectSediment="selectSediment"
 		:disabledInput="disabledInput"
 		:openDeleteModal="openDeleteModal"
-		:getColorByStatus="getColorByStatus"
 		:openModalRefuse="openModalRefuse"
-		:setColorSpinnerBar="setColorSpinnerBar"
-		:validatedStatus="validatedStatus"
-		:setStatusStyle="setStatusStyle"
 		:setBackgroundInputDetails="setBackgroundInputDetails"
 		:setTextButton="setTextButton"
 		:showButtonsForAdm="showButtonsForAdm"
@@ -70,26 +66,17 @@ import {
 import Loading from "@/components/molecules/Loading.vue"
 import { AuthorizationUser, Status } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
-import { reactive } from "vue"
 import { socket } from "@/socket"
 import router from "@/router"
 import { detailsScreenEvent } from "@/socket/detailsScreenEvent"
 import { generateHtmlCollections } from "@/utils/generateHtmlCollections"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
+import { stores } from "@/store"
 
-const {
-	parseCollections,
-	setStore,
-	getColorByStatus,
-	setStatusStyle,
-	validatedStatus,
-	setColorSpinnerBar,
-	handleUrl,
-} = useProps()
+const { parseCollections, handleUrl } = useProps()
 
-const { idCompany_store, department_store, user_store, sediment_store } =
-	setStore()
+const { department_store, user_store, sediment_store, company_store } = stores()
 
 const measures = ["kg", "L", "m³"]
 
@@ -492,7 +479,7 @@ const pdfDownload = async () => {
 }
 
 onMounted(async () => {
-	idCompany.value = idCompany_store
+	idCompany.value = company_store.getIdCompany
 	idDepartment.value = department_store.getIdDepartment
 	userId.value = user_store.getUserId
 

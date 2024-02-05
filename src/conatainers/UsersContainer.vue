@@ -77,10 +77,11 @@ import { takeAllDepartments } from "@/api/department"
 import { createUser, takeAllUsers, updateUser, deleteUser } from "@/api/user"
 import { getPermission, hasPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
+import { stores } from "@/store"
 
-const { parseDepartment, setStore, setTotalPages, parseUser } = useProps()
+const { parseDepartment, setTotalPages, parseUser } = useProps()
 
-const { idCompany_store, department_store, user_store } = setStore()
+const { department_store, user_store, company_store } = stores()
 
 const headers = ["Nome", "Username", "Email", "Departamento", "Ramal"]
 
@@ -476,7 +477,7 @@ const loadsAllUsersAndTheirInfo = async () => {
 onMounted(() => {
 	permission.value = getPermission()
 
-	idCompany.value = idCompany_store
+	idCompany.value = company_store.getIdCompany
 
 	if (hasPermission([AuthorizationUser.MANAGER])) {
 		idDepartment.value = department_store.getIdDepartment

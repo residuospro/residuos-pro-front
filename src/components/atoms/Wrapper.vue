@@ -122,6 +122,16 @@ const wrapperClass = computed(() => {
 					glass-effect
 					rounded-lg
 				`,
+
+				chart: `
+					w-[94%] 
+					grid
+					grid-cols-[1fr_30%]
+					grid-rows-[100%]
+					gap-2
+					h-[18rem]
+					mb-5
+				`,
 			},
 		},
 	})({

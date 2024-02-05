@@ -1,17 +1,17 @@
 import { Socket } from "socket.io-client"
-import useProps from "@/context/useProps"
 import { AuthorizationUser, SocketEvent } from "../utils/enum"
 import { hasPermission } from "@/utils/permissions"
 import { ICollectionEvent } from "@/utils/interfaces"
 import { notify } from "@kyvg/vue3-notification"
 import { audioStore } from "@/store/audioStore"
-
-const { setStore } = useProps()
+import { stores } from "@/store"
 
 export const collectionEvent = (socket: Socket) => {
 	socket.on(SocketEvent.COLLECTION_CREATED, (data: ICollectionEvent) => {
 		const { idCompany } = data.data
-		const { idCompany_store } = setStore()
+		const { company_store } = stores()
+
+		const idCompany_store = company_store.getIdCompany
 
 		if (
 			idCompany == idCompany_store &&

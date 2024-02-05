@@ -2,8 +2,7 @@ import useProps from "@/context/useProps"
 import { SocketEvent } from "@/utils/enum"
 import { ICollectionEvent } from "@/utils/interfaces"
 import { Socket } from "socket.io-client"
-
-const { setStore } = useProps()
+import { stores } from "@/store"
 
 export const collectionScreenEvent = (
 	socket: Socket,
@@ -11,7 +10,9 @@ export const collectionScreenEvent = (
 ) => {
 	socket.on(SocketEvent.COLLECTION_CREATED, async (data: ICollectionEvent) => {
 		const { idCompany } = data.data
-		const { idCompany_store } = setStore()
+		const { company_store } = stores()
+
+		const idCompany_store = company_store.getIdCompany
 
 		if (idCompany == idCompany_store) {
 			await fn()
@@ -22,7 +23,9 @@ export const collectionScreenEvent = (
 		SocketEvent.UPDATE_COLLECTION_STATUS,
 		async (data: ICollectionEvent) => {
 			const { idCompany } = data.data
-			const { idCompany_store } = setStore()
+			const { company_store } = stores()
+
+			const idCompany_store = company_store.getIdCompany
 
 			if (idCompany == idCompany_store) {
 				await fn()
@@ -32,7 +35,9 @@ export const collectionScreenEvent = (
 
 	socket.on(SocketEvent.DELETE_COLLECTION, async (data: ICollectionEvent) => {
 		const { idCompany } = data.data
-		const { idCompany_store } = setStore()
+		const { company_store } = stores()
+
+		const idCompany_store = company_store.getIdCompany
 
 		if (idCompany == idCompany_store) {
 			await fn()

@@ -1,21 +1,14 @@
 import {
 	ICollectionApi,
 	ICollectionData,
-	ICollectionStatus,
 	IDepartment,
 	ISediments,
 	ISedimentsApi,
-	ISetStore,
-	IStatusStyle,
 	IUseProps,
 	IUserApi,
 	IUsers,
 } from "@/utils/interfaces"
-import { companyStore } from "@/store/companyStore"
-import { departmentStore } from "@/store/departmentStore"
-import { sedimentStore } from "@/store/sedimentStore"
-import { userStore } from "@/store/userStore"
-import { Service, Status } from "@/utils/enum"
+import { Service } from "@/utils/enum"
 
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
@@ -34,101 +27,6 @@ const useProps = (): IUseProps => {
 		}
 
 		return totalPages
-	}
-
-	const setStore = (): ISetStore => {
-		const idCompany_store = companyStore().getIdCompany
-
-		const sediment_store = sedimentStore()
-		const department_store = departmentStore()
-		const user_store = userStore()
-
-		const departments = department_store.getDepartments
-		const sediments = sediment_store.getSediments
-		const users = user_store.getUsers
-
-		return {
-			idCompany_store,
-			department_store,
-			sediment_store,
-			user_store,
-			users,
-			departments,
-			sediments,
-		}
-	}
-
-	const getBackgroundColorByStatus = (status: string) => {
-		const backgroundColorByStatus: ICollectionStatus = {
-			"Aguardando aprovação": "rgba(255, 168, 0, 0.2)",
-			"Aguardando coleta": "rgba(255, 215, 0, 0.2)",
-			"Saiu para coleta": "rgba(0, 255, 0, 0.5)",
-			Finalizado: "rgba(0, 128, 0, 0.2)",
-			Recusado: "rgba(255, 0, 0, 0.2)",
-		}
-
-		return backgroundColorByStatus[status as keyof ICollectionStatus]
-	}
-
-	const getColorByStatus = (status: string) => {
-		const colorByStatus: ICollectionStatus = {
-			"Aguardando aprovação": "#FFa100",
-			"Aguardando coleta": "#FFC300",
-			"Saiu para coleta": "#00FF00",
-			Finalizado: "#008000",
-			Recusado: "#FF0000",
-		}
-
-		return colorByStatus[status as keyof ICollectionStatus]
-	}
-
-	const setStatusStyle = (status: string): any => {
-		const style: IStatusStyle[] = [
-			{
-				background: "",
-				marginTop: "0.5em",
-				marginBottom: "0.5em",
-				borderRadius: "8px",
-				color: "",
-				fontWeight: "bold",
-				borderColor: "",
-				borderWidth: "1px",
-				display: "flex",
-				flexDirection: "columun",
-				justifyContent: "center",
-				padding: "0 2rem",
-				width: "80%",
-			},
-		]
-
-		style[0].background = getBackgroundColorByStatus(status)
-		style[0].color = getColorByStatus(status)
-		style[0].borderColor = getColorByStatus(status)
-
-		return style[0]
-	}
-
-	const validatedStatus = (currentStatus: string) => {
-		const status = [
-			String(Status.WAITING_FOR_APPROVAL),
-			String(Status.AWAITING_COLLECTION),
-			String(Status.WENT_OUT_FOR_COLLECTION),
-		]
-		if (status.includes(currentStatus)) {
-			return true
-		}
-
-		return false
-	}
-
-	const setColorSpinnerBar = (status: string): string | undefined => {
-		if (status == Status.WAITING_FOR_APPROVAL) {
-			return "#FFa100"
-		} else if (status == Status.AWAITING_COLLECTION) {
-			return "#FFC300"
-		} else if (status == Status.WENT_OUT_FOR_COLLECTION) {
-			return "#00FF00"
-		}
 	}
 
 	const handleAutoCompleteStyle = (value: string | undefined | null): any => {
@@ -305,18 +203,12 @@ const useProps = (): IUseProps => {
 		handleAutoCompleteStyle,
 		setTotalPages,
 		parseUpdateDepartment,
-		setStore,
 		parseSediments,
 		parseUpdateSediment,
 		parseUser,
 		parseUpdateUser,
 		parseUpdateUserAfterDepartment,
 		parseCollections,
-		getBackgroundColorByStatus,
-		getColorByStatus,
-		setStatusStyle,
-		validatedStatus,
-		setColorSpinnerBar,
 		handleUrl,
 	}
 }

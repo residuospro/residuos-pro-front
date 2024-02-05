@@ -2,18 +2,21 @@ import { Socket } from "socket.io-client"
 import { SocketEvent } from "../utils/enum"
 import useProps from "@/context/useProps"
 import { IUserDepartmentEvent, IUserEvent } from "@/utils/interfaces"
+import { stores } from "@/store"
 
 const {
 	parseUser,
 	setTotalPages,
-	setStore,
 	parseUpdateUser,
 	parseUpdateUserAfterDepartment,
 } = useProps()
 
 export const userEvent = (socket: Socket) => {
 	socket.on(SocketEvent.USER_CREATED, (data: IUserEvent) => {
-		const { idCompany_store, users, user_store } = setStore()
+		const { company_store, user_store } = stores()
+
+		const users = user_store.getUsers
+		const idCompany_store = company_store.getIdCompany
 
 		const { idCompany, user, totalPages } = data.data
 
@@ -25,7 +28,10 @@ export const userEvent = (socket: Socket) => {
 	})
 
 	socket.on(SocketEvent.UPDATED_USER, (data: IUserEvent) => {
-		const { idCompany_store, users, user_store } = setStore()
+		const { company_store, user_store } = stores()
+
+		const users = user_store.getUsers
+		const idCompany_store = company_store.getIdCompany
 
 		const { idCompany, user } = data.data
 
@@ -37,7 +43,10 @@ export const userEvent = (socket: Socket) => {
 	socket.on(
 		SocketEvent.UPDATED_USER_AFTER_DEPARTMENT,
 		(data: IUserDepartmentEvent) => {
-			const { idCompany_store, users, user_store } = setStore()
+			const { company_store, user_store } = stores()
+
+			const users = user_store.getUsers
+			const idCompany_store = company_store.getIdCompany
 
 			const { idCompany, user } = data.data
 
@@ -48,7 +57,10 @@ export const userEvent = (socket: Socket) => {
 	)
 
 	socket.on(SocketEvent.DELETED_USER, (data: IUserEvent) => {
-		const { idCompany_store, users, user_store } = setStore()
+		const { company_store, user_store } = stores()
+
+		const users = user_store.getUsers
+		const idCompany_store = company_store.getIdCompany
 
 		const { idCompany, user } = data.data
 
@@ -60,7 +72,10 @@ export const userEvent = (socket: Socket) => {
 	socket.on(
 		SocketEvent.DELETED_USER_AFTER_DEPARTMENT,
 		(data: IUserDepartmentEvent) => {
-			const { idCompany_store, users, user_store } = setStore()
+			const { company_store, user_store } = stores()
+
+			const users = user_store.getUsers
+			const idCompany_store = company_store.getIdCompany
 
 			const { idCompany, user } = data.data
 
