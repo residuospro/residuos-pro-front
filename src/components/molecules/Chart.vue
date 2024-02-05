@@ -38,13 +38,12 @@ const createChart = () => {
 				labels: props.months,
 				datasets: [
 					{
-						label: "Gasoso",
-						data: props.annualSediments.gaseous,
-						backgroundColor: ["rgba(255, 99, 132, 0.2)"],
-						borderColor: ["rgba(255,99,132,1)"],
+						label: "Sólido",
+						data: props.annualSediments.solid,
+						backgroundColor: ["rgba(255, 206, 86, 0.2)"],
+						borderColor: ["rgba(255, 159, 64, 1)"],
 						borderWidth: 1,
 					},
-
 					{
 						label: "Liquido",
 						data: props.annualSediments.liquid,
@@ -52,12 +51,11 @@ const createChart = () => {
 						borderColor: ["rgba(54, 162, 235, 1)"],
 						borderWidth: 1,
 					},
-
 					{
-						label: "Sólido",
-						data: props.annualSediments.solid,
-						backgroundColor: ["rgba(255, 206, 86, 0.2)"],
-						borderColor: ["rgba(255, 159, 64, 1)"],
+						label: "Gasoso",
+						data: props.annualSediments.gaseous,
+						backgroundColor: ["rgba(74, 217, 137, 0.1)"],
+						borderColor: ["#77ab59"],
 						borderWidth: 1,
 					},
 				],

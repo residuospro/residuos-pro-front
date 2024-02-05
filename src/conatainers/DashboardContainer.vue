@@ -91,7 +91,7 @@ const setBackgroundColor = (state?: string) => {
 	const states: ISedimentsColor = {
 		Sólido: { background: "rgba(255, 206, 86, 0.2)" },
 		Líquido: { background: "rgba(54, 162, 235, 0.2)" },
-		Gasoso: { background: " rgba(255, 0, 0, 0.1)" },
+		Gasoso: { background: "rgba(74, 217, 137, 0.1)" },
 	}
 
 	return states[state as keyof ISedimentsColor]
@@ -101,7 +101,7 @@ const setTextColor = (state?: string) => {
 	const states: ISedimentsColor = {
 		Sólido: { color: "rgba(255, 159, 64, 1)" },
 		Líquido: { color: "rgba(54, 162, 235, 1)" },
-		Gasoso: { color: "#ff0000" },
+		Gasoso: { color: "#77ab59" },
 	}
 
 	return states[state as keyof ISedimentsColor]
