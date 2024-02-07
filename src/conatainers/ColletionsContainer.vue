@@ -7,15 +7,21 @@
 		@closeModal="showNotificationModal = false"
 		v-if="showNotificationModal" />
 
-	<CollectionsModal
+	<WrapperModal
 		v-if="showCollectionModal"
-		:showButton="showButton"
-		:measure="measures"
-		:sedimentsName="sedimentsName"
-		:closeCollectionModal="closeCollectionModal"
-		:selectSedimentId="selectSedimentId"
-		:validateDataToCreateCollection="validateDataToCreateCollection"
-		:createCollectionOrder="createCollectionOrder" />
+		:closeModalOutside="() => (showCollectionModal = false)">
+		<CollectionsModal
+			:measure="measures"
+			:sedimentsName="sedimentsName"
+			:closeCollectionModal="closeCollectionModal"
+			:selectSedimentId="selectSedimentId"
+			:validateDataToCreateCollection="validateDataToCreateCollection"
+			:createCollectionOrder="createCollectionOrder">
+			<ModalActionButtons
+				:showButton="showButton"
+				:closeModal="closeCollectionModal" />
+		</CollectionsModal>
+	</WrapperModal>
 
 	<Collections
 		:itemsPerPage="itemsPerPage"
@@ -37,9 +43,7 @@
 		:openCollectionsModal="openCollectionModal"
 		:setStatusStyle="setStatusStyle" />
 
-	<div
-		class="w-full mt-4 ml-10"
-		v-if="totalPages.length > 1 || itemsPerPage > 10">
+	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
 
 		<Pagination
@@ -48,11 +52,14 @@
 			:items="totalPages"
 			@paginate="setPagination"
 			class="float-right" />
-	</div>
+	</WrapperPagination>
 </template>
 
 <script setup lang="ts">
 import Collections from "@/components/organisms/Collections.vue"
+import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
+import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
+import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import CollectionsModal from "@/components/organisms/CollectionsModal.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Pagination from "../components/organisms/Pagination.vue"

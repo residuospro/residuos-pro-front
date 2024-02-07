@@ -1,69 +1,47 @@
 <template>
-	<Container type="backgroundContainer">
-		<Wrapper type="modal">
-			<Wrapper type="actionsModal">
-				<form @submit.prevent="createOrUpdateSediments(sediment, typeAction)">
-					<Typograph type="H2" class="text-v_medium_gray">
-						{{ typeAction }} resíduo
-					</Typograph>
+	<form @submit.prevent="createOrUpdateSediments(sediment, typeAction)">
+		<Typograph type="H2" class="text-v_medium_gray">
+			{{ typeAction }} resíduo
+		</Typograph>
 
-					<div class="flex flex-wrap w-full justify-between mt-2 space-y-5">
-						<v-autocomplete
-							:style="handleAutoCompleteStyle(sediment.classification)"
-							clearable
-							:items="classifications"
-							v-model="sediment.classification"
-							chips
-							label="Classificação:"></v-autocomplete>
+		<div class="flex flex-wrap w-full justify-between mt-2 space-y-5">
+			<v-autocomplete
+				:style="handleAutoCompleteStyle(sediment.classification)"
+				clearable
+				:items="classifications"
+				v-model="sediment.classification"
+				chips
+				label="Classificação:"></v-autocomplete>
 
-						<v-autocomplete
-							:style="handleAutoCompleteStyle(sediment.risk)"
-							clearable
-							:items="risk"
-							v-model="sediment.risk"
-							chips
-							label="Risco:"></v-autocomplete>
+			<v-autocomplete
+				:style="handleAutoCompleteStyle(sediment.risk)"
+				clearable
+				:items="risk"
+				v-model="sediment.risk"
+				chips
+				label="Risco:"></v-autocomplete>
 
-						<v-autocomplete
-							:style="handleAutoCompleteStyle(sediment.state)"
-							clearable
-							:items="states"
-							v-model="sediment.state"
-							chips
-							label="Estado:"></v-autocomplete>
+			<v-autocomplete
+				:style="handleAutoCompleteStyle(sediment.state)"
+				clearable
+				:items="states"
+				v-model="sediment.state"
+				chips
+				label="Estado:"></v-autocomplete>
 
-						<Input
-							input="input"
-							placeholder="Nome:"
-							:class="sediment.name !== '' ? 'bg-white w-full' : 'w-full'"
-							@input="(value: string) => sediment.name = value" />
-					</div>
-
-					<div class="flex justify-end w-full space-x-5 mt-5">
-						<Button
-							type="submit"
-							buttonType="confirmButton"
-							:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
-							:disabled="!showButton">
-							<p class="text-white">{{ typeAction }}</p>
-						</Button>
-
-						<Button buttonType="closeButton" @click="closeSedimentsModal">
-							Cancelar
-						</Button>
-					</div>
-				</form>
-			</Wrapper>
-		</Wrapper>
-	</Container>
+			<Input
+				input="input"
+				placeholder="Nome:"
+				:class="sediment.name !== '' ? 'bg-white w-full' : 'w-full'"
+				@input="(value: string) => sediment.name = value" />
+		</div>
+		<slot></slot>
+	</form>
 </template>
 
 <script setup lang="ts">
-import Container from "../atoms/Container.vue"
-import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
-import Button from "../atoms/Button.vue"
 import { reactive, watch } from "vue"
 import { PropType } from "vue"
 import { Actions } from "@/utils/enum"
@@ -87,10 +65,7 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
-	closeSedimentsModal: {
-		type: Function as any as () => (event: MouseEvent) => void,
-		required: true,
-	},
+
 	createOrUpdateSediments: {
 		type: Function as PropType<(sediment: ISediments, action: string) => void>,
 		required: true,
@@ -103,11 +78,6 @@ const props = defineProps({
 
 	validateDataToUpdateSediments: {
 		type: Function as PropType<(sediment: ISediments) => void>,
-		required: true,
-	},
-
-	showButton: {
-		type: Boolean,
 		required: true,
 	},
 

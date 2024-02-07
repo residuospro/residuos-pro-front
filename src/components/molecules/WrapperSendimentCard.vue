@@ -2,14 +2,14 @@
 	<div class="w-[94%] flex flex-wrap glass-effect rounded-lg">
 		<div
 			class="w-full rounded-t-lg bg-v_light_green px-2 py-1 flex justify-between items-center">
-			<h1 class="text-white">Estoque atual</h1>
+			<h1 class="text-white">{{ cardTitle }} atual</h1>
 
 			<div>
 				<v-icon icon="mdi-help" class="text-white" size="18" />
 
 				<v-tooltip activator="parent" location="start">
-					O estoque é calculado a partir dos valores obtidos do primeiro ao
-					último dia do mês atual
+					{{ cardTitle }} é calculado a partir dos valores obtidos do primeiro
+					ao último dia do mês atual
 				</v-tooltip>
 			</div>
 		</div>
@@ -30,6 +30,11 @@ import { PropType } from "vue"
 defineProps({
 	sedimentsInfo: {
 		type: Array as PropType<ISedimentsInfo[]>,
+		required: true,
+	},
+
+	cardTitle: {
+		type: String,
 		required: true,
 	},
 })

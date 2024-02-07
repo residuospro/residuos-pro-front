@@ -15,12 +15,13 @@
 		<Wrapper type="chart">
 			<Chart :months="months" :annualSediments="annualSediments" />
 
-			<DailyEntries
+			<CardDailySediments
+				:cardTitleDailySediments="cardTitleDailySediments"
 				:dailySediment="dailySediment"
 				:setTextColor="setTextColor" />
 		</Wrapper>
 
-		<WrapperSendimentCard :sedimentsInfo="sedimentsInfo">
+		<WrapperSendimentCard :sedimentsInfo="sedimentsInfo" :cardTitle="cardTitle">
 			<SedimetsCard
 				:sedimentsInfo="sedimentsInfo"
 				:validadeState="validadeState"
@@ -32,7 +33,7 @@
 
 <script setup lang="ts">
 import Loading from "@/components/molecules/Loading.vue"
-import DailyEntries from "@/components/molecules/DailyEntries.vue"
+import CardDailySediments from "@/components/molecules/CardDailySediments.vue"
 import Chart from "@/components/molecules/Chart.vue"
 import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperSendimentCard from "@/components/molecules/WrapperSendimentCard.vue"
@@ -56,6 +57,8 @@ import {
 import gas from "@/assets/gas.json"
 import liquid from "@/assets/liquid.json"
 import solid from "@/assets/solid.json"
+import { hasPermission } from "@/utils/permissions"
+import { AuthorizationUser } from "@/utils/enum"
 
 const { department_store, sediment_store, company_store } = stores()
 
@@ -71,6 +74,24 @@ let sedimentsInfo = ref<ISedimentsInfo[]>([])
 let annualSediments = ref<MonthTotals>({ solid: [], liquid: [], gaseous: [] })
 let dailySediment = ref<DayStateTotal[]>([])
 let months = ref<string[]>([])
+let cardTitle = ref("")
+let cardTitleDailySediments = ref("")
+
+const setCardTitle = () => {
+	if (hasPermission([AuthorizationUser.ADMIN])) {
+		cardTitle.value = "Estoque"
+	} else {
+		cardTitle.value = "Saída"
+	}
+}
+
+const setCardTitleDailySediments = () => {
+	if (hasPermission([AuthorizationUser.ADMIN])) {
+		cardTitleDailySediments.value = "Entradas"
+	} else {
+		cardTitleDailySediments.value = "Saídas"
+	}
+}
 
 const handleApiResponse = (message: IMessage) => {
 	title.value = message.title
@@ -187,12 +208,25 @@ const sumItemsBySedimentName = (
 		groupedItems[sedimentName!].total += amount
 	})
 
-	return Object.keys(groupedItems).map((sedimentName) => ({
-		sedimentName,
-		total: groupedItems[sedimentName].total,
-		measure: groupedItems[sedimentName].measure,
-		state: groupedItems[sedimentName].state,
-	}))
+	return Object.keys(groupedItems)
+		.map((sedimentName) => ({
+			sedimentName,
+			total: groupedItems[sedimentName].total,
+			measure: groupedItems[sedimentName].measure,
+			state: groupedItems[sedimentName].state,
+		}))
+		.sort((a, b) => {
+			const stateOrder: { [key: string]: number } = {
+				Sólido: 0,
+				Líquido: 1,
+				Gasoso: 2,
+			}
+
+			const stateA = a.state || ""
+			const stateB = b.state || ""
+
+			return stateOrder[stateA] - stateOrder[stateB]
+		})
 }
 
 const calculateMonthlyTotals = (data: ICollectionApi[]): MonthTotals => {
@@ -265,6 +299,10 @@ onMounted(async () => {
 	idDepartment.value = department_store.getIdDepartment
 
 	getAllCollections()
+
+	setCardTitle()
+
+	setCardTitleDailySediments()
 
 	departmentNames.value = await department_store.getDepartmentNames()
 

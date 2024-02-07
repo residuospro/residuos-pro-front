@@ -1,71 +1,43 @@
 <template>
-	<Container
-		type="backgroundContainer"
-		ref="modalContainer"
-		@click="closeUserModalOutside">
-		<Wrapper type="modal">
-			<Wrapper type="actionsModal" :style="inputContainerStyle()" @click.stop>
-				<form @submit.prevent="createOrUpdateUser(user, typeAction)">
-					<Typograph type="H2" class="text-v_medium_gray">
-						{{ typeAction }} usuário
-					</Typograph>
+	<form @submit.prevent="createOrUpdateUser(user, typeAction)">
+		<Typograph type="H2" class="text-v_medium_gray">
+			{{ typeAction }} usuário
+		</Typograph>
 
-					<div :style="styles">
-						<v-autocomplete
-							v-if="hasPermission([AuthorizationUser.ADMIN])"
-							:style="handleAutoCompleteStyle(user.department)"
-							clearable
-							:on-click:clear="() => (user.department = undefined)"
-							:onUpdate:modelValue="selectDepartment"
-							:items="departments"
-							v-model="user.department"
-							chips
-							label="Departamento:"></v-autocomplete>
+		<div :style="styles">
+			<v-autocomplete
+				v-if="hasPermission([AuthorizationUser.ADMIN])"
+				:style="handleAutoCompleteStyle(user.department)"
+				clearable
+				:on-click:clear="() => (user.department = undefined)"
+				:onUpdate:modelValue="selectDepartment"
+				:items="departments"
+				v-model="user.department"
+				chips
+				label="Departamento:"></v-autocomplete>
 
-						<Input
-							input="input"
-							placeholder="Nome:"
-							:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
-							@input="(value: string) => user.name = value" />
+			<Input
+				input="input"
+				placeholder="Nome:"
+				:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
+				@input="(value: string) => user.name = value" />
 
-						<Input
-							input="input"
-							placeholder="Email:"
-							:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
-							@input="(value: string) => user.email = value" />
-					</div>
+			<Input
+				input="input"
+				placeholder="Email:"
+				:class="user.name !== '' ? '!w-full bg-white' : '!w-full'"
+				@input="(value: string) => user.email = value" />
+		</div>
 
-					<div class="flex justify-end w-full space-x-5 mt-4">
-						<Button
-							type="submit"
-							buttonType="confirmButton"
-							:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
-							:disabled="!showButton">
-							<p class="text-white">{{ typeAction }}</p>
-						</Button>
-
-						<Button buttonType="closeButton" @click.prevent="closeUserModal">
-							Cancelar
-						</Button>
-					</div>
-				</form>
-			</Wrapper>
-		</Wrapper>
-	</Container>
+		<slot></slot>
+	</form>
 </template>
 
 <script setup lang="ts">
-import Container from "../atoms/Container.vue"
-import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
-import Button from "../atoms/Button.vue"
 import { PropType, reactive, watch, ref, Ref } from "vue"
-import {
-	IInputContainerStyle,
-	IInputWrappingStyle,
-	IUserForm,
-} from "@/utils/interfaces"
+import { IInputWrappingStyle, IUserForm } from "@/utils/interfaces"
 import { Actions, AuthorizationUser } from "@/utils/enum"
 import { hasPermission } from "@/utils/permissions"
 import { onMounted } from "vue"
@@ -78,14 +50,8 @@ const user: IUserForm = reactive({
 	email: "",
 	department: undefined,
 })
-
+let styles = ref()
 const modalContainer: Ref<HTMLElement | null> = ref(null)
-
-const closeUserModalOutside = () => {
-	if (modalContainer.value) {
-		props.closeUserModal()
-	}
-}
 
 const props = defineProps({
 	inputWrappingStyle: {
@@ -93,18 +59,8 @@ const props = defineProps({
 		required: true,
 	},
 
-	inputContainerStyle: {
-		type: Function as PropType<() => IInputContainerStyle>,
-		required: true,
-	},
-
 	typeAction: {
 		type: String,
-		required: true,
-	},
-
-	closeUserModal: {
-		type: Function as PropType<() => void>,
 		required: true,
 	},
 
@@ -123,11 +79,6 @@ const props = defineProps({
 		required: true,
 	},
 
-	showButton: {
-		type: Boolean,
-		required: true,
-	},
-
 	selectDepartment: {
 		type: Function as PropType<(department: any) => void>,
 		required: true,
@@ -138,8 +89,6 @@ const props = defineProps({
 		required: true,
 	},
 })
-
-let styles = ref()
 
 onMounted(() => {
 	styles.value = props.inputWrappingStyle()

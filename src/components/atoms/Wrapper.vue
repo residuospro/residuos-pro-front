@@ -111,7 +111,7 @@ const wrapperClass = computed(() => {
 					flex-col 
 					py-5
 					px-5
-					min-h-[20rem] 
+					min-h-[13rem] 
 					w-[40rem] 
 					text-black 
 					rounded-md

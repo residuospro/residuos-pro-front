@@ -7,14 +7,19 @@
 		@closeModal="closeModal"
 		v-if="showNotificationModal" />
 
-	<DepartmentModal
+	<WrapperModal
 		v-if="showDepartmentModal"
-		:showButton="showButton"
-		:validateDataToUpdateDepartment="validateDataToUpdateDepartment"
-		:validateDataToCreateDepartment="validateDataToCreateDepartment"
-		:typeAction="typeAction"
-		:closeDepartmentModal="closeDepartmentModal"
-		:create-or-update-department="createOrUpdateDepartment" />
+		:closeModalOutside="() => (showDepartmentModal = false)">
+		<DepartmentModal
+			:validateDataToUpdateDepartment="validateDataToUpdateDepartment"
+			:validateDataToCreateDepartment="validateDataToCreateDepartment"
+			:typeAction="typeAction"
+			:create-or-update-department="createOrUpdateDepartment">
+			<ModalActionButtons
+				:showButton="showButton"
+				:closeModal="closeDepartmentModal" />
+		</DepartmentModal>
+	</WrapperModal>
 
 	<ActionModal
 		v-if="showDeleteModal"
@@ -34,9 +39,7 @@
 		:departmentFilterCleaning="departmentFilterCleaning"
 		:openDepartmentModal="openDepartmentModal" />
 
-	<div
-		class="w-full mt-4 ml-10"
-		v-if="totalPages.length > 1 || itemsPerPage > 10">
+	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
 
 		<Pagination
@@ -45,10 +48,13 @@
 			:items="totalPages"
 			@paginate="setPagination"
 			class="float-right" />
-	</div>
+	</WrapperPagination>
 </template>
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
+import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
+import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
+import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import Departments from "@/components/organisms/Departments.vue"
 import Pagination from "../components/organisms/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"

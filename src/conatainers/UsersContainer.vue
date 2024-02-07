@@ -4,7 +4,7 @@
 	<Notification
 		:title="title"
 		:subTitle="subTitle"
-		@closeModal="closeModal"
+		@closeModal="closeNotificationModal"
 		v-if="showNotificationModal" />
 
 	<ActionModal
@@ -14,18 +14,22 @@
 		title="Confirmar exclusão"
 		sub-title="Tem certeza que deseja excluir esse usuário?" />
 
-	<UserModal
+	<WrapperModal
 		v-if="showUserModal"
-		:type-action="typeAction"
-		:show-button="showButton"
-		:departments="allDepartments"
-		:close-user-modal="() => (showUserModal = false)"
-		:create-or-update-user="createOrUpdateUser"
-		:validateDataToCreateUser="validateDataToCreateUser"
-		:validateDataToUpdateUser="validateDataToUpdateUser"
-		:selectDepartment="selectTheDepartmentToCreateTheManager"
-		:inputWrappingStyle="inputWrappingStyle"
-		:inputContainerStyle="inputContainerStyle" />
+		:closeModalOutside="() => (showUserModal = false)">
+		<UserModal
+			:type-action="typeAction"
+			:departments="allDepartments"
+			:create-or-update-user="createOrUpdateUser"
+			:validateDataToCreateUser="validateDataToCreateUser"
+			:validateDataToUpdateUser="validateDataToUpdateUser"
+			:selectDepartment="selectTheDepartmentToCreateTheManager"
+			:inputWrappingStyle="inputWrappingStyle">
+			<ModalActionButtons
+				:show-button="showButton"
+				:closeModal="closeUserModal" />
+		</UserModal>
+	</WrapperModal>
 
 	<Users
 		:headers="headers"
@@ -40,9 +44,7 @@
 		:selectUser="selectUser"
 		:userFilterCleaning="userFilterCleaning" />
 
-	<div
-		class="w-full mt-4 ml-10"
-		v-if="totalPages.length > 1 || itemsPerPage > 10">
+	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
 
 		<Pagination
@@ -51,11 +53,14 @@
 			:items="totalPages"
 			@paginate="setPagination"
 			class="float-right" />
-	</div>
+	</WrapperPagination>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
+import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
+import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
+import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import Users from "@/components/organisms/Users.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
@@ -65,7 +70,6 @@ import ActionModal from "@/components/molecules/ActionModal.vue"
 import UserModal from "@/components/organisms/UserCreateOrUpdateModal.vue"
 import {
 	IDepartment,
-	IInputContainerStyle,
 	IInputWrappingStyle,
 	IMessage,
 	IUserForm,
@@ -135,14 +139,6 @@ const inputWrappingStyle = () => {
 	}
 
 	return style[0]
-}
-
-const inputContainerStyle = (): IInputContainerStyle => {
-	if (hasPermission([AuthorizationUser.ADMIN])) {
-		return { minHeight: "18rem" }
-	} else {
-		return { minHeight: "15rem" }
-	}
 }
 
 const changeVariableState = () => {
@@ -238,8 +234,13 @@ const openDeleteModal = (id: string | undefined) => {
 	showDeleteModal.value = true
 }
 
-const closeModal = () => {
+const closeNotificationModal = () => {
 	showNotificationModal.value = false
+}
+
+const closeUserModal = (event: Event) => {
+	event.stopPropagation()
+	showUserModal.value = false
 }
 
 // Crud Session

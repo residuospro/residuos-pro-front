@@ -9,6 +9,7 @@ import {
 	IUsers,
 } from "@/utils/interfaces"
 import { Service } from "@/utils/enum"
+import { Ref } from "vue"
 
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {

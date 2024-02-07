@@ -4,7 +4,7 @@
 	<Notification
 		:title="title"
 		:subTitle="subTitle"
-		@closeModal="closeModal"
+		@closeModal="closeNotificationModal"
 		v-if="showNotificationModal" />
 
 	<ActionModal
@@ -14,17 +14,22 @@
 		title="Confirmar exclusão"
 		sub-title="Tem certeza que deseja excluir esse resíduo?" />
 
-	<SedimentsCreateOrUpdateModal
+	<WrapperModal
 		v-if="showSedimentsModal"
-		:type-action="typeAction"
-		:closeSedimentsModal="() => (showSedimentsModal = false)"
-		:showButton="showButton"
-		:classifications="classifications"
-		:states="states"
-		:risk="risk"
-		:createOrUpdateSediments="createOrUpdateSediments"
-		:validateDataToCreateSediments="validateDataToCreateSediments"
-		:validateDataToUpdateSediments="validateDataToUpdateSediments" />
+		:closeModalOutside="() => (showSedimentsModal = false)">
+		<SedimentsCreateOrUpdateModal
+			:type-action="typeAction"
+			:classifications="classifications"
+			:states="states"
+			:risk="risk"
+			:createOrUpdateSediments="createOrUpdateSediments"
+			:validateDataToCreateSediments="validateDataToCreateSediments"
+			:validateDataToUpdateSediments="validateDataToUpdateSediments">
+			<ModalActionButtons
+				:showButton="showButton"
+				:closeModal="closeSedimentsModal" />
+		</SedimentsCreateOrUpdateModal>
+	</WrapperModal>
 
 	<Sediments
 		:headers="headers"
@@ -36,9 +41,7 @@
 		:openSedimentsModal="openSedimentsModal"
 		:sedimentsFilterCleaning="sedimentsFilterCleaning" />
 
-	<div
-		class="w-full mt-4 ml-10"
-		v-if="totalPages.length > 1 || itemsPerPage > 10">
+	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
 
 		<Pagination
@@ -47,11 +50,14 @@
 			:items="totalPages"
 			@paginate="setPagination"
 			class="float-right" />
-	</div>
+	</WrapperPagination>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
+import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
+import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
+import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import Sediments from "@/components/organisms/Sediments.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
@@ -59,7 +65,7 @@ import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import ActionModal from "@/components/molecules/ActionModal.vue"
 import SedimentsCreateOrUpdateModal from "@/components/organisms/SedimentsCreateOrUpdateModal.vue"
-import { computed, ref, watch } from "vue"
+import { Ref, computed, ref, watch } from "vue"
 import { IMessage, ISediments } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
 import { onMounted } from "vue"
@@ -142,9 +148,14 @@ const changeVariableState = () => {
 	showButton.value = false
 }
 
-const closeModal = () => {
+const closeNotificationModal = () => {
 	getNameOfSediments()
 	showNotificationModal.value = false
+}
+
+const closeSedimentsModal = (event: Event) => {
+	event.stopPropagation()
+	showSedimentsModal.value = false
 }
 
 const setPagination = (currentPage: number) => {
@@ -363,6 +374,11 @@ const getId = () => {
 	idCompany.value
 	idDepartment.value = department_store.getIdDepartment
 }
+
+const print = () => {
+	console.log("aqui")
+}
+const modalContainer: Ref<HTMLElement | null> = ref(null)
 
 onMounted(async () => {
 	idCompany.value = company_store.getIdCompany

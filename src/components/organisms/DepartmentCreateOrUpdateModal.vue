@@ -1,55 +1,31 @@
 <template>
-	<Container type="backgroundContainer">
-		<Wrapper type="modal">
-			<Wrapper type="actionsModal" class="!min-h-[13rem]">
-				<form
-					@submit.prevent="createOrUpdateDepartment(department, typeAction)">
-					<Typograph type="H2" class="text-v_medium_gray">
-						{{ typeAction }} departamento
-					</Typograph>
+	<form @submit.prevent="createOrUpdateDepartment(department, typeAction)">
+		<Typograph type="H2" class="text-v_medium_gray">
+			{{ typeAction }} departamento
+		</Typograph>
 
-					<div class="flex flex-wrap w-full justify-between h-20 mt-2">
-						<Input
-							input="input"
-							placeholder="Departamento:"
-							:class="department.name !== '' ? 'bg-white' : ''"
-							@input="(value: string) => department.name = value" />
+		<div class="flex flex-wrap w-full justify-between h-20 mt-2">
+			<Input
+				input="input"
+				placeholder="Departamento:"
+				:class="department.name !== '' ? 'bg-white' : ''"
+				@input="(value: string) => department.name = value" />
 
-						<Input
-							input="input"
-							type="number"
-							placeholder="Ramal:"
-							:class="department.ramal !== '' ? 'bg-white' : ''"
-							@input="(value: number) => department.ramal = String(value)" />
-					</div>
+			<Input
+				input="input"
+				type="number"
+				placeholder="Ramal:"
+				:class="department.ramal !== '' ? 'bg-white' : ''"
+				@input="(value: number) => department.ramal = String(value)" />
+		</div>
 
-					<div class="flex justify-end w-full space-x-5 mt-2">
-						<Button
-							buttonType="confirmButton"
-							:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
-							:disabled="!showButton"
-							type="submit">
-							<p class="text-white">{{ typeAction }}</p>
-						</Button>
-
-						<Button
-							buttonType="closeButton"
-							@click.prevent="closeDepartmentModal">
-							Cancelar
-						</Button>
-					</div>
-				</form>
-			</Wrapper>
-		</Wrapper>
-	</Container>
+		<slot></slot>
+	</form>
 </template>
 
 <script setup lang="ts">
-import Container from "../atoms/Container.vue"
-import Wrapper from "../atoms/Wrapper.vue"
 import Typograph from "../atoms/Typograph.vue"
 import Input from "../atoms/Input.vue"
-import Button from "../atoms/Button.vue"
 import { reactive, watch } from "vue"
 import { PropType } from "vue"
 import { IDepartment } from "@/utils/interfaces"
@@ -68,11 +44,6 @@ const props = defineProps({
 		required: true,
 	},
 
-	closeDepartmentModal: {
-		type: Function as PropType<(event: Event) => void>,
-		required: true,
-	},
-
 	createOrUpdateDepartment: {
 		type: Function as PropType<
 			(department: IDepartment, action: string) => void
@@ -87,11 +58,6 @@ const props = defineProps({
 
 	validateDataToUpdateDepartment: {
 		type: Function as PropType<(department: IDepartment) => void>,
-		required: true,
-	},
-
-	showButton: {
-		type: Boolean,
 		required: true,
 	},
 })

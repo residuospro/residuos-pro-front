@@ -2,7 +2,7 @@
 	<div class="glass-effect rounded-lg mb-5">
 		<div
 			class="w-full rounded-t-lg bg-v_light_green px-2 py-1 flex justify-between items-center">
-			<h1 class="text-white">Entradas diárias</h1>
+			<h1 class="text-white">{{ cardTitleDailySediments }} diárias</h1>
 		</div>
 
 		<div class="w-full py-4 space-y-2">
@@ -12,6 +12,7 @@
 				class="w-full shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] card px-4 py-2 rounded-lg">
 				<div class="font-extrabold flex justify-between">
 					<h1 :style="setTextColor(items.name)">{{ items.name }}</h1>
+
 					<div class="flex">
 						<p class="text-v_medium_gray">+{{ items.lastEntry }}</p>
 						<v-icon icon="mdi-arrow-up-bold-box" class="text-v_light_green" />
@@ -19,7 +20,10 @@
 				</div>
 
 				<div class="flex justify-between">
-					<h1 class="text-v_medium_gray">Total de entrada diária:</h1>
+					<h1 class="text-v_medium_gray">
+						Total de {{ cardTitleDailySediments.toLowerCase() }} diárias:
+					</h1>
+
 					<p class="font-extrabold" :style="setTextColor(items.name)">
 						{{ items.total }}{{ items.measure }}
 					</p>
@@ -41,6 +45,11 @@ defineProps({
 
 	setTextColor: {
 		type: Function as PropType<(state?: string) => any>,
+		required: true,
+	},
+
+	cardTitleDailySediments: {
+		type: String,
 		required: true,
 	},
 })
