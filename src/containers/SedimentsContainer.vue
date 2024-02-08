@@ -47,11 +47,14 @@
 		</Wrapper>
 
 		<SedimentTable
-			:headers="headers"
 			:actions="actions"
 			:content="sediments"
 			:show-delete-modal="openDeleteModal"
-			:openSedimentsModal="openSedimentsModal" />
+			:openSedimentsModal="openSedimentsModal">
+			<TableHead :headers="headers" action="Ajustar" />
+
+			<EmptyTable :content="sediments.length" />
+		</SedimentTable>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
@@ -75,6 +78,8 @@ import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import SedimentTable from "@/components/organisms/SedimentTable.vue"
+import TableHead from "@/components/molecules/TableHead.vue"
+import EmptyTable from "@/components/molecules/EmptyTable.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Button from "@/components/atoms/Button.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"

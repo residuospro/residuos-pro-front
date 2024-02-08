@@ -46,10 +46,13 @@
 		<DepartmentTable
 			:actions="actions"
 			:content="departments"
-			:headers="headers"
 			:itemsPerPage="Number(itemsPerPage)"
 			:showDeleteModal="openDeleteModal"
-			:openDepartmentModal="openDepartmentModal" />
+			:openDepartmentModal="openDepartmentModal">
+			<TableHead :headers="headers" action="Ajustar" />
+
+			<EmptyTable :content="departments.length"
+		/></DepartmentTable>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
@@ -72,6 +75,8 @@ import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import DepartmentTable from "@/components/organisms/DepartmentTable.vue"
+import TableHead from "@/components/molecules/TableHead.vue"
+import EmptyTable from "@/components/molecules/EmptyTable.vue"
 import Pagination from "../components/organisms/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
 import ActionModal from "@/components/molecules/ActionModal.vue"

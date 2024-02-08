@@ -47,6 +47,7 @@ module.exports = {
 					"Chart",
 					"DailyEntries",
 					"Collection",
+					"Logo",
 				],
 			},
 		],

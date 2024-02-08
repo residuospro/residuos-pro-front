@@ -46,7 +46,6 @@
 
 		<CollectionTable
 			:itemsPerPage="itemsPerPage"
-			:headers="headers"
 			:actions="actions"
 			:collections="collections"
 			:collectionFilter="collectionFilter"
@@ -54,7 +53,11 @@
 			:setColorSpinnerBar="setColorSpinnerBar"
 			:validatedStatus="validatedStatus"
 			:showDeleteModal="openDeleteModal"
-			:setStatusStyle="setStatusStyle" />
+			:setStatusStyle="setStatusStyle">
+			<TableHead :headers="headers" action="Detalhes" />
+
+			<EmptyTable :content="collections.length" />
+		</CollectionTable>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
@@ -73,6 +76,8 @@
 import CollectionsFilter from "@/components/organisms/CollectionsFilter.vue"
 import CollectionsView from "@/views/CollectionsView.vue"
 import CollectionTable from "@/components/organisms/CollectionTable.vue"
+import TableHead from "@/components/molecules/TableHead.vue"
+import EmptyTable from "@/components/molecules/EmptyTable.vue"
 import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"

@@ -49,12 +49,15 @@
 		</Wrapper>
 
 		<UserTable
-			:headers="headers"
 			:actions="actions"
 			:content="users"
 			:itemsPerPage="Number(itemsPerPage)"
 			:show-delete-modal="openDeleteModal"
-			:openUserModal="openUserModal" />
+			:openUserModal="openUserModal">
+			<TableHead :headers="headers" action="Ajustar" />
+
+			<EmptyTable :content="users.length" />
+		</UserTable>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
@@ -78,6 +81,8 @@ import UsersView from "@/views/UsersView.vue"
 import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import UserTable from "@/components/organisms/UserTable.vue"
+import TableHead from "@/components/molecules/TableHead.vue"
+import EmptyTable from "@/components/molecules/EmptyTable.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Button from "@/components/atoms/Button.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"

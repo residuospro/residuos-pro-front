@@ -1,18 +1,7 @@
 <template>
 	<Wrapper type="dataTable">
 		<table>
-			<thead>
-				<tr>
-					<th
-						v-for="(items, index) in headers"
-						:key="index"
-						:class="index == 0 ? 'rounded-tl-md' : ''">
-						{{ items }}
-					</th>
-
-					<th type="H3" class="rounded-tr-md">Detalhes</th>
-				</tr>
-			</thead>
+			<slot></slot>
 
 			<tbody style="height: auto">
 				<tr
@@ -90,12 +79,6 @@
 						</button>
 					</td>
 				</tr>
-
-				<p
-					class="text-v_medium_gray absolute top-[12rem] w-full text-center"
-					v-if="collections.length == 0">
-					Ops! Não há registros por aqui.
-				</p>
 			</tbody>
 		</table>
 	</Wrapper>
@@ -122,8 +105,6 @@ defineProps({
 		type: Array as PropType<ICollectionFilter[]>,
 		required: true,
 	},
-
-	headers: { type: Array as PropType<string[]>, required: true },
 
 	actions: { type: Array as PropType<string[]>, required: true },
 

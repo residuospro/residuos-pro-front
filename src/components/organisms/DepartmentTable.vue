@@ -1,18 +1,7 @@
 <template>
 	<Wrapper type="dataTable">
 		<table>
-			<thead>
-				<tr>
-					<th
-						v-for="(items, index) in headers"
-						:key="index"
-						:class="index == 0 ? 'rounded-tl-md' : ''">
-						{{ items }}
-					</th>
-
-					<th type="H3" class="rounded-tr-md">Ajustar</th>
-				</tr>
-			</thead>
+			<slot></slot>
 
 			<tbody style="height: auto">
 				<tr
@@ -50,12 +39,6 @@
 						</v-menu>
 					</td>
 				</tr>
-
-				<p
-					class="text-v_medium_gray absolute top-[12rem] w-full text-center"
-					v-if="content.length == 0">
-					Não há registros, crie o seu primeiro departamento!
-				</p>
 			</tbody>
 		</table>
 	</Wrapper>
@@ -73,8 +56,6 @@ const { setTableBackground } = useProps()
 
 defineProps({
 	itemsPerPage: { type: Number, required: true },
-
-	headers: { type: Array as PropType<string[]>, required: true },
 
 	actions: { type: Array as PropType<string[]>, required: true },
 

@@ -22,16 +22,12 @@ import NotificationModal from "@/components/molecules/NotificationModal.vue"
 import MenuSideBarContainer from "@/containers/MenuSideBarContainer.vue"
 import router from "@/router"
 import { onMounted, ref } from "vue"
-import { userStore } from "../store/userStore"
-import { companyStore } from "@/store/companyStore"
-import { departmentStore } from "@/store/departmentStore"
 import { getPayload } from "../api/signin"
 import { hasPermission } from "@/utils/permissions"
 import { AuthorizationUser } from "@/utils/enum"
+import { stores } from "@/store"
 
-const user_Store = userStore()
-const idCompanyStore = companyStore()
-const idDepartmentStore = departmentStore()
+const { user_store, company_store, department_store } = stores()
 
 let title = ref("Bem vindo")
 let subTitle = ref(
@@ -43,9 +39,9 @@ let showNotificationModal = ref(false)
 const getUserInfo = async () => {
 	const payload = await getPayload()
 
-	user_Store.setUserId(payload.data.userId)
+	user_store.setUserId(payload.data.userId)
 
-	user_Store.setUser({
+	user_store.setUser({
 		name: payload.data.name,
 		email: payload.data.email,
 		ramal: payload.data.ramal,
@@ -53,7 +49,7 @@ const getUserInfo = async () => {
 		department: payload.data.department,
 	})
 
-	idCompanyStore.setIdCompany(payload.data.idCompany)
+	company_store.setIdCompany(payload.data.idCompany)
 
 	if (payload.data.idDepartment) {
 		const config = {
@@ -63,7 +59,7 @@ const getUserInfo = async () => {
 			idCompany: payload.data.idCompany,
 		}
 
-		idDepartmentStore.setDepartment(config)
+		department_store.setDepartment(config)
 	}
 }
 

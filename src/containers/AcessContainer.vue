@@ -1,22 +1,28 @@
 <template>
 	<Loading v-if="showLoading" />
 
-	<Acess
-		:eye-icon="eyeIcon"
-		:loggedIn="loggedIn"
-		:showPassord="showPassord"
-		:validation-error="validationError"
-		:show-button="showButton"
-		:get-username="getUserInfo"
-		:get-password="getPassword"
-		:error-message="errorMessage"
-		:login="login" />
+	<LoginView>
+		<Acess
+			:eye-icon="eyeIcon"
+			:loggedIn="loggedIn"
+			:showPassord="showPassord"
+			:validation-error="validationError"
+			:show-button="showButton"
+			:get-username="getUserInfo"
+			:get-password="getPassword"
+			:error-message="errorMessage"
+			:login="login" />
+
+		<Logo />
+	</LoginView>
 </template>
 
 <script setup lang="ts">
 import { signin } from "@/api/signin"
 import Acess from "@/components/organisms/Acess.vue"
 import Loading from "@/components/molecules/Loading.vue"
+import Logo from "@/components/molecules/Logo.vue"
+import LoginView from "@/views/LoginView.vue"
 import router from "@/router"
 import { reactive, ref, watch } from "vue"
 import { TypeErrors } from "@/utils/enum"

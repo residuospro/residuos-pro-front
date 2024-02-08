@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
-import Login from "../views/Login.vue"
+import Login from "@/containers/AcessContainer.vue"
 import Painel from "../views/Painel.vue"
 import Collections from "@/containers/ColletionsContainer.vue"
 import Users from "@/containers/UsersContainer.vue"
