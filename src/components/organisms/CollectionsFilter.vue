@@ -89,8 +89,13 @@
 					<Button
 						@click="getCollectionByFilter(filterSelected), (closeMenu = false)"
 						buttonType="filterButton"
-						class="bg-v_light_green text-white mb-2">
-						Filtrar
+						:class="
+							showButton
+								? ' bg-v_green w-full mb-2'
+								: 'bg-v_dark_gray w-full mb-2'
+						"
+						:disabled="!showButton">
+						<p class="text-white">Filtrar</p>
 					</Button>
 				</v-list-item>
 			</v-list>
@@ -109,6 +114,7 @@ import userProps from "@/context/useProps"
 
 const { handleAutoCompleteStyle } = userProps()
 
+let showButton = ref(false)
 let departmentSelected = ref()
 let statusSelected = ref(null)
 let closeMenu = ref(false)
@@ -138,11 +144,14 @@ watch(filterSelected.value, () => {
 
 	if (orderNumber != "") {
 		disableInput.value = true
+		showButton.value = true
 	} else if (sedimentName || department || status || date != "") {
 		disableInputOrderNumber.value = true
+		showButton.value = true
 	} else {
 		disableInputOrderNumber.value = false
 		disableInput.value = false
+		showButton.value = false
 	}
 })
 

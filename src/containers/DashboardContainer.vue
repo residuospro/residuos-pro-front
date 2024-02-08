@@ -21,18 +21,21 @@
 				:setTextColor="setTextColor" />
 		</Wrapper>
 
-		<WrapperSendimentCard :sedimentsInfo="sedimentsInfo" :cardTitle="cardTitle">
+		<WrapperSendimentCard :cardTitle="cardTitle">
 			<SedimetsCard
 				:sedimentsInfo="sedimentsInfo"
 				:validadeState="validadeState"
 				:setBackgroundColor="setBackgroundColor"
 				:setTextColor="setTextColor" />
+
+			<EmptyTable :content="sedimentsInfo.length" />
 		</WrapperSendimentCard>
 	</Container>
 </template>
 
 <script setup lang="ts">
 import Loading from "@/components/molecules/Loading.vue"
+import EmptyTable from "@/components/molecules/EmptyTable.vue"
 import Container from "@/components/atoms/Container.vue"
 import CardDailySediments from "@/components/molecules/CardDailySediments.vue"
 import Chart from "@/components/molecules/Chart.vue"

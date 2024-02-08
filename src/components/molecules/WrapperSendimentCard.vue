@@ -1,7 +1,7 @@
 <template>
-	<div class="w-[94%] flex flex-wrap glass-effect rounded-lg">
+	<div class="w-[94%] flex flex-wrap glass-effect rounded-lg min-h-[22rem]">
 		<div
-			class="w-full rounded-t-lg bg-v_light_green px-2 py-1 flex justify-between items-center">
+			class="w-full rounded-t-lg bg-v_light_green px-2 py-1 flex justify-between items-center h-[2rem]">
 			<h1 class="text-white">{{ cardTitle }} atual</h1>
 
 			<div>
@@ -14,25 +14,11 @@
 			</div>
 		</div>
 		<slot></slot>
-
-		<p
-			class="text-v_medium_gray absolute top-[12rem] w-full text-center"
-			v-if="sedimentsInfo.length == 0">
-			Ops! Não há registros por aqui.
-		</p>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ISedimentsInfo } from "@/utils/interfaces"
-import { PropType } from "vue"
-
 defineProps({
-	sedimentsInfo: {
-		type: Array as PropType<ISedimentsInfo[]>,
-		required: true,
-	},
-
 	cardTitle: {
 		type: String,
 		required: true,
