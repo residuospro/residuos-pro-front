@@ -17,7 +17,7 @@
 	<WrapperModal
 		v-if="showSedimentsModal"
 		:closeModalOutside="() => (showSedimentsModal = false)">
-		<SedimentsCreateOrUpdateModal
+		<SedimentsModal
 			:type-action="typeAction"
 			:classifications="classifications"
 			:states="states"
@@ -28,43 +28,60 @@
 			<ModalActionButtons
 				:showButton="showButton"
 				:closeModal="closeSedimentsModal" />
-		</SedimentsCreateOrUpdateModal>
+		</SedimentsModal>
 	</WrapperModal>
 
-	<Sediments
-		:headers="headers"
-		:actions="actions"
-		:sedimentsName="sedimentsName"
-		:content="sediments"
-		:select-sediments="filterDepartment"
-		:show-delete-modal="openDeleteModal"
-		:openSedimentsModal="openSedimentsModal"
-		:sedimentsFilterCleaning="sedimentsFilterCleaning" />
+	<SedimentsView>
+		<Wrapper type="header">
+			<SedimentFilter
+				:sedimentsName="sedimentsName"
+				:select-sediments="filterSediments"
+				:sedimentsFilterCleaning="sedimentsFilterCleaning" />
 
-	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+			<Button
+				buttonType="submit"
+				@click="openSedimentsModal(Actions.SAVE)"
+				class="bg-white">
+				<p class="text-v_dark_gray">Cadastrar</p>
+			</Button>
+		</Wrapper>
 
-		<Pagination
-			:current-page="page"
-			:pageCount="totalPages.length"
-			:items="totalPages"
-			@paginate="setPagination"
-			class="float-right" />
-	</WrapperPagination>
+		<SedimentTable
+			:headers="headers"
+			:actions="actions"
+			:content="sediments"
+			:show-delete-modal="openDeleteModal"
+			:openSedimentsModal="openSedimentsModal" />
+
+		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
+			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+
+			<Pagination
+				:current-page="page"
+				:pageCount="totalPages.length"
+				:items="totalPages"
+				@paginate="setPagination"
+				class="float-right" />
+		</WrapperPagination>
+	</SedimentsView>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
+import SedimentsView from "@/views/SedimentsView.vue"
+import SedimentFilter from "@/components/molecules/SedimentFilter.vue"
+import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
-import Sediments from "@/components/organisms/Sediments.vue"
+import SedimentTable from "@/components/organisms/SedimentTable.vue"
 import Loading from "@/components/molecules/Loading.vue"
+import Button from "@/components/atoms/Button.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import ActionModal from "@/components/molecules/ActionModal.vue"
-import SedimentsCreateOrUpdateModal from "@/components/organisms/SedimentsCreateOrUpdateModal.vue"
+import SedimentsModal from "@/components/organisms/SedimentsModal.vue"
 import { Ref, computed, ref, watch } from "vue"
 import { IMessage, ISediments } from "@/utils/interfaces"
 import { Actions } from "@/utils/enum"
@@ -170,7 +187,7 @@ const setItemsPerPage = (value: number) => {
 	}
 }
 
-const filterDepartment = async (sediment: string) => {
+const filterSediments = async (sediment: string) => {
 	sedimentSelected.value = true
 
 	sediments.value = sediments.value.filter((d) => d.name == sediment)

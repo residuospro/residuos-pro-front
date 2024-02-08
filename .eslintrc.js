@@ -46,6 +46,7 @@ module.exports = {
 					"Reports",
 					"Chart",
 					"DailyEntries",
+					"Collection",
 				],
 			},
 		],

@@ -31,43 +31,60 @@
 		</UserModal>
 	</WrapperModal>
 
-	<Users
-		:headers="headers"
-		:actions="actions"
-		:content="users"
-		:users="usernames"
-		:departments="nameDepartments"
-		:itemsPerPage="Number(itemsPerPage)"
-		:show-delete-modal="openDeleteModal"
-		:openUserModal="openUserModal"
-		:selectUserByDepartment="selectUserByDepartment"
-		:selectUser="selectUser"
-		:userFilterCleaning="userFilterCleaning" />
+	<UsersView>
+		<Wrapper type="header">
+			<UserFilter
+				:users="usernames"
+				:departments="nameDepartments"
+				:selectUserByDepartment="selectUserByDepartment"
+				:selectUser="selectUser"
+				:userFilterCleaning="userFilterCleaning" />
 
-	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+			<Button
+				buttonType="submit"
+				class="bg-white"
+				@click="openUserModal(Actions.SAVE)">
+				<p class="text-v_dark_gray">Cadastrar</p>
+			</Button>
+		</Wrapper>
 
-		<Pagination
-			:current-page="page"
-			:pageCount="totalPages.length"
-			:items="totalPages"
-			@paginate="setPagination"
-			class="float-right" />
-	</WrapperPagination>
+		<UserTable
+			:headers="headers"
+			:actions="actions"
+			:content="users"
+			:itemsPerPage="Number(itemsPerPage)"
+			:show-delete-modal="openDeleteModal"
+			:openUserModal="openUserModal" />
+
+		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
+			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+
+			<Pagination
+				:current-page="page"
+				:pageCount="totalPages.length"
+				:items="totalPages"
+				@paginate="setPagination"
+				class="float-right" />
+		</WrapperPagination>
+	</UsersView>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
 import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
+import UserFilter from "@/components/molecules/UserFilter.vue"
+import UsersView from "@/views/UsersView.vue"
+import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
-import Users from "@/components/organisms/Users.vue"
+import UserTable from "@/components/organisms/UserTable.vue"
 import Loading from "@/components/molecules/Loading.vue"
+import Button from "@/components/atoms/Button.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import Pagination from "@/components/organisms/Pagination.vue"
 import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue"
 import ActionModal from "@/components/molecules/ActionModal.vue"
-import UserModal from "@/components/organisms/UserCreateOrUpdateModal.vue"
+import UserModal from "@/components/organisms/UserModal.vue"
 import {
 	IDepartment,
 	IInputWrappingStyle,

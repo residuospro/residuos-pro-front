@@ -1,16 +1,16 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router"
 import Login from "../views/Login.vue"
 import Painel from "../views/Painel.vue"
-import Collections from "@/conatainers/ColletionsContainer.vue"
-import Users from "@/conatainers/UsersContainer.vue"
-import Departments from "@/conatainers/DepartmentsContainer.vue"
-import Dashboard from "@/conatainers/DashboardContainer.vue"
+import Collections from "@/containers/ColletionsContainer.vue"
+import Users from "@/containers/UsersContainer.vue"
+import Departments from "@/containers/DepartmentsContainer.vue"
+import Dashboard from "@/containers/DashboardContainer.vue"
 import Settings from "@/components/organisms/Settings.vue"
-import Sediments from "@/conatainers/SedimentsContainer.vue"
+import Sediments from "@/containers/SedimentsContainer.vue"
 import { AuthorizationUser } from "@/utils/enum"
 import { setBearerAuthorization, useClient } from "@/clients/AxiosClient"
 import { hasPermission, isAuthenticated } from "@/utils/permissions"
-import Details from "@/conatainers/DetailsContainer.vue"
+import Details from "@/containers/DetailsContainer.vue"
 
 const routes: Array<RouteRecordRaw> = [
 	{

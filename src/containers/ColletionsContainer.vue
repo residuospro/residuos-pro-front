@@ -23,40 +23,57 @@
 		</CollectionsModal>
 	</WrapperModal>
 
-	<Collections
-		:itemsPerPage="itemsPerPage"
-		:page="page"
-		:departmentNames="departmentNames"
-		:headers="headers"
-		:actions="actions"
-		:collections="collections"
-		:collectionFilter="collectionFilter"
-		:status="status"
-		:sedimentsName="sedimentsName"
-		:showClearFilterButton="collection_store.showClearFilterButton"
-		:callCollectionsByPage="callCollectionsByPage"
-		:getCollectionByFilter="getCollectionByFilter"
-		:getColorByStatus="getColorByStatus"
-		:setColorSpinnerBar="setColorSpinnerBar"
-		:validatedStatus="validatedStatus"
-		:showDeleteModal="openDeleteModal"
-		:openCollectionsModal="openCollectionModal"
-		:setStatusStyle="setStatusStyle" />
+	<CollectionsView>
+		<Wrapper type="header">
+			<CollectionsFilter
+				:page="page"
+				:departmentNames="departmentNames"
+				:status="status"
+				:sedimentsName="sedimentsName"
+				:showClearFilterButton="collection_store.showClearFilterButton"
+				:callCollectionsByPage="callCollectionsByPage"
+				:getCollectionByFilter="getCollectionByFilter"
+				:openCollectionsModal="openCollectionModal" />
 
-	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+			<Button
+				v-if="!hasPermission([AuthorizationUser.ADMIN])"
+				buttonType="submit"
+				@click="openCollectionModal(Actions.SAVE)"
+				class="bg-white">
+				<p class="text-v_dark_gray">Criar</p>
+			</Button>
+		</Wrapper>
 
-		<Pagination
-			:current-page="page"
-			:pageCount="totalPages.length"
-			:items="totalPages"
-			@paginate="setPagination"
-			class="float-right" />
-	</WrapperPagination>
+		<CollectionTable
+			:itemsPerPage="itemsPerPage"
+			:headers="headers"
+			:actions="actions"
+			:collections="collections"
+			:collectionFilter="collectionFilter"
+			:getColorByStatus="getColorByStatus"
+			:setColorSpinnerBar="setColorSpinnerBar"
+			:validatedStatus="validatedStatus"
+			:showDeleteModal="openDeleteModal"
+			:setStatusStyle="setStatusStyle" />
+
+		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
+			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+
+			<Pagination
+				:current-page="page"
+				:pageCount="totalPages.length"
+				:items="totalPages"
+				@paginate="setPagination"
+				class="float-right" />
+		</WrapperPagination>
+	</CollectionsView>
 </template>
 
 <script setup lang="ts">
-import Collections from "@/components/organisms/Collections.vue"
+import CollectionsFilter from "@/components/organisms/CollectionsFilter.vue"
+import CollectionsView from "@/views/CollectionsView.vue"
+import CollectionTable from "@/components/organisms/CollectionTable.vue"
+import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
@@ -64,8 +81,9 @@ import CollectionsModal from "@/components/organisms/CollectionsModal.vue"
 import Loading from "@/components/molecules/Loading.vue"
 import Pagination from "../components/organisms/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
+import Button from "@/components/atoms/Button.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
-import { AuthorizationUser, Status } from "@/utils/enum"
+import { AuthorizationUser, Status, Actions } from "@/utils/enum"
 import {
 	ICollectionData,
 	ICollectionFilter,

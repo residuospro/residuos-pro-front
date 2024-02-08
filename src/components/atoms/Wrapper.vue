@@ -132,6 +132,14 @@ const wrapperClass = computed(() => {
 					h-[18rem]
 					mb-5
 				`,
+
+				header: `
+					flex 
+					items-center 
+					w-full 
+					justify-between 
+					mb-8
+				`,
 			},
 		},
 	})({

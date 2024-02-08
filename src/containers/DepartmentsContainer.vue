@@ -28,39 +28,56 @@
 		title="Confirmar Exclusão"
 		sub-title="Ao excluir um departamento, você excluirá todos os usuários do mesmo, tem certeza disso ?" />
 
-	<Departments
-		:actions="actions"
-		:content="departments"
-		:departments="departmentsName"
-		:headers="headers"
-		:itemsPerPage="Number(itemsPerPage)"
-		:showDeleteModal="openDeleteModal"
-		:filterDepartment="filterDepartment"
-		:departmentFilterCleaning="departmentFilterCleaning"
-		:openDepartmentModal="openDepartmentModal" />
+	<DepartmentsView>
+		<Wrapper type="header">
+			<DepartmentFilter
+				:departments="departmentsName"
+				:filterDepartment="filterDepartment"
+				:departmentFilterCleaning="departmentFilterCleaning" />
 
-	<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
-		<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+			<Button
+				buttonType="submit"
+				@click="openDepartmentModal(Actions.SAVE)"
+				class="bg-white">
+				<p class="text-v_dark_gray">Cadastrar</p>
+			</Button>
+		</Wrapper>
 
-		<Pagination
-			:current-page="page"
-			:pageCount="totalPages.length"
-			:items="totalPages"
-			@paginate="setPagination"
-			class="float-right" />
-	</WrapperPagination>
+		<DepartmentTable
+			:actions="actions"
+			:content="departments"
+			:headers="headers"
+			:itemsPerPage="Number(itemsPerPage)"
+			:showDeleteModal="openDeleteModal"
+			:openDepartmentModal="openDepartmentModal" />
+
+		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
+			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+
+			<Pagination
+				:current-page="page"
+				:pageCount="totalPages.length"
+				:items="totalPages"
+				@paginate="setPagination"
+				class="float-right" />
+		</WrapperPagination>
+	</DepartmentsView>
 </template>
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
+import DepartmentsView from "@/views/DepartmentsView.vue"
+import DepartmentFilter from "@/components/molecules/DepartmentFilter.vue"
+import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
-import Departments from "@/components/organisms/Departments.vue"
+import DepartmentTable from "@/components/organisms/DepartmentTable.vue"
 import Pagination from "../components/organisms/Pagination.vue"
 import ItemsPerPage from "../components/molecules/ItemsPerPage.vue"
 import ActionModal from "@/components/molecules/ActionModal.vue"
 import Loading from "@/components/molecules/Loading.vue"
-import DepartmentModal from "@/components/organisms/DepartmentCreateOrUpdateModal.vue"
+import Button from "@/components/atoms/Button.vue"
+import DepartmentModal from "@/components/organisms/DepartmentsModal.vue"
 import { computed, ref, watch, onMounted } from "vue"
 import { IDepartment, IMessage } from "@/utils/interfaces"
 import {
@@ -71,8 +88,6 @@ import {
 } from "@/api/department"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import { Actions } from "@/utils/enum"
-import { companyStore } from "@/store/companyStore"
-import { departmentStore } from "@/store/departmentStore"
 import { getPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
 import { stores } from "@/store"

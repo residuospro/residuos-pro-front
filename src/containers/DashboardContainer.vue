@@ -7,7 +7,7 @@
 		@closeModal="showNotificationModal = false"
 		v-if="showNotificationModal" />
 
-	<Dashboard>
+	<DashboardView>
 		<Reports
 			:departmentNames="departmentNames"
 			:sedimentsName="sedimentsName" />
@@ -28,7 +28,7 @@
 				:setBackgroundColor="setBackgroundColor"
 				:setTextColor="setTextColor" />
 		</WrapperSendimentCard>
-	</Dashboard>
+	</DashboardView>
 </template>
 
 <script setup lang="ts">
@@ -39,7 +39,7 @@ import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperSendimentCard from "@/components/molecules/WrapperSendimentCard.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import SedimetsCard from "@/components/organisms/SedimentsCard.vue"
-import Dashboard from "@/views/Dashboard.vue"
+import DashboardView from "@/views/DashboardView.vue"
 import Reports from "@/components/molecules/Reports.vue"
 import { ref } from "vue"
 import { onMounted } from "vue"

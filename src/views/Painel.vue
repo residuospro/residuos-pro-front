@@ -19,7 +19,7 @@
 import Container from "@/components/atoms/Container.vue"
 import Notification from "@/components/molecules/Notification.vue"
 import NotificationModal from "@/components/molecules/NotificationModal.vue"
-import MenuSideBarContainer from "@/conatainers/MenuSideBarContainer.vue"
+import MenuSideBarContainer from "@/containers/MenuSideBarContainer.vue"
 import router from "@/router"
 import { onMounted, ref } from "vue"
 import { userStore } from "../store/userStore"
