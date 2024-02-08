@@ -31,7 +31,7 @@
 		</UserModal>
 	</WrapperModal>
 
-	<UsersView>
+	<Container type="page">
 		<Wrapper type="header">
 			<UserFilter
 				:users="usernames"
@@ -69,15 +69,15 @@
 				@paginate="setPagination"
 				class="float-right" />
 		</WrapperPagination>
-	</UsersView>
+	</Container>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
+import Container from "@/components/atoms/Container.vue"
 import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
 import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue"
 import UserFilter from "@/components/molecules/UserFilter.vue"
-import UsersView from "@/views/UsersView.vue"
 import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperModal from "@/components/molecules/WrapperModal.vue"
 import UserTable from "@/components/organisms/UserTable.vue"
@@ -104,6 +104,11 @@ import { createUser, takeAllUsers, updateUser, deleteUser } from "@/api/user"
 import { getPermission, hasPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
 import { stores } from "@/store"
+import { useHead } from "@vueuse/head"
+
+useHead({
+	title: "Resíduos Pro - Usuários",
+})
 
 const { parseDepartment, setTotalPages, parseUser } = useProps()
 

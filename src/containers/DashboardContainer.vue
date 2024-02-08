@@ -7,7 +7,7 @@
 		@closeModal="showNotificationModal = false"
 		v-if="showNotificationModal" />
 
-	<DashboardView>
+	<Container type="page">
 		<Reports
 			:departmentNames="departmentNames"
 			:sedimentsName="sedimentsName" />
@@ -28,18 +28,18 @@
 				:setBackgroundColor="setBackgroundColor"
 				:setTextColor="setTextColor" />
 		</WrapperSendimentCard>
-	</DashboardView>
+	</Container>
 </template>
 
 <script setup lang="ts">
 import Loading from "@/components/molecules/Loading.vue"
+import Container from "@/components/atoms/Container.vue"
 import CardDailySediments from "@/components/molecules/CardDailySediments.vue"
 import Chart from "@/components/molecules/Chart.vue"
 import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperSendimentCard from "@/components/molecules/WrapperSendimentCard.vue"
 import Notification from "@/components/molecules/NotificationModal.vue"
 import SedimetsCard from "@/components/organisms/SedimentsCard.vue"
-import DashboardView from "@/views/DashboardView.vue"
 import Reports from "@/components/molecules/Reports.vue"
 import { ref } from "vue"
 import { onMounted } from "vue"
@@ -59,6 +59,11 @@ import liquid from "@/assets/liquid.json"
 import solid from "@/assets/solid.json"
 import { hasPermission } from "@/utils/permissions"
 import { AuthorizationUser } from "@/utils/enum"
+import { useHead } from "@vueuse/head"
+
+useHead({
+	title: "Resíduos Pro - Dashboard",
+})
 
 const { department_store, sediment_store, company_store } = stores()
 

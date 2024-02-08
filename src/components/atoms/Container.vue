@@ -18,6 +18,8 @@ const containerClass = computed(() => {
 	return cva("", {
 		variants: {
 			intent: {
+				page: "w-full ml-8 mt-2",
+
 				loginContainer: "flex justify-between h-screen",
 
 				loadingContainer: `

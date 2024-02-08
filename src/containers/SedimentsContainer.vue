@@ -31,7 +31,7 @@
 		</SedimentsModal>
 	</WrapperModal>
 
-	<SedimentsView>
+	<Container type="page">
 		<Wrapper type="header">
 			<SedimentFilter
 				:sedimentsName="sedimentsName"
@@ -66,12 +66,12 @@
 				@paginate="setPagination"
 				class="float-right" />
 		</WrapperPagination>
-	</SedimentsView>
+	</Container>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
-import SedimentsView from "@/views/SedimentsView.vue"
+import Container from "@/components/atoms/Container.vue"
 import SedimentFilter from "@/components/molecules/SedimentFilter.vue"
 import Wrapper from "@/components/atoms/Wrapper.vue"
 import WrapperPagination from "@/components/molecules/WrapperPagination.vue"
@@ -99,6 +99,11 @@ import {
 } from "@/api/sediments"
 import useProps from "@/context/useProps"
 import { stores } from "@/store"
+import { useHead } from "@vueuse/head"
+
+useHead({
+	title: "Resíduos Pro - Resíduos",
+})
 
 const { setTotalPages, parseSediments } = useProps()
 

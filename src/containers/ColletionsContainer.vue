@@ -23,7 +23,7 @@
 		</CollectionsModal>
 	</WrapperModal>
 
-	<CollectionsView>
+	<Container type="page">
 		<Wrapper type="header">
 			<CollectionsFilter
 				:page="page"
@@ -69,12 +69,12 @@
 				@paginate="setPagination"
 				class="float-right" />
 		</WrapperPagination>
-	</CollectionsView>
+	</Container>
 </template>
 
 <script setup lang="ts">
+import Container from "@/components/atoms/Container.vue"
 import CollectionsFilter from "@/components/organisms/CollectionsFilter.vue"
-import CollectionsView from "@/views/CollectionsView.vue"
 import CollectionTable from "@/components/organisms/CollectionTable.vue"
 import TableHead from "@/components/molecules/TableHead.vue"
 import EmptyTable from "@/components/molecules/EmptyTable.vue"
@@ -115,6 +115,11 @@ import { collectionScreenEvent } from "@/socket/collectionScreenEvent"
 import sound from "@/assets/sounds/r.mp3"
 import { audioStore } from "@/store/audioStore"
 import { stores } from "@/store"
+import { useHead } from "@vueuse/head"
+
+useHead({
+	title: "Resíduos Pro - Coletas",
+})
 
 const audio = audioStore()
 

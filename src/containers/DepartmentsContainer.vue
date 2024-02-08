@@ -28,7 +28,7 @@
 		title="Confirmar Exclusão"
 		sub-title="Ao excluir um departamento, você excluirá todos os usuários do mesmo, tem certeza disso ?" />
 
-	<DepartmentsView>
+	<Container type="page">
 		<Wrapper type="header">
 			<DepartmentFilter
 				:departments="departmentsName"
@@ -64,10 +64,11 @@
 				@paginate="setPagination"
 				class="float-right" />
 		</WrapperPagination>
-	</DepartmentsView>
+	</Container>
 </template>
 <script setup lang="ts">
 /* eslint-disable no-useless-escape */
+import Container from "@/components/atoms/Container.vue"
 import DepartmentsView from "@/views/DepartmentsView.vue"
 import DepartmentFilter from "@/components/molecules/DepartmentFilter.vue"
 import Wrapper from "@/components/atoms/Wrapper.vue"
@@ -96,6 +97,11 @@ import { Actions } from "@/utils/enum"
 import { getPermission } from "@/utils/permissions"
 import useProps from "../context/useProps"
 import { stores } from "@/store"
+import { useHead } from "@vueuse/head"
+
+useHead({
+	title: "Resíduos Pro - Departamentos",
+})
 
 const { parseDepartment, setTotalPages } = useProps()
 
