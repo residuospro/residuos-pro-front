@@ -64,15 +64,8 @@ const wrapperClass = computed(() => {
 					rounded-md
 				`,
 
-				acess: `
-					bg-white_two
-					flex flex-col
-					justify-center
-					items-center
-					rounded-br-[10rem]`,
-
 				userInput: `
-					w-[40%]
+					w-[35%]
 					h-[35rem]
 					left-32
 					absolute
@@ -119,8 +112,10 @@ const wrapperClass = computed(() => {
 
 				dataTable: `
 					min-h-[30rem]
-					glass-effect
+					w-full
+					backgroundTable
 					rounded-lg
+					relative
 				`,
 
 				chart: `
@@ -149,11 +144,34 @@ const wrapperClass = computed(() => {
 </script>
 
 <style scoped>
+@keyframes fadeInAnimation {
+	0% {
+		opacity: 0.3;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
 .modalContainer {
 	transform: translate(-50%, -50%);
 	background: rgba(0, 0, 0, 0.5);
 	animation: fadeInAnimation ease 0.3s;
 	animation-iteration-count: 1;
 	animation-fill-mode: forwards;
+}
+
+.backgroundTable {
+	background: #fff;
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass-effect {
+	background: #fff;
+	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(2px);
+	-webkit-backdrop-filter: blur(13.5px);
+	border: 1px solid rgba(255, 255, 255, 0.18);
 }
 </style>

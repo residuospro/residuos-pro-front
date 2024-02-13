@@ -77,6 +77,13 @@ const containerClass = computed(() => {
 					w-[20%]
 					items-center
 				`,
+
+				acess: `
+					bg-white_two
+					flex flex-col
+					justify-center
+					items-center
+					rounded-br-[10rem]`,
 			},
 		},
 	})({
@@ -86,23 +93,6 @@ const containerClass = computed(() => {
 </script>
 
 <style scoped>
-.glass-effect {
-	background: rgba(255, 255, 255, 0.1);
-	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-	backdrop-filter: blur(2px);
-	-webkit-backdrop-filter: blur(13.5px);
-	border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
-@keyframes fadeInAnimation {
-	0% {
-		opacity: 0.3;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-
 @media (max-width: 1023px) {
 	.userInput {
 		width: calc(100% - 8rem);

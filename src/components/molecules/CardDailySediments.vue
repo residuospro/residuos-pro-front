@@ -1,5 +1,5 @@
 <template>
-	<div class="glass-effect rounded-lg mb-5">
+	<div class="glass-effect rounded-lg mb-5 bg-white">
 		<div
 			class="w-full rounded-t-lg bg-v_light_green px-2 py-1 flex justify-between items-center">
 			<h1 class="text-white">{{ cardTitleDailySediments }} diárias</h1>

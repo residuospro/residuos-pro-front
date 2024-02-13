@@ -54,9 +54,13 @@
 			:validatedStatus="validatedStatus"
 			:showDeleteModal="openDeleteModal"
 			:setStatusStyle="setStatusStyle">
-			<TableHead :headers="headers" action="Detalhes" />
+			<template v-slot:emptyTable>
+				<EmptyTable :content="collections.length" />
+			</template>
 
-			<EmptyTable :content="collections.length" />
+			<template v-slot:header>
+				<TableHead :headers="headers" action="Ajustar" />
+			</template>
 		</CollectionTable>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">

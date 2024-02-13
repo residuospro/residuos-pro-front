@@ -13,8 +13,10 @@
 <script setup lang="ts">
 import { onMounted } from "vue"
 import Chart, { ChartConfiguration, ChartItem } from "chart.js/auto"
-import { PropType } from "vue"
+import { PropType, defineEmits } from "vue"
 import { MonthTotals } from "@/utils/interfaces"
+
+const emit = defineEmits(["showLoading"])
 
 const props = defineProps({
 	months: {
@@ -89,7 +91,9 @@ const createChart = () => {
 onMounted(() => {
 	setTimeout(() => {
 		createChart()
-	}, 1000)
+
+		emit("showLoading", false)
+	}, 1500)
 })
 </script>
 

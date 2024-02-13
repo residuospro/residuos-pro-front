@@ -8,38 +8,36 @@ import { Routes } from "@/utils/enum"
 import { setIsAuthenticated, setPermission } from "@/utils/permissions"
 
 export const signin = async (user: any) => {
-	try {
-		const encode = btoa(`${user.username}:${user.password}`)
+	const encode = btoa(`${user.username}:${user.password}`)
 
-		setBasicAuthorization(useClient(), encode)
+	setBasicAuthorization(useClient(), encode)
 
-		const res = await useClient().post(Routes.LOGIN)
+	const res = await useClient().post(Routes.LOGIN)
 
-		if (res?.status == 403) {
-			return res
-		}
+	console.log("reeeee", res)
 
-		const token = res.data.token
-		const refresh_token = res.data.refreshToken
-
-		setBearerAuthorization(useClient(), token)
-
-		const payload: any = await getPayload()
-
-		const userId = payload.data.userId
-
-		const idCompany = payload.data.company
-
-		const roles = payload.data.permission
-
-		setIsAuthenticated(token, refresh_token)
-
-		setPermission(roles)
-
-		return { res, userId, idCompany }
-	} catch (error) {
-		return error
+	if (res?.status == 403 || res.status == 404) {
+		return res
 	}
+
+	const token = res.data.token
+	const refresh_token = res.data.refreshToken
+
+	setBearerAuthorization(useClient(), token)
+
+	const payload: any = await getPayload()
+
+	const userId = payload.data.userId
+
+	const idCompany = payload.data.company
+
+	const roles = payload.data.permission
+
+	setIsAuthenticated(token, refresh_token)
+
+	setPermission(roles)
+
+	return { res, userId, idCompany }
 }
 
 export const getPayload = async () => {

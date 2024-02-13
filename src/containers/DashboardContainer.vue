@@ -13,7 +13,10 @@
 			:sedimentsName="sedimentsName" />
 
 		<Wrapper type="chart">
-			<Chart :months="months" :annualSediments="annualSediments" />
+			<Chart
+				:months="months"
+				:annualSediments="annualSediments"
+				@show-loading="(value: boolean) => (showLoading = value)" />
 
 			<CardDailySediments
 				:cardTitleDailySediments="cardTitleDailySediments"
@@ -190,8 +193,6 @@ const getAllCollections = async () => {
 
 		showNotificationModal.value = true
 	}
-
-	showLoading.value = false
 }
 
 const sumItemsBySedimentName = (

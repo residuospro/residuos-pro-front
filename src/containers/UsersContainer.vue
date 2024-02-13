@@ -54,9 +54,13 @@
 			:itemsPerPage="Number(itemsPerPage)"
 			:show-delete-modal="openDeleteModal"
 			:openUserModal="openUserModal">
-			<TableHead :headers="headers" action="Ajustar" />
+			<template v-slot:emptyTable>
+				<EmptyTable :content="users.length" />
+			</template>
 
-			<EmptyTable :content="users.length" />
+			<template v-slot:header>
+				<TableHead :headers="headers" action="Ajustar" />
+			</template>
 		</UserTable>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">

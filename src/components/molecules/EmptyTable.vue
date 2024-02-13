@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="text-v_medium_gray absolute top-[8rem] w-full text-center"
+		class="text-v_medium_gray absolute top-[10rem] w-full text-center"
 		v-if="content == 0">
 		<div class="h-24">
 			<Vue3Lottie :animationData="emptyBox" />

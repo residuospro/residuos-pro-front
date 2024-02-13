@@ -49,10 +49,15 @@
 			:itemsPerPage="Number(itemsPerPage)"
 			:showDeleteModal="openDeleteModal"
 			:openDepartmentModal="openDepartmentModal">
-			<TableHead :headers="headers" action="Ajustar" />
+			<template v-slot:emptyTable>
+				<EmptyTable :content="departments.length" />
+			</template>
 
-			<EmptyTable :content="departments.length"
-		/></DepartmentTable>
+			<template v-slot:header>
+				<TableHead :headers="headers" action="Ajustar" />
+			</template>
+			/></DepartmentTable
+		>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
 			<ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />

@@ -14,7 +14,7 @@ import { Ref } from "vue"
 const useProps = (): IUseProps => {
 	const setTableBackground = (index: number) => {
 		if (index % 2 == 0) {
-			return { background: "#F8f8f8" }
+			return { background: "#F5f5f5" }
 		}
 
 		return { background: "transparent" }

@@ -51,9 +51,13 @@
 			:content="sediments"
 			:show-delete-modal="openDeleteModal"
 			:openSedimentsModal="openSedimentsModal">
-			<TableHead :headers="headers" action="Ajustar" />
+			<template v-slot:emptyTable>
+				<EmptyTable :content="sediments.length" />
+			</template>
 
-			<EmptyTable :content="sediments.length" />
+			<template v-slot:header>
+				<TableHead :headers="headers" action="Ajustar" />
+			</template>
 		</SedimentTable>
 
 		<WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">

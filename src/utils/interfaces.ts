@@ -1,4 +1,5 @@
 import { Ref } from "vue"
+import { NavigationFailure } from "vue-router"
 
 export interface Credential {
 	username: string
@@ -387,4 +388,8 @@ export interface DayStateTotal {
 
 export interface IStateCondition {
 	[key: string]: number
+}
+
+export interface IResponseHandler {
+	[key: number]: () => Promise<void | NavigationFailure | undefined> | void
 }

@@ -1,7 +1,8 @@
 <template>
 	<Wrapper type="dataTable">
+		<slot name="emptyTable"></slot>
 		<table>
-			<slot></slot>
+			<slot name="header"></slot>
 
 			<tbody style="height: auto">
 				<tr
@@ -173,33 +174,5 @@ th {
 
 tbody td {
 	line-height: 3;
-}
-
-.overflow {
-	overflow: hidden;
-	-ms-text-overflow: ellipsis;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	padding: 0.3rem;
-}
-
-.overflow:hover {
-	position: absolute;
-	background: #fff;
-	height: 2rem;
-	margin-top: -1rem;
-	box-shadow: 0 0.3rem 0.62rem rgba(0, 0, 0, 0.4);
-	border-radius: 0.25rem;
-	color: #000;
-	width: auto;
-	z-index: 10;
-}
-
-.glass-effect {
-	background: rgba(255, 255, 255, 0.1);
-	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-	backdrop-filter: blur(2px);
-	-webkit-backdrop-filter: blur(13.5px);
-	border: 1px solid rgba(255, 255, 255, 0.18);
 }
 </style>

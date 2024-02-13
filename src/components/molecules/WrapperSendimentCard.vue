@@ -1,5 +1,6 @@
 <template>
-	<div class="w-[94%] flex flex-wrap glass-effect rounded-lg min-h-[22rem]">
+	<div
+		class="w-[94%] flex flex-wrap glass-effect bg-white rounded-lg min-h-[22rem]">
 		<div
 			class="w-full rounded-t-lg bg-v_light_green px-2 py-1 flex justify-between items-center h-[2rem]">
 			<h1 class="text-white">{{ cardTitle }} atual</h1>

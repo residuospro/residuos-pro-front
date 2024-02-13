@@ -2,7 +2,7 @@
 	<div
 		v-for="(items, index) in sedimentsInfo"
 		:key="index"
-		class="min-w-[17rem] h-[10rem] shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] rounded-lg card px-2 py-2 mx-2 my-2">
+		class="min-w-[17rem] h-[10rem] shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] bg-white rounded-lg card px-2 py-2 mx-2 my-2">
 		<div class="flex items-center justify-between px-5">
 			<div
 				:style="setBackgroundColor(items.state)"
