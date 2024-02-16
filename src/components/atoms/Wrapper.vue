@@ -83,7 +83,6 @@ const wrapperClass = computed(() => {
 					flex-col
 					justify-evenly
 					items-center
-					h-[20rem]
 					mt-[-2rem] 
 					relative`,
 

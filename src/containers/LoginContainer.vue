@@ -14,6 +14,15 @@
 				:get-password="getPassword"
 				:changePassword="changePassword"
 				:login="login" />
+
+			<ChangePassword
+				v-else
+				:showSucessMessage="showSucessMessage"
+				:showErrorMessage="showErrorMessage"
+				:message="message"
+				:returnToLogin="returnToLogin"
+				:validateEmail="validateEmail"
+				:sendEmailToChangePassword="sendEmailToChangePassword" />
 		</Container>
 
 		<Logo />
@@ -21,6 +30,8 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable no-useless-escape */
+import ChangePassword from "@/components/molecules/ChangePassword.vue"
 import Container from "@/components/atoms/Container.vue"
 import { signin } from "@/api/signin"
 import Acess from "@/components/organisms/Login.vue"
@@ -31,6 +42,7 @@ import { reactive, ref, watch } from "vue"
 import { TypeErrors } from "@/utils/enum"
 import { useHead } from "@vueuse/head"
 import { IResponseHandler } from "@/utils/interfaces"
+import { createNewPasswordApi } from "@/api/user"
 
 useHead({ title: "Resíduos Pro - Login" })
 
@@ -38,6 +50,9 @@ let eyeIcon = ref(false)
 let showChangePassword = ref(false)
 let validationError = ref(false)
 let showButton = ref(false)
+let showSucessMessage = ref(false)
+let showErrorMessage = ref(false)
+let message = ref("")
 let showLoading = ref(false)
 let errorMessage = ref("")
 let user = reactive({
@@ -87,6 +102,39 @@ const login = async () => {
 	const response: any = await signin(user)
 
 	responseHandler(response.status || response.res.status)
+
+	showLoading.value = false
+}
+
+const validateEmail = (email: string) => {
+	return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)
+}
+
+const returnToLogin = (event: Event) => {
+	event.stopPropagation()
+
+	showSucessMessage.value = false
+	showErrorMessage.value = false
+	showChangePassword.value = false
+}
+
+const sendEmailToChangePassword = async (userInfo: string) => {
+	showSucessMessage.value = false
+	showErrorMessage.value = false
+
+	showLoading.value = true
+
+	const res: any = await createNewPasswordApi(userInfo)
+
+	if (res?.status == 200) {
+		message.value = res?.data
+
+		showSucessMessage.value = true
+	} else {
+		message.value = res?.data.message.subTitle
+
+		showErrorMessage.value = true
+	}
 
 	showLoading.value = false
 }

@@ -26,6 +26,7 @@
 			:validateDataToCreateSediments="validateDataToCreateSediments"
 			:validateDataToUpdateSediments="validateDataToUpdateSediments">
 			<ModalActionButtons
+				:type-action="typeAction"
 				:showButton="showButton"
 				:closeModal="closeSedimentsModal" />
 		</SedimentsModal>

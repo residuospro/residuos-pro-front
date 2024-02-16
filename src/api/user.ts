@@ -144,3 +144,17 @@ export const deleteUser = async (idCompany: string, userId?: string) => {
 		return error
 	}
 }
+
+export const createNewPasswordApi = async (userInfo: string) => {
+	try {
+		const data = {
+			userInfo,
+		}
+
+		const res = await useClient().post(Routes.RESET_PASSWORD, data)
+
+		return res
+	} catch (error) {
+		return error
+	}
+}

@@ -26,6 +26,7 @@
 			:selectDepartment="selectTheDepartmentToCreateTheManager"
 			:inputWrappingStyle="inputWrappingStyle">
 			<ModalActionButtons
+				:type-action="typeAction"
 				:show-button="showButton"
 				:closeModal="closeUserModal" />
 		</UserModal>

@@ -16,6 +16,7 @@
 			:typeAction="typeAction"
 			:create-or-update-department="createOrUpdateDepartment">
 			<ModalActionButtons
+				:type-action="typeAction"
 				:showButton="showButton"
 				:closeModal="closeDepartmentModal" />
 		</DepartmentModal>

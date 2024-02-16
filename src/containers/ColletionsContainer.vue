@@ -18,6 +18,7 @@
 			:validateDataToCreateCollection="validateDataToCreateCollection"
 			:createCollectionOrder="createCollectionOrder">
 			<ModalActionButtons
+				:type-action="typeAction"
 				:showButton="showButton"
 				:closeModal="closeCollectionModal" />
 		</CollectionsModal>

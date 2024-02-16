@@ -30,6 +30,7 @@ export enum Routes {
 	DELETE_COLLECTION = "/api/delete_collection/",
 	GENERATE_COLLECTION_ORDER_DOWNLOAD = "/api/generate_collection_order_download",
 	GET_ALL_COLLECTIONS = "/api/all_collections",
+	RESET_PASSWORD = "/api/user/reset_password",
 }
 
 export enum TypeErrors {

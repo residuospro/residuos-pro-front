@@ -5,7 +5,7 @@
 			buttonType="confirmButton"
 			:class="showButton ? ' bg-v_green' : 'bg-v_dark_gray'"
 			:disabled="!showButton">
-			<p class="text-white">Criar</p>
+			<p class="text-white">{{ typeAction }}</p>
 		</Button>
 
 		<Button buttonType="closeButton" @click="closeModal"> Cancelar </Button>
@@ -23,6 +23,11 @@ defineProps({
 
 	closeModal: {
 		type: Function as PropType<(event: Event) => void>,
+		required: true,
+	},
+
+	typeAction: {
+		type: String,
 		required: true,
 	},
 })

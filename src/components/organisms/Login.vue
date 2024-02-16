@@ -9,7 +9,7 @@
 		</div>
 
 		<form @submit.prevent="login">
-			<Wrapper type="input">
+			<Wrapper type="input" class="h-[20rem]">
 				<Input
 					type="text"
 					placeholder="Username:"

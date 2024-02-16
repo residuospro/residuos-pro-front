@@ -14,12 +14,22 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from "vue"
+import { PropType, computed } from "vue"
+import { useRoute } from "vue-router"
 
+const route = useRoute()
 defineProps({
 	headers: { type: Array as PropType<string[]>, required: true },
 
 	action: { type: String, required: true },
+})
+
+const tableHeaderAlignment = computed(() => {
+	if (route.path === "/Painel/Coletas") {
+		return "center"
+	} else {
+		return "start"
+	}
 })
 </script>
 
@@ -28,7 +38,7 @@ th {
 	background-color: #77ab59;
 	color: #fff;
 	height: 3rem;
-	text-align: start;
+	text-align: v-bind(tableHeaderAlignment);
 	padding: 0 2em;
 }
 </style>
