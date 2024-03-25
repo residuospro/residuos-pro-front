@@ -15,6 +15,8 @@ export const createCollectionApi = async (collectionData: ICollectionData) => {
 
 		const res = await useClient().post(Routes.SAVE_COLLECTION, data)
 
+		console.log("co")
+
 		return res
 	} catch (error) {
 		return error
